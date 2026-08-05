@@ -1,0 +1,4 @@
+[[IgnoredVulns]]
+id = "PYSEC-2026-3552"
+ignoreUntil = 2027-01-01
+reason = "cryptography 49.0.0 is the exact study control. It runs offline in a read-only container. The current 50.0.0 adapter is tested separately."

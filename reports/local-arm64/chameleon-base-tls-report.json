@@ -1,0 +1,163 @@
+{
+  "altered_transcript_rejected": {
+    "confidence": "behaviorally-established",
+    "state": "pass"
+  },
+  "binding": {
+    "confidence": "behaviorally-established",
+    "state": "pass"
+  },
+  "incompatible_signature_rejected": {
+    "confidence": "behaviorally-established",
+    "state": "pass"
+  },
+  "report": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-valid-delta.pem,dst=/input/leaf.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
+      "--",
+      "hybrid-x509-bouncycastle:1.85",
+      "--root",
+      "/input/root.pem",
+      "--intermediate",
+      "/input/intermediate.pem",
+      "--leaf",
+      "/input/leaf.pem",
+      "--time",
+      "2026-06-20T00:00:00Z",
+      "--mode",
+      "tls-transcript",
+      "--key",
+      "/input/key.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 672,
+        "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+        "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+      },
+      {
+        "bytes": 2854,
+        "path": "tests/fixtures/generated-controls/chameleon-base-valid-delta.pem",
+        "sha256": "e375f4290a335ac48ab11adbe158db94bfc4b167f0899de5cf101435beecdaea"
+      },
+      {
+        "bytes": 3613,
+        "path": "tests/fixtures/generated-controls/chameleon-base-key.pem",
+        "sha256": "64183afd8804d4b6fc1c131ecf79b3fb18c3313e55ccc076e318a0297abd05a6"
+      }
+    ],
+    "observation": {
+      "adapter": "bouncycastle-java-current",
+      "execution_isolation": "container",
+      "validation_profile": "evidence-signature",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "1.85",
+      "version_track": "current"
+    },
+    "source_instrumentation": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": null,
+          "operation": "validate-pkix-path",
+          "outcome": "pass",
+          "target": "leaf"
+        },
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-certificate-verify",
+          "outcome": "pass",
+          "target": "leaf"
+        },
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-altered-transcript",
+          "outcome": "reject",
+          "target": "leaf"
+        },
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-incompatible-signature",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": []
+    },
+    "verification": {
+      "elapsed_milliseconds": 749,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 539,
+        "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwidmFsaWRfaGFuZHNoYWtlIjoiYWNjZXB0IiwiYWx0ZXJlZF90cmFuc2NyaXB0X2hhbmRzaGFrZSI6InJlamVjdCIsImluY29tcGF0aWJsZV9zaWduYXR1cmVfaGFuZHNoYWtlIjoicmVqZWN0Iiwic2lnbmF0dXJlIjoibWxkc2E0NCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjpudWxsLCJvdXRjb21lIjoicGFzcyJ9LHsib3BlcmF0aW9uIjoidGxzLWNlcnRpZmljYXRlLXZlcmlmeSIsInRhcmdldCI6ImxlYWYiLCJhbGdvcml0aG0iOiJtbGRzYTQ0Iiwib3V0Y29tZSI6InBhc3MifSx7Im9wZXJhdGlvbiI6InRscy1hbHRlcmVkLXRyYW5zY3JpcHQiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoibWxkc2E0NCIsIm91dGNvbWUiOiJyZWplY3QifSx7Im9wZXJhdGlvbiI6InRscy1pbmNvbXBhdGlibGUtc2lnbmF0dXJlIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6Im1sZHNhNDQiLCJvdXRjb21lIjoicmVqZWN0In1dfQo=",
+        "encoding": "base64",
+        "sha256": "31a9ae5dbc14922071ac313cdb184336d256e7ec7d094d269a9be2105134bc36",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 1171,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 5,
+        "data": "MS44NQo=",
+        "encoding": "base64",
+        "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "signature": "mldsa44",
+  "valid_handshake": {
+    "confidence": "behaviorally-established",
+    "state": "pass"
+  }
+}

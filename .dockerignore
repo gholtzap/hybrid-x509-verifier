@@ -1,0 +1,7 @@
+.git
+target
+fuzz/artifacts
+fuzz/corpus
+fuzz/target
+reports
+sbom-*.cdx.json

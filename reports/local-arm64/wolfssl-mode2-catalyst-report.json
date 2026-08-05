@@ -1,0 +1,123 @@
+{
+  "api_version": "hybrid-x509-verifier/v1",
+  "arguments": [
+    "run",
+    "--rm",
+    "--pull=never",
+    "--network=none",
+    "--ipc=none",
+    "--read-only",
+    "--cap-drop=ALL",
+    "--security-opt=no-new-privileges",
+    "--user=65532:65532",
+    "--pids-limit=64",
+    "--memory=768m",
+    "--cpus=2",
+    "--ulimit=nofile=64:64",
+    "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+    "--mount",
+    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+    "--mount",
+    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+    "--mount",
+    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+    "--",
+    "hybrid-x509-wolfssl:5.9.2",
+    "mode2",
+    "2026-06-20 00:00:00",
+    "--scheme",
+    "catalyst",
+    "--root",
+    "/input/root.pem",
+    "--ca",
+    "/input/intermediate.pem",
+    "--leaf",
+    "/input/leaf.pem"
+  ],
+  "executable": "/usr/local/bin/docker",
+  "inputs": [
+    {
+      "bytes": 668,
+      "path": "tests/fixtures/paper-v1.0.2/root.pem",
+      "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+    },
+    {
+      "bytes": 5937,
+      "path": "tests/fixtures/paper-v1.0.2/catalyst-leaf.pem",
+      "sha256": "dc3e00e9668d64d9f9bd2a426b18dd9a4d34c12d73d031e902ae9d728601e132"
+    },
+    {
+      "bytes": 2504,
+      "path": "tests/fixtures/paper-v1.0.2/catalyst-ica.pem",
+      "sha256": "1fde4f744201843472c10c5b8e193b79e02c67f1acdf59d52bc375ebc050fb66"
+    }
+  ],
+  "observation": {
+    "adapter": "wolfssl-mode2",
+    "execution_isolation": "container",
+    "validation_profile": "x509-path",
+    "validation_time": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "verdict": "reject",
+    "version": "wolfSSL 5.9.2 mode2-dualalg",
+    "version_track": "current-and-study"
+  },
+  "source_instrumentation": {
+    "confidence": "observed",
+    "events": [
+      {
+        "algorithm": null,
+        "operation": "load-ca-certificate",
+        "outcome": "pass",
+        "target": "certificate-path"
+      },
+      {
+        "algorithm": null,
+        "operation": "verify-certificate-path",
+        "outcome": "reject",
+        "target": "leaf"
+      }
+    ],
+    "extensions": []
+  },
+  "verification": {
+    "elapsed_milliseconds": 685,
+    "status_code": 0,
+    "stderr": {
+      "captured_bytes": 80,
+      "data": "c2NoZW1lPWNhdGFseXN0IG1vZGU9bW9kZTItZHVhbGFsZyBjb2RlPS0xNTUgZXJyPUFTTiBzaWcgZXJyb3IsIGNvbmZpcm0gZmFpbHVyZQo=",
+      "encoding": "base64",
+      "sha256": "01f6c2ea21c4a5f9e44d3dcc6d1cef795578033e8c856684004fd735aedb7a36",
+      "truncated": false
+    },
+    "stdout": {
+      "captured_bytes": 237,
+      "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwidHJhY2UiOlt7Im9wZXJhdGlvbiI6ImxvYWQtY2EtY2VydGlmaWNhdGUiLCJ0YXJnZXQiOiJjZXJ0aWZpY2F0ZS1wYXRoIiwiYWxnb3JpdGhtIjpudWxsLCJvdXRjb21lIjoicGFzcyJ9LHsib3BlcmF0aW9uIjoidmVyaWZ5LWNlcnRpZmljYXRlLXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjpudWxsLCJvdXRjb21lIjoicmVqZWN0In1dLCJleHRlbnNpb25zIjpbXX0K",
+      "encoding": "base64",
+      "sha256": "6cbb2c296dedc12d6f312161f9591da3ca214c81dc91c75a64db8f927e69dc2e",
+      "truncated": false
+    },
+    "timed_out": false
+  },
+  "version": {
+    "elapsed_milliseconds": 591,
+    "status_code": 0,
+    "stderr": {
+      "captured_bytes": 0,
+      "data": "",
+      "encoding": "base64",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "stdout": {
+      "captured_bytes": 28,
+      "data": "d29sZlNTTCA1LjkuMiBtb2RlMi1kdWFsYWxnCg==",
+      "encoding": "base64",
+      "sha256": "5bfb17dfe863b10dbc0fabb0e2ee08d4308a78efd22e835615411946390b211c",
+      "truncated": false
+    },
+    "timed_out": false
+  }
+}

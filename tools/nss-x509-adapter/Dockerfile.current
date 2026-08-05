@@ -1,0 +1,24 @@
+FROM ubuntu:22.04@sha256:3b06811b2afd352be909dd088a004166d665dc76d38b13eada33522a9d915c6f AS build
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ca-certificates clang curl g++ gyp make ninja-build pkg-config python3 zlib1g-dev \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
+RUN curl -fsSLO https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_126_RTM/src/nss-3.126-with-nspr-4.39.tar.gz \
+    && printf '%s  %s\n' \
+       c95a4cf93d6939000642254422d71dffccb5c017d0f40733d3e2be18aa93f1be \
+       nss-3.126-with-nspr-4.39.tar.gz | sha256sum -c - \
+    && tar -xzf nss-3.126-with-nspr-4.39.tar.gz \
+    && cd nss-3.126/nss \
+    && ./build.sh --opt
+
+FROM ubuntu:22.04@sha256:3b06811b2afd352be909dd088a004166d665dc76d38b13eada33522a9d915c6f
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libsqlite3-0 libstdc++6 zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=build /src/nss-3.126/dist/Release /opt/nss
+COPY adapter.sh /adapter.sh
+ENV LD_LIBRARY_PATH=/opt/nss/lib NSS_ADAPTER_VERSION=3.126 NSS_BIN_DIR=/opt/nss/bin NSS_VERIFY_TOOL=vfychain
+ENTRYPOINT ["/adapter.sh"]

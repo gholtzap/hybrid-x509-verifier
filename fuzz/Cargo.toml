@@ -1,0 +1,37 @@
+[package]
+name = "hybrid-x509-verifier-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+serde_json = "1.0"
+hybrid-x509-verifier = { path = ".." }
+
+[[bin]]
+name = "pem"
+path = "fuzz_targets/pem.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "oracle-json"
+path = "fuzz_targets/oracle_json.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ocsp-der"
+path = "fuzz_targets/ocsp_der.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
+members = ["."]

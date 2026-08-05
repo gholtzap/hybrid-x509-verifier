@@ -1,0 +1,145 @@
+{
+  "altered_transcript_rejected": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  },
+  "binding": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  },
+  "incompatible_signature_rejected": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  },
+  "report": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-leaf.pem,dst=/input/leaf.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-leaf-key.pem,dst=/input/key.pem,readonly",
+      "--",
+      "hybrid-x509-bouncycastle:1.85",
+      "--root",
+      "/input/root.pem",
+      "--intermediate",
+      "/input/intermediate.pem",
+      "--leaf",
+      "/input/leaf.pem",
+      "--time",
+      "2026-06-20T00:00:00Z",
+      "--mode",
+      "tls-transcript",
+      "--key",
+      "/input/key.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 5555,
+        "path": "tests/fixtures/generated-controls/pure-path-root.pem",
+        "sha256": "3a6550eeb78017e818dd27687c69c95e753c9b69d9714582d97837838302e037"
+      },
+      {
+        "bytes": 5555,
+        "path": "tests/fixtures/generated-controls/pure-path-ica.pem",
+        "sha256": "e38b5e7fcb7a6764949aa218c8d8f0c20183c2c2777facbff6d6f510836be227"
+      },
+      {
+        "bytes": 5628,
+        "path": "tests/fixtures/generated-controls/pure-path-leaf.pem",
+        "sha256": "085819c484c4d0e92449c78a0c5441ea304eea72c750d6a52088e947b1db9d8f"
+      },
+      {
+        "bytes": 3613,
+        "path": "tests/fixtures/generated-controls/pure-leaf-key.pem",
+        "sha256": "3281caa94b2690155ea603c0e7f3148da1f9b94326dae1b6b376088d389ea2cf"
+      }
+    ],
+    "observation": {
+      "adapter": "bouncycastle-java-current",
+      "execution_isolation": "container",
+      "validation_profile": "evidence-signature",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "reject",
+      "version": "1.85",
+      "version_track": "current"
+    },
+    "source_instrumentation": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-handshake",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": []
+    },
+    "verification": {
+      "elapsed_milliseconds": 902,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 251,
+        "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwidmFsaWRfaGFuZHNoYWtlIjoicmVqZWN0IiwiYWx0ZXJlZF90cmFuc2NyaXB0X2hhbmRzaGFrZSI6InJlamVjdCIsImluY29tcGF0aWJsZV9zaWduYXR1cmVfaGFuZHNoYWtlIjoicmVqZWN0Iiwic2lnbmF0dXJlIjoibWxkc2E0NCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ0bHMtaGFuZHNoYWtlIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6Im1sZHNhNDQiLCJvdXRjb21lIjoicmVqZWN0In1dfQo=",
+        "encoding": "base64",
+        "sha256": "d5ebf2fc51eb21bdebf604abf87033cc0ae4f8568e57d54d20ffa290ca601a5d",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 1354,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 5,
+        "data": "MS44NQo=",
+        "encoding": "base64",
+        "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "signature": "mldsa44",
+  "valid_handshake": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  }
+}

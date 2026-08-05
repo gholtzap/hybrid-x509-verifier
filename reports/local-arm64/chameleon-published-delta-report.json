@@ -1,0 +1,117 @@
+{
+  "api_version": "hybrid-x509-verifier/v1",
+  "arguments": [
+    "run",
+    "--rm",
+    "--pull=never",
+    "--network=none",
+    "--ipc=none",
+    "--read-only",
+    "--cap-drop=ALL",
+    "--security-opt=no-new-privileges",
+    "--user=65532:65532",
+    "--pids-limit=64",
+    "--memory=768m",
+    "--cpus=2",
+    "--ulimit=nofile=64:64",
+    "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+    "--mount",
+    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+    "--mount",
+    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+    "--mount",
+    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/chameleon-base.pem,dst=/input/leaf.pem,readonly",
+    "--",
+    "hybrid-x509-bouncycastle:1.84",
+    "--root",
+    "/input/root.pem",
+    "--intermediate",
+    "/input/intermediate.pem",
+    "--leaf",
+    "/input/leaf.pem",
+    "--time",
+    "2026-06-20T00:00:00Z",
+    "--mode",
+    "delta-signature"
+  ],
+  "executable": "/usr/local/bin/docker",
+  "inputs": [
+    {
+      "bytes": 668,
+      "path": "tests/fixtures/paper-v1.0.2/root.pem",
+      "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+    },
+    {
+      "bytes": 672,
+      "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+      "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+    },
+    {
+      "bytes": 2854,
+      "path": "tests/fixtures/paper-v1.0.2/chameleon-base.pem",
+      "sha256": "1cd4e0bc7734f78a80644fcceab9c8e1573449e4f5ac20567afa5361dc214ae7"
+    }
+  ],
+  "observation": {
+    "adapter": "bouncycastle-java-study",
+    "execution_isolation": "container",
+    "validation_profile": "evidence-signature",
+    "validation_time": {
+      "confidence": "observed",
+      "state": "not-applicable"
+    },
+    "verdict": "reject",
+    "version": "1.84",
+    "version_track": "study"
+  },
+  "source_instrumentation": {
+    "confidence": "observed",
+    "events": [
+      {
+        "algorithm": "1.2.840.10045.4.3.2",
+        "operation": "check-delta-certificate-signature",
+        "outcome": "reject",
+        "target": "leaf"
+      }
+    ],
+    "extensions": []
+  },
+  "verification": {
+    "elapsed_milliseconds": 652,
+    "status_code": 0,
+    "stderr": {
+      "captured_bytes": 0,
+      "data": "",
+      "encoding": "base64",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "stdout": {
+      "captured_bytes": 199,
+      "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJkZWx0YSBjZXJ0aWZpY2F0ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1kZWx0YS1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiMS4yLjg0MC4xMDA0NS40LjMuMiIsIm91dGNvbWUiOiJyZWplY3QifV19Cg==",
+      "encoding": "base64",
+      "sha256": "5be7fd99ad98c3cc9405ca3f4afb242aae33a3860628dd21c7a5785c29e51f1d",
+      "truncated": false
+    },
+    "timed_out": false
+  },
+  "version": {
+    "elapsed_milliseconds": 1118,
+    "status_code": 0,
+    "stderr": {
+      "captured_bytes": 0,
+      "data": "",
+      "encoding": "base64",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "truncated": false
+    },
+    "stdout": {
+      "captured_bytes": 5,
+      "data": "MS44NAo=",
+      "encoding": "base64",
+      "sha256": "2756f5958d667618f9a89c7504434fe4c312cffa310e22fcffacb54db40fd76a",
+      "truncated": false
+    },
+    "timed_out": false
+  }
+}

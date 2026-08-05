@@ -1,0 +1,45 @@
+FROM debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258 AS build
+
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+    && printf '%s\n' \
+       'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260701T000000Z trixie main' \
+       > /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       build-essential ca-certificates gnupg libgmp-dev libidn2-dev libtasn1-6-dev \
+       libunistring-dev nettle-dev pkg-config xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+ADD --checksum=sha256:ffed8ec1bf09c2426d4f14aae377de4753b53e537d685e604e99a8b16ca9c97e \
+    https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.13.tar.xz /tmp/gnutls.tar.xz
+ADD --checksum=sha256:fbe8e5a702febffba6df45bbcfc0e6f46300e68fb380b0757f3ad0c3544abada \
+    https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.13.tar.xz.sig /tmp/gnutls.tar.xz.sig
+ADD --checksum=sha256:a47ae67e65375cedf0e0af830db4f29b29365283c1c3661a47d3d67601b9eada \
+    https://www.gnutls.org/gnutls-release-keyring.gpg /tmp/gnutls-release-keyring.gpg
+
+RUN gpg --batch --dearmor --output /tmp/gnutls-release-keyring.kbx \
+       /tmp/gnutls-release-keyring.gpg \
+    && gpg --batch --no-default-keyring --keyring /tmp/gnutls-release-keyring.kbx --verify \
+       /tmp/gnutls.tar.xz.sig /tmp/gnutls.tar.xz \
+    && mkdir /src \
+    && tar -xJf /tmp/gnutls.tar.xz -C /src --strip-components=1 \
+    && cd /src \
+    && ./configure --prefix=/opt/gnutls --disable-doc --disable-cxx \
+       --disable-nls --without-p11-kit --without-tpm --without-zlib --without-brotli \
+       --without-zstd \
+    && make -j"$(nproc)" \
+    && make install
+
+FROM debian:trixie-slim@sha256:3a39a0592364683e6bab97937b72cad5a8fa6dcbbee90edb3bb48c7f8e94f258
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+    && printf '%s\n' \
+       'deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260701T000000Z trixie main' \
+       > /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libfaketime libgmp10 libhogweed6t64 libidn2-0 libnettle8t64 libtasn1-6 libunistring5 \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=build /opt/gnutls /opt/gnutls
+COPY adapter.sh /adapter.sh
+ENV PATH=/opt/gnutls/bin:$PATH LD_LIBRARY_PATH=/opt/gnutls/lib
+ENTRYPOINT ["/adapter.sh"]

@@ -1,0 +1,4435 @@
+{
+  "api_version": "hybrid-x509-verifier/v1",
+  "classical_default_path": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a.pem,dst=/input/leaf.pem,readonly",
+      "--",
+      "hybrid-x509-bouncycastle:1.85",
+      "--root",
+      "/input/root.pem",
+      "--intermediate",
+      "/input/intermediate.pem",
+      "--leaf",
+      "/input/leaf.pem",
+      "--time",
+      "2026-06-20T00:00:00Z",
+      "--mode",
+      "path"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 782,
+        "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+        "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+      },
+      {
+        "bytes": 778,
+        "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+        "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+      },
+      {
+        "bytes": 855,
+        "path": "tests/fixtures/generated-controls/related-path-leaf-a.pem",
+        "sha256": "84375aff1ec5fd9236e4b299a003c8729dc54df256bdea5e509a2ce458864a5d"
+      }
+    ],
+    "observation": {
+      "adapter": "bouncycastle-java-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "1.85",
+      "version_track": "current"
+    },
+    "source_instrumentation": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "SHA256WITHECDSA",
+          "operation": "validate-pkix-path",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": []
+    },
+    "verification": {
+      "elapsed_milliseconds": 3829,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 144,
+        "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+        "encoding": "base64",
+        "sha256": "55672a4729925d53c671c547e20157858becf445cea85dbc221a94fe467b1ccb",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 2395,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 5,
+        "data": "MS44NQo=",
+        "encoding": "base64",
+        "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "positions": [
+    {
+      "binding": {
+        "calculated_digest": "ff0da6c9ce5b51c3cad6fa2464cef7904058e7d652c123d0a247e56d644fe71b",
+        "check": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "ff0da6c9ce5b51c3cad6fa2464cef7904058e7d652c123d0a247e56d644fe71b"
+      },
+      "classical_crl_status": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a.pem,dst=/input/leaf.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a-crl.pem,dst=/input/crl.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "crl-status",
+          "--crl",
+          "/input/crl.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a.pem",
+            "sha256": "84375aff1ec5fd9236e4b299a003c8729dc54df256bdea5e509a2ce458864a5d"
+          },
+          {
+            "bytes": 390,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a-crl.pem",
+            "sha256": "981e81bc204492ba546d5b1ec6cad9a9fdd8f374949627e0aba14d5c78646c96"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-crl-status",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 868,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 142,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jcmwtc3RhdHVzIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6IlNIQTI1NldJVEhFQ0RTQSIsIm91dGNvbWUiOiJhY2NlcHQifV19Cg==",
+            "encoding": "base64",
+            "sha256": "1b6ffeaa7cc3aca9dc6b13e19ef158b76c523635915f7b00a8752d8d431b5150",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 724,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "classical_outcome_bearing": {
+        "confidence": "behaviorally-established",
+        "state": "pass"
+      },
+      "classical_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a.pem",
+            "sha256": "84375aff1ec5fd9236e4b299a003c8729dc54df256bdea5e509a2ce458864a5d"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-certificate-signature",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 1236,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 153,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "38c0688ef290bd84d2fdcc1530651d6723cbd67f3ddc1ea4de7d5bb0a6ca9137",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 1216,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "classical_validity": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "invalid_binding": {
+        "calculated_digest": "ff0da6c9ce5b51c3cad6fa2464cef7904058e7d652c123d0a247e56d644fe71b",
+        "check": {
+          "confidence": "observed",
+          "state": "fail"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "invalid_binding_default_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a-bad-binding.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a-bad-binding.pem",
+            "sha256": "f753fd81e0b707dfdb0a4a43c3fd82af25910630625818cc1e6bbe175c25990a"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "validate-pkix-path",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 803,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 144,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "55672a4729925d53c671c547e20157858becf445cea85dbc221a94fe467b1ccb",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 708,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_classical_default_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a-bad-signature.pem",
+            "sha256": "4ac5c2ba884eb93dc635721de0c1228f0d04d6a328f59b0af1865f87dbfa209e"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "validate-pkix-path",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 778,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 245,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJvcmcuYm91bmN5Y2FzdGxlLmpjZS5leGNlcHRpb24uRXh0Q2VydFBhdGhWYWxpZGF0b3JFeGNlcHRpb246IENvdWxkIG5vdCB2YWxpZGF0ZSBjZXJ0aWZpY2F0ZSBzaWduYXR1cmUuIiwidHJhY2UiOlt7Im9wZXJhdGlvbiI6InZhbGlkYXRlLXBraXgtcGF0aCIsInRhcmdldCI6ImxlYWYiLCJhbGdvcml0aG0iOiJTSEEyNTZXSVRIRUNEU0EiLCJvdXRjb21lIjoicmVqZWN0In1dfQo=",
+            "encoding": "base64",
+            "sha256": "a356efe5c6b73c4468966a35c776d0e955f8314ab6acce7d4042ac413a9ccb92",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 773,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_classical_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a-bad-signature.pem",
+            "sha256": "4ac5c2ba884eb93dc635721de0c1228f0d04d6a328f59b0af1865f87dbfa209e"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-certificate-signature",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 1011,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 183,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJjZXJ0aWZpY2F0ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6InJlamVjdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "8be62f7ef7e6479d07c647b6796b16153be329e454a9cc45489b7cfb19adbf2e",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 1078,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_post_quantum_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-b-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5640,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-b-bad-signature.pem",
+            "sha256": "c40afb913ce8ca133d79ae1943ac6295078ffcdc684f6fe31993d181259bf21b"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "validate-pkix-path",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 780,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 239,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJvcmcuYm91bmN5Y2FzdGxlLmpjZS5leGNlcHRpb24uRXh0Q2VydFBhdGhWYWxpZGF0b3JFeGNlcHRpb246IENvdWxkIG5vdCB2YWxpZGF0ZSBjZXJ0aWZpY2F0ZSBzaWduYXR1cmUuIiwidHJhY2UiOlt7Im9wZXJhdGlvbiI6InZhbGlkYXRlLXBraXgtcGF0aCIsInRhcmdldCI6ImxlYWYiLCJhbGdvcml0aG0iOiJNTC1EU0EtNDQiLCJvdXRjb21lIjoicmVqZWN0In1dfQo=",
+            "encoding": "base64",
+            "sha256": "8f63c0843d8449b5484288183b7006bb92c809e97d8548628a322b86229ed98b",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 738,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_post_quantum_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-b-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5640,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-b-bad-signature.pem",
+            "sha256": "c40afb913ce8ca133d79ae1943ac6295078ffcdc684f6fe31993d181259bf21b"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-certificate-signature",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 803,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 177,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJjZXJ0aWZpY2F0ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6InJlamVjdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "9fdf93f61d256184103892a478dffcdb3dfbb02b86edf03b4ec2ec49b9f302e7",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 831,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "position": "end-entity",
+      "post_quantum_crl_status": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-b.pem,dst=/input/leaf.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b-crl.pem,dst=/input/crl.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "crl-status",
+          "--crl",
+          "/input/crl.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5640,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-b.pem",
+            "sha256": "3249e65ae0f79d91ab054504895e16549eddf47862c8391f6e16636b4b0f6b2f"
+          },
+          {
+            "bytes": 3575,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b-crl.pem",
+            "sha256": "da98dec22b036d7475dad755d6f7b7412d529a99804a2e32db9b78a953802f6f"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-crl-status",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 1084,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 136,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jcmwtc3RhdHVzIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6Ik1MLURTQS00NCIsIm91dGNvbWUiOiJhY2NlcHQifV19Cg==",
+            "encoding": "base64",
+            "sha256": "e43b6e7fa9337a028f69cd93fecd2be45cd04017d079f2772b3c44db01942cc8",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 942,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "post_quantum_outcome_bearing": {
+        "confidence": "behaviorally-established",
+        "state": "fail"
+      },
+      "post_quantum_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-b.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5640,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-b.pem",
+            "sha256": "3249e65ae0f79d91ab054504895e16549eddf47862c8391f6e16636b4b0f6b2f"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-certificate-signature",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 986,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 147,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "1664104e0907828cdc6009c2ce60f26795c4b4e99b04e17577d40aa7d089bcd8",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 943,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "post_quantum_validity": {
+        "confidence": "observed",
+        "state": "pass"
+      }
+    },
+    {
+      "binding": {
+        "calculated_digest": "3af65c19772bb8ac35642b5af3a3210420e8236ea240ed6259cedad11830c130",
+        "check": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "3af65c19772bb8ac35642b5af3a3210420e8236ea240ed6259cedad11830c130"
+      },
+      "classical_crl_status": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/leaf.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a-crl.pem,dst=/input/crl.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "crl-status",
+          "--crl",
+          "/input/crl.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 390,
+            "path": "tests/fixtures/generated-controls/related-path-root-a-crl.pem",
+            "sha256": "040bdd1f45e03aface0382d993974fce21443b3526d8425627ef2f67bbefb3be"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-crl-status",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 1214,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 142,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jcmwtc3RhdHVzIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6IlNIQTI1NldJVEhFQ0RTQSIsIm91dGNvbWUiOiJhY2NlcHQifV19Cg==",
+            "encoding": "base64",
+            "sha256": "1b6ffeaa7cc3aca9dc6b13e19ef158b76c523635915f7b00a8752d8d431b5150",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 1269,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "classical_outcome_bearing": {
+        "confidence": "behaviorally-established",
+        "state": "pass"
+      },
+      "classical_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-certificate-signature",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 743,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 153,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "38c0688ef290bd84d2fdcc1530651d6723cbd67f3ddc1ea4de7d5bb0a6ca9137",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 916,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "classical_validity": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "invalid_binding": {
+        "calculated_digest": "3af65c19772bb8ac35642b5af3a3210420e8236ea240ed6259cedad11830c130",
+        "check": {
+          "confidence": "observed",
+          "state": "fail"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "invalid_binding_default_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a-bad-binding.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a-bad-binding.pem",
+            "sha256": "80ce4366d94013be90f05e4e0d24c3ebe289f2547809acb1b9bd4204a485a978"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a.pem",
+            "sha256": "84375aff1ec5fd9236e4b299a003c8729dc54df256bdea5e509a2ce458864a5d"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "validate-pkix-path",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 3097,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 144,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "55672a4729925d53c671c547e20157858becf445cea85dbc221a94fe467b1ccb",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 661,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_classical_default_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a-bad-signature.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a-bad-signature.pem",
+            "sha256": "567cac911c7305f22dc07b4140e299514e2dd64e33de878dcd4ecfe583d896e1"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a.pem",
+            "sha256": "84375aff1ec5fd9236e4b299a003c8729dc54df256bdea5e509a2ce458864a5d"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "validate-pkix-path",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 716,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 241,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJqYXZhLnNlY3VyaXR5LmNlcnQuQ2VydFBhdGhWYWxpZGF0b3JFeGNlcHRpb246IFRydXN0QW5jaG9yIGZvdW5kIGJ1dCBjZXJ0aWZpY2F0ZSB2YWxpZGF0aW9uIGZhaWxlZC4iLCJ0cmFjZSI6W3sib3BlcmF0aW9uIjoidmFsaWRhdGUtcGtpeC1wYXRoIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6IlNIQTI1NldJVEhFQ0RTQSIsIm91dGNvbWUiOiJyZWplY3QifV19Cg==",
+            "encoding": "base64",
+            "sha256": "413aaf53f13b67df9d4c05830fbe5d6602e35693190956af921cbaa198216ed4",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 1000,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_classical_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a-bad-signature.pem",
+            "sha256": "567cac911c7305f22dc07b4140e299514e2dd64e33de878dcd4ecfe583d896e1"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-certificate-signature",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 1014,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 183,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJjZXJ0aWZpY2F0ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6InJlamVjdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "8be62f7ef7e6479d07c647b6796b16153be329e454a9cc45489b7cfb19adbf2e",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 629,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_post_quantum_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b-bad-signature.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-b.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b-bad-signature.pem",
+            "sha256": "b03b0f8d7a4919a2919438d826025956d1fc6be96f3517d80889fa8bd32c9571"
+          },
+          {
+            "bytes": 5640,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-b.pem",
+            "sha256": "3249e65ae0f79d91ab054504895e16549eddf47862c8391f6e16636b4b0f6b2f"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "validate-pkix-path",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 1205,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 235,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJqYXZhLnNlY3VyaXR5LmNlcnQuQ2VydFBhdGhWYWxpZGF0b3JFeGNlcHRpb246IFRydXN0QW5jaG9yIGZvdW5kIGJ1dCBjZXJ0aWZpY2F0ZSB2YWxpZGF0aW9uIGZhaWxlZC4iLCJ0cmFjZSI6W3sib3BlcmF0aW9uIjoidmFsaWRhdGUtcGtpeC1wYXRoIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6Ik1MLURTQS00NCIsIm91dGNvbWUiOiJyZWplY3QifV19Cg==",
+            "encoding": "base64",
+            "sha256": "83a36d07e73bf78f384e8bb3e02ebdb719c7b83337f1667e87f025772efb7ae4",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 910,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_post_quantum_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b-bad-signature.pem",
+            "sha256": "b03b0f8d7a4919a2919438d826025956d1fc6be96f3517d80889fa8bd32c9571"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-certificate-signature",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 874,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 177,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJjZXJ0aWZpY2F0ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6InJlamVjdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "9fdf93f61d256184103892a478dffcdb3dfbb02b86edf03b4ec2ec49b9f302e7",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 791,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "position": "intermediate",
+      "post_quantum_crl_status": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/leaf.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b-crl.pem,dst=/input/crl.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "crl-status",
+          "--crl",
+          "/input/crl.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 3579,
+            "path": "tests/fixtures/generated-controls/related-path-root-b-crl.pem",
+            "sha256": "c03e2a548e3119ac73f4041e000f622c326ec25bfc05a89ee27027a04a56869a"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-crl-status",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 758,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 136,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jcmwtc3RhdHVzIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6Ik1MLURTQS00NCIsIm91dGNvbWUiOiJhY2NlcHQifV19Cg==",
+            "encoding": "base64",
+            "sha256": "e43b6e7fa9337a028f69cd93fecd2be45cd04017d079f2772b3c44db01942cc8",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 2368,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "post_quantum_outcome_bearing": {
+        "confidence": "behaviorally-established",
+        "state": "fail"
+      },
+      "post_quantum_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-certificate-signature",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 2785,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 147,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "1664104e0907828cdc6009c2ce60f26795c4b4e99b04e17577d40aa7d089bcd8",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 682,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "post_quantum_validity": {
+        "confidence": "observed",
+        "state": "pass"
+      }
+    },
+    {
+      "binding": {
+        "calculated_digest": "3b7f3e325b79efb47b6e6feb52057289a2a0f05d5ef2a2210a6c42b31e309817",
+        "check": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "3b7f3e325b79efb47b6e6feb52057289a2a0f05d5ef2a2210a6c42b31e309817"
+      },
+      "classical_crl_status": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/leaf.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a-crl.pem,dst=/input/crl.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "crl-status",
+          "--crl",
+          "/input/crl.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 390,
+            "path": "tests/fixtures/generated-controls/related-path-root-a-crl.pem",
+            "sha256": "040bdd1f45e03aface0382d993974fce21443b3526d8425627ef2f67bbefb3be"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-crl-status",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 560,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 142,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jcmwtc3RhdHVzIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6IlNIQTI1NldJVEhFQ0RTQSIsIm91dGNvbWUiOiJhY2NlcHQifV19Cg==",
+            "encoding": "base64",
+            "sha256": "1b6ffeaa7cc3aca9dc6b13e19ef158b76c523635915f7b00a8752d8d431b5150",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 504,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "classical_outcome_bearing": {
+        "confidence": "behaviorally-established",
+        "state": "fail"
+      },
+      "classical_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-certificate-signature",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 707,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 153,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "38c0688ef290bd84d2fdcc1530651d6723cbd67f3ddc1ea4de7d5bb0a6ca9137",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 646,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "classical_validity": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "invalid_binding": {
+        "calculated_digest": "3b7f3e325b79efb47b6e6feb52057289a2a0f05d5ef2a2210a6c42b31e309817",
+        "check": {
+          "confidence": "observed",
+          "state": "fail"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "invalid_binding_default_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a-bad-binding.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-root-a-bad-binding.pem",
+            "sha256": "d64f6085c8067f89c07d27c751ecc223617c26039ae2d9409fafbfeda97ea530"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a.pem",
+            "sha256": "84375aff1ec5fd9236e4b299a003c8729dc54df256bdea5e509a2ce458864a5d"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "validate-pkix-path",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 718,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 144,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "55672a4729925d53c671c547e20157858becf445cea85dbc221a94fe467b1ccb",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 685,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_classical_default_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a-bad-signature.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-a.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a-bad-signature.pem",
+            "sha256": "9f35341c069f28cfc6466af48a244be6561c65a7677a85f449a5bf2f7dc774ad"
+          },
+          {
+            "bytes": 778,
+            "path": "tests/fixtures/generated-controls/related-path-ica-a.pem",
+            "sha256": "09fd7da08bbe23012407ad1e39d26d7d0afe1aede013b297430b945282f39b9b"
+          },
+          {
+            "bytes": 855,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-a.pem",
+            "sha256": "84375aff1ec5fd9236e4b299a003c8729dc54df256bdea5e509a2ce458864a5d"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "validate-pkix-path",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 690,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 144,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "55672a4729925d53c671c547e20157858becf445cea85dbc221a94fe467b1ccb",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 667,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_classical_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-a-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a.pem",
+            "sha256": "75d33dbc0e37656ecae2c16ca0aeab5e3f6b9d8815a94b92833fac257bec62aa"
+          },
+          {
+            "bytes": 782,
+            "path": "tests/fixtures/generated-controls/related-path-root-a-bad-signature.pem",
+            "sha256": "9f35341c069f28cfc6466af48a244be6561c65a7677a85f449a5bf2f7dc774ad"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "SHA256WITHECDSA",
+              "operation": "check-certificate-signature",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 652,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 183,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJjZXJ0aWZpY2F0ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiU0hBMjU2V0lUSEVDRFNBIiwib3V0Y29tZSI6InJlamVjdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "8be62f7ef7e6479d07c647b6796b16153be329e454a9cc45489b7cfb19adbf2e",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 651,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_post_quantum_path": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b-bad-signature.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-b.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "path"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b-bad-signature.pem",
+            "sha256": "723565257e240d9b9c366c1c72d8139c48d7197ccf41edf6bb32f4e5a64ab11e"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+            "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+          },
+          {
+            "bytes": 5640,
+            "path": "tests/fixtures/generated-controls/related-path-leaf-b.pem",
+            "sha256": "3249e65ae0f79d91ab054504895e16549eddf47862c8391f6e16636b4b0f6b2f"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "validate-pkix-path",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 618,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 138,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "ac9fe8d59a962c29abce62c5ddfc2559be07c0dd6bfaa4275450d9b879843dbf",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 645,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "invalid_post_quantum_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b-bad-signature.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b-bad-signature.pem",
+            "sha256": "723565257e240d9b9c366c1c72d8139c48d7197ccf41edf6bb32f4e5a64ab11e"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "reject",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-certificate-signature",
+              "outcome": "reject",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 661,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 177,
+            "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJjZXJ0aWZpY2F0ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6InJlamVjdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "9fdf93f61d256184103892a478dffcdb3dfbb02b86edf03b4ec2ec49b9f302e7",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 663,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "position": "trust-anchor",
+      "post_quantum_crl_status": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/leaf.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b-crl.pem,dst=/input/crl.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "crl-status",
+          "--crl",
+          "/input/crl.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 3579,
+            "path": "tests/fixtures/generated-controls/related-path-root-b-crl.pem",
+            "sha256": "c03e2a548e3119ac73f4041e000f622c326ec25bfc05a89ee27027a04a56869a"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-crl-status",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 546,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 136,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jcmwtc3RhdHVzIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6Ik1MLURTQS00NCIsIm91dGNvbWUiOiJhY2NlcHQifV19Cg==",
+            "encoding": "base64",
+            "sha256": "e43b6e7fa9337a028f69cd93fecd2be45cd04017d079f2772b3c44db01942cc8",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 512,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "post_quantum_outcome_bearing": {
+        "confidence": "behaviorally-established",
+        "state": "fail"
+      },
+      "post_quantum_signature": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/intermediate.pem,readonly",
+          "--mount",
+          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-bouncycastle:1.85",
+          "--root",
+          "/input/root.pem",
+          "--intermediate",
+          "/input/intermediate.pem",
+          "--leaf",
+          "/input/leaf.pem",
+          "--time",
+          "2026-06-20T00:00:00Z",
+          "--mode",
+          "certificate-signature"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          },
+          {
+            "bytes": 5559,
+            "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+            "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+          }
+        ],
+        "observation": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "evidence-signature",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "not-applicable"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "source_instrumentation": {
+          "confidence": "observed",
+          "events": [
+            {
+              "algorithm": "ML-DSA-44",
+              "operation": "check-certificate-signature",
+              "outcome": "accept",
+              "target": "leaf"
+            }
+          ],
+          "extensions": []
+        },
+        "verification": {
+          "elapsed_milliseconds": 639,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 147,
+            "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1jZXJ0aWZpY2F0ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+            "encoding": "base64",
+            "sha256": "1664104e0907828cdc6009c2ce60f26795c4b4e99b04e17577d40aa7d089bcd8",
+            "truncated": false
+          },
+          "timed_out": false
+        },
+        "version": {
+          "elapsed_milliseconds": 658,
+          "status_code": 0,
+          "stderr": {
+            "captured_bytes": 0,
+            "data": "",
+            "encoding": "base64",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "truncated": false
+          },
+          "stdout": {
+            "captured_bytes": 5,
+            "data": "MS44NQo=",
+            "encoding": "base64",
+            "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+            "truncated": false
+          },
+          "timed_out": false
+        }
+      },
+      "post_quantum_validity": {
+        "confidence": "observed",
+        "state": "pass"
+      }
+    }
+  ],
+  "post_quantum_path_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-root-b.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-ica-b.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-path-leaf-b.pem,dst=/input/leaf.pem,readonly",
+      "--",
+      "hybrid-x509-bouncycastle:1.85",
+      "--root",
+      "/input/root.pem",
+      "--intermediate",
+      "/input/intermediate.pem",
+      "--leaf",
+      "/input/leaf.pem",
+      "--time",
+      "2026-06-20T00:00:00Z",
+      "--mode",
+      "path"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 5559,
+        "path": "tests/fixtures/generated-controls/related-path-root-b.pem",
+        "sha256": "3645d2ebd5f1e343c263c677dcee64ea0c79e7cd8015533bc44ae6e9abf4e78a"
+      },
+      {
+        "bytes": 5559,
+        "path": "tests/fixtures/generated-controls/related-path-ica-b.pem",
+        "sha256": "84c6dca6ae17f4810badec49d7c3bdd15788e758eee880c0b4db2707f967128c"
+      },
+      {
+        "bytes": 5640,
+        "path": "tests/fixtures/generated-controls/related-path-leaf-b.pem",
+        "sha256": "3249e65ae0f79d91ab054504895e16549eddf47862c8391f6e16636b4b0f6b2f"
+      }
+    ],
+    "observation": {
+      "adapter": "bouncycastle-java-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "1.85",
+      "version_track": "current"
+    },
+    "source_instrumentation": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "ML-DSA-44",
+          "operation": "validate-pkix-path",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": []
+    },
+    "verification": {
+      "elapsed_milliseconds": 5169,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 138,
+        "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBLTQ0Iiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+        "encoding": "base64",
+        "sha256": "ac9fe8d59a962c29abce62c5ddfc2559be07c0dd6bfaa4275450d9b879843dbf",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 4143,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 5,
+        "data": "MS44NQo=",
+        "encoding": "base64",
+        "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "scopes": [
+    {
+      "result": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "certificate_path": [
+          {
+            "id": "leaf",
+            "position": "end-entity",
+            "scheme": "related"
+          },
+          {
+            "id": "intermediate",
+            "position": "intermediate",
+            "scheme": "related"
+          },
+          {
+            "id": "root",
+            "position": "trust-anchor",
+            "scheme": "related"
+          }
+        ],
+        "classical_only_fallback": true,
+        "evaluated_evidence": [
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "leaf",
+            "id": "leaf-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "end-entity",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "leaf",
+            "id": "leaf-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "end-entity",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "intermediate",
+            "id": "intermediate-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "intermediate",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "intermediate",
+            "id": "intermediate-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "intermediate",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "root",
+            "id": "root-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "trust-anchor",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "root",
+            "id": "root-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "trust-anchor",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          }
+        ],
+        "failed_checks": [
+          {
+            "check": "outcome-bearing",
+            "confidence": "behaviorally-established",
+            "evidence_id": "leaf-post-quantum-certificate",
+            "state": "fail"
+          }
+        ],
+        "lifecycle_desynchronization": false,
+        "path_scope": "end-entity",
+        "policy": "p2-required-hybrid",
+        "policy_verdict": "reject",
+        "previous_authentication": null,
+        "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+        "stack": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "stack_verdict": "accept",
+        "validation_time": "2026-06-20T00:00:00Z"
+      },
+      "scope": "end-entity"
+    },
+    {
+      "result": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "certificate_path": [
+          {
+            "id": "leaf",
+            "position": "end-entity",
+            "scheme": "related"
+          },
+          {
+            "id": "intermediate",
+            "position": "intermediate",
+            "scheme": "related"
+          },
+          {
+            "id": "root",
+            "position": "trust-anchor",
+            "scheme": "related"
+          }
+        ],
+        "classical_only_fallback": true,
+        "evaluated_evidence": [
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "leaf",
+            "id": "leaf-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "end-entity",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "leaf",
+            "id": "leaf-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "end-entity",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "intermediate",
+            "id": "intermediate-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "intermediate",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "intermediate",
+            "id": "intermediate-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "intermediate",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "root",
+            "id": "root-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "trust-anchor",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "root",
+            "id": "root-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "trust-anchor",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          }
+        ],
+        "failed_checks": [
+          {
+            "check": "outcome-bearing",
+            "confidence": "behaviorally-established",
+            "evidence_id": "leaf-post-quantum-certificate",
+            "state": "fail"
+          },
+          {
+            "check": "outcome-bearing",
+            "confidence": "behaviorally-established",
+            "evidence_id": "intermediate-post-quantum-certificate",
+            "state": "fail"
+          }
+        ],
+        "lifecycle_desynchronization": false,
+        "path_scope": "issuing-path",
+        "policy": "p2-required-hybrid",
+        "policy_verdict": "reject",
+        "previous_authentication": null,
+        "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+        "stack": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "stack_verdict": "accept",
+        "validation_time": "2026-06-20T00:00:00Z"
+      },
+      "scope": "issuing-path"
+    },
+    {
+      "result": {
+        "api_version": "hybrid-x509-verifier/v1",
+        "certificate_path": [
+          {
+            "id": "leaf",
+            "position": "end-entity",
+            "scheme": "related"
+          },
+          {
+            "id": "intermediate",
+            "position": "intermediate",
+            "scheme": "related"
+          },
+          {
+            "id": "root",
+            "position": "trust-anchor",
+            "scheme": "related"
+          }
+        ],
+        "classical_only_fallback": false,
+        "evaluated_evidence": [
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "leaf",
+            "id": "leaf-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "end-entity",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "leaf",
+            "id": "leaf-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "end-entity",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "intermediate",
+            "id": "intermediate-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "intermediate",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "intermediate",
+            "id": "intermediate-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "intermediate",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "not-applicable"
+            },
+            "certificate_id": "root",
+            "id": "root-classical-certificate",
+            "kind": "classical",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "trust-anchor",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          },
+          {
+            "binding": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "certificate_id": "root",
+            "id": "root-post-quantum-certificate",
+            "kind": "post-quantum",
+            "outcome_bearing": {
+              "confidence": "behaviorally-established",
+              "state": "fail"
+            },
+            "path": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "position": "trust-anchor",
+            "present": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "recognized": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "revocation": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "signature": {
+              "confidence": "observed",
+              "state": "pass"
+            },
+            "validity": {
+              "confidence": "observed",
+              "state": "pass"
+            }
+          }
+        ],
+        "failed_checks": [
+          {
+            "check": "outcome-bearing",
+            "confidence": "behaviorally-established",
+            "evidence_id": "leaf-post-quantum-certificate",
+            "state": "fail"
+          },
+          {
+            "check": "outcome-bearing",
+            "confidence": "behaviorally-established",
+            "evidence_id": "intermediate-post-quantum-certificate",
+            "state": "fail"
+          },
+          {
+            "check": "outcome-bearing",
+            "confidence": "behaviorally-established",
+            "evidence_id": "root-classical-certificate",
+            "state": "fail"
+          },
+          {
+            "check": "outcome-bearing",
+            "confidence": "behaviorally-established",
+            "evidence_id": "root-post-quantum-certificate",
+            "state": "fail"
+          }
+        ],
+        "lifecycle_desynchronization": false,
+        "path_scope": "full-path",
+        "policy": "p2-required-hybrid",
+        "policy_verdict": "reject",
+        "previous_authentication": null,
+        "reason": "Required classical or post-quantum evidence did not pass.",
+        "stack": {
+          "adapter": "bouncycastle-java-current",
+          "execution_isolation": "container",
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "1.85",
+          "version_track": "current"
+        },
+        "stack_verdict": "accept",
+        "validation_time": "2026-06-20T00:00:00Z"
+      },
+      "scope": "full-path"
+    }
+  ]
+}

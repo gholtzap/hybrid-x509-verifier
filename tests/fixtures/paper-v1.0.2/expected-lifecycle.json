@@ -1,0 +1,13 @@
+{
+  "paper_commit": "b1c2ee5e87862c4103b482571945505f82a0d0d9",
+  "validation_time": "2026-06-20T00:00:00Z",
+  "cases": {
+    "pq-revoked": {"stack": "accept", "oracle_p2": "reject"},
+    "pq-expired": {"stack": "accept", "oracle_p2": "reject"},
+    "pq-ocsp-unknown": {"stack": "accept", "oracle_p2": "indeterminate"},
+    "peer-absent": {"stack": "accept", "oracle_p2": "reject"},
+    "both-good": {"stack": "accept", "oracle_p2": "accept-hybrid"},
+    "control-leafB-revoked-alone": {"stack": "reject", "oracle_p2": "reject"},
+    "control-leafB-expired-alone": {"stack": "reject", "oracle_p2": "reject"}
+  }
+}

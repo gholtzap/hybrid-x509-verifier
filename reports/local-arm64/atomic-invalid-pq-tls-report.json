@@ -1,0 +1,134 @@
+{
+  "authentication_signature": null,
+  "certificate_selection": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  },
+  "certificate_sha256": "1129a91c3df29373d42e3e89b2cc3d8f30525eb7b02a5ce61e0bfbfd5e3fc875",
+  "certificate_subject": null,
+  "cipher_suite": null,
+  "hostname_verification": {
+    "confidence": "observed",
+    "state": "indeterminate"
+  },
+  "key_exchange_group": null,
+  "proof_of_possession": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  },
+  "protocol": null,
+  "report": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "--tls-server-client",
+      "/input/root.pem",
+      "/input/intermediate.pem",
+      "/input/leaf.pem",
+      "/input/key.pem",
+      "composite.pqc-probe.test",
+      "1781913600"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 2447,
+        "path": "tests/fixtures/paper-v1.0.2/composite-ica.pem",
+        "sha256": "e2c0320148a5156491febcf713f9ebfbd74dc47776c2e2e2a0615d0696fe091b"
+      },
+      {
+        "bytes": 4044,
+        "path": "tests/fixtures/generated-controls/composite-leaf-bad-mldsa.pem",
+        "sha256": "3d189242bb6cbf277dc60f32d2ace38c17ee8143ab4feb1727739bf01a3e101a"
+      },
+      {
+        "bytes": 258,
+        "path": "tests/fixtures/generated-controls/composite-leaf-key.pem",
+        "sha256": "54ee938dae0e4d891048e0d49de9140f4c5c3fc82d411d9832c55fc25310ae1d"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current-tls",
+      "execution_isolation": "container",
+      "validation_profile": "web-pki-server",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "reject",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 1001,
+      "status_code": 1,
+      "stderr": {
+        "captured_bytes": 162,
+        "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKZXJyb3Igc2V0dGluZyBjZXJ0aWZpY2F0ZQpDMDJGNTA5QkZGRkYwMDAwOmVycm9yOjBBMDAwMThFOlNTTCByb3V0aW5lczpTU0xfQ1RYX3VzZV9jZXJ0aWZpY2F0ZTpjYSBtZCB0b28gd2Vhazpzc2wvc3NsX3JzYS5jOjI1MjoK",
+        "encoding": "base64",
+        "sha256": "2cf36b568934b0de89f8681652cda91aac23d500fd9bb2158cee3e07d07786a6",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 240,
+        "data": "QzBERjc5OEVGRkZGMDAwMDplcnJvcjo4MDAwMDA2RjpzeXN0ZW0gbGlicmFyeTpCSU9fY29ubmVjdDpDb25uZWN0aW9uIHJlZnVzZWQ6Y3J5cHRvL2Jpby9iaW9fc29jazIuYzoxODM6Y2FsbGluZyBjb25uZWN0KCkKQzBERjc5OEVGRkZGMDAwMDplcnJvcjoxMDAwMDA2NzpCSU8gcm91dGluZXM6QklPX2Nvbm5lY3Q6Y29ubmVjdCBlcnJvcjpjcnlwdG8vYmlvL2Jpb19zb2NrMi5jOjE4NToKY29ubmVjdDplcnJubz0xMTEK",
+        "encoding": "base64",
+        "sha256": "2212ea186a51991b0f3874ef892bae41484dbbe1566962a4d7b89a236a53d74b",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 1338,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "transcript_binding": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  }
+}

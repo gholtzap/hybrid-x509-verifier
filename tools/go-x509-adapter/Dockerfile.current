@@ -1,0 +1,9 @@
+FROM golang:1.26.5-bookworm@sha256:8d36439c36258ba98de1bf2b316eda72905f9d743117119f6db9705c49245644 AS build
+WORKDIR /source
+COPY go.mod *.go ./
+RUN go test ./... && CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -buildid=" -o /adapter .
+
+FROM scratch
+COPY --from=build /adapter /adapter
+USER 65532:65532
+ENTRYPOINT ["/adapter"]

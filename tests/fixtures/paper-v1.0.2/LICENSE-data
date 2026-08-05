@@ -1,0 +1,19 @@
+Creative Commons Zero v1.0 Universal (CC0-1.0)
+SPDX-License-Identifier: CC0-1.0
+
+This file covers the DATA in this repository: the synthetic certificate corpus
+(corpus/out/**), the recorded observations and raw logs (results/**), and the corpus
+manifest. (Source code is licensed separately under Apache-2.0; see LICENSE.)
+
+To the extent possible under law, Electronics and Telecommunications Research Institute
+(ETRI) has dedicated all copyright and related and neighboring rights to the above data to
+the public domain worldwide. This data is distributed without any warranty.
+Copyright 2026 Electronics and Telecommunications Research Institute (ETRI).
+
+The certificates are synthetic, issued under a dedicated test hierarchy
+(O=pqc-probe, *.pqc-probe.test); they contain no real credentials, private keys, or
+personal data.
+
+You should have received a copy of the full CC0 1.0 Universal legal code along with
+this work. If not, see: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+(canonical full text) — maintainer may paste the full legal code here before release.

@@ -1,0 +1,39 @@
+{
+  "certificate_id": {
+    "confidence": "observed",
+    "state": "pass"
+  },
+  "certificate_status": "unknown",
+  "extensions": {
+    "confidence": "observed",
+    "state": "pass"
+  },
+  "freshness": {
+    "confidence": "observed",
+    "state": "pass"
+  },
+  "issuer": {
+    "confidence": "observed",
+    "state": "pass"
+  },
+  "nonce": {
+    "confidence": "observed",
+    "state": "indeterminate"
+  },
+  "responder": {
+    "confidence": "observed",
+    "state": "pass"
+  },
+  "response_status": {
+    "confidence": "observed",
+    "state": "pass"
+  },
+  "revocation": {
+    "confidence": "observed",
+    "state": "indeterminate"
+  },
+  "signature": {
+    "confidence": "observed",
+    "state": "pass"
+  }
+}

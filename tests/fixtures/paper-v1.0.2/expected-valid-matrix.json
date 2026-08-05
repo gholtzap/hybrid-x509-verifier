@@ -1,0 +1,41 @@
+{
+  "paper_commit": "b1c2ee5e87862c4103b482571945505f82a0d0d9",
+  "profiles": {
+    "openssl-study": {
+      "version_contains": "OpenSSL 3.5.7",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"accept","atomic-composite":"unsupported","catalyst":"accept","chameleon":"accept","related":"accept"}
+    },
+    "oqs-provider": {
+      "version_contains": "version: 0.11.0",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"accept","atomic-composite":"unsupported","catalyst":"accept","chameleon":"accept","related":"accept"}
+    },
+    "pyca-cryptography-study": {
+      "version_contains": "49.0.0",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"unsupported","atomic-composite":"unsupported","catalyst":"accept","chameleon":"accept","related":"accept"}
+    },
+    "gnutls-study": {
+      "version_contains": "3.7.3",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"unsupported","atomic-composite":"unsupported","catalyst":"accept","chameleon":"accept","related":"accept"}
+    },
+    "go-crypto-x509-study": {
+      "version_contains": "go1.26.4",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"unsupported","atomic-composite":"unsupported","catalyst":"accept","chameleon":"accept","related":"accept"}
+    },
+    "bouncycastle-java-study": {
+      "version_contains": "1.84",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"accept","atomic-composite":"accept","catalyst":"accept","chameleon":"accept","related":"accept"}
+    },
+    "mozilla-nss-study": {
+      "version_contains": "3.98",
+      "cases": {"pure-pq-key":"unsupported","pure-pq-signature":"unsupported","atomic-composite":"unsupported","catalyst":"accept","chameleon":"unsupported","related":"accept"}
+    },
+    "wolfssl-mode1": {
+      "version_contains": "5.9.2",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"accept","atomic-composite":"unsupported","catalyst":"accept","chameleon":"accept","related":"accept"}
+    },
+    "wolfssl-mode2": {
+      "version_contains": "5.9.2",
+      "cases": {"pure-pq-key":"accept","pure-pq-signature":"accept","atomic-composite":"unsupported","catalyst":"reject","chameleon":"accept","related":"accept"}
+    }
+  }
+}

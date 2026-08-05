@@ -1,0 +1,937 @@
+{
+  "api_version": "hybrid-x509-verifier/v1",
+  "crl_status": {
+    "freshness": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "issuer": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "revocation": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "signature": {
+      "confidence": "observed",
+      "state": "pass"
+    }
+  },
+  "invalid_classical_tls": {
+    "authentication_signature": null,
+    "certificate_selection": {
+      "confidence": "unknown",
+      "state": "indeterminate"
+    },
+    "certificate_sha256": "75ab4c2347a3b4079e7f1cf05ac8956762c2e8a3b1f34d20285c6b0d2a45f018",
+    "certificate_subject": null,
+    "cipher_suite": null,
+    "hostname_verification": {
+      "confidence": "observed",
+      "state": "indeterminate"
+    },
+    "key_exchange_group": null,
+    "proof_of_possession": {
+      "confidence": "unknown",
+      "state": "indeterminate"
+    },
+    "protocol": null,
+    "report": {
+      "api_version": "hybrid-x509-verifier/v1",
+      "arguments": [
+        "run",
+        "--rm",
+        "--pull=never",
+        "--network=none",
+        "--ipc=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--user=65532:65532",
+        "--pids-limit=64",
+        "--memory=768m",
+        "--cpus=2",
+        "--ulimit=nofile=64:64",
+        "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "--mount",
+        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpY38qZk,dst=/input/leaf.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "--",
+        "hybrid-x509-openssl:4.0.1",
+        "--tls-server-client",
+        "/input/root.pem",
+        "/input/intermediate.pem",
+        "/input/leaf.pem",
+        "/input/key.pem",
+        "catalyst.pqc-probe.test",
+        "1781913600"
+      ],
+      "executable": "/usr/local/bin/docker",
+      "inputs": [
+        {
+          "bytes": 668,
+          "path": "tests/fixtures/paper-v1.0.2/root.pem",
+          "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+        },
+        {
+          "bytes": 2504,
+          "path": "tests/fixtures/paper-v1.0.2/catalyst-ica.pem",
+          "sha256": "1fde4f744201843472c10c5b8e193b79e02c67f1acdf59d52bc375ebc050fb66"
+        },
+        {
+          "bytes": 5937,
+          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpY38qZk",
+          "sha256": "f4ff2c686979d1f0179384473db399f2b7ba43c55a8bc5e81d0b87b7f3d6939a"
+        },
+        {
+          "bytes": 258,
+          "path": "tests/fixtures/generated-controls/catalyst-leaf-base-key.pem",
+          "sha256": "85cbca770bffc341671a0f090d32239affd7f12172654602d1d80dfdd0499c80"
+        }
+      ],
+      "observation": {
+        "adapter": "openssl-current-tls",
+        "execution_isolation": "container",
+        "validation_profile": "web-pki-server",
+        "validation_time": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "verdict": "reject",
+        "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+        "version_track": "current"
+      },
+      "source_instrumentation": null,
+      "verification": {
+        "elapsed_milliseconds": 508,
+        "status_code": 1,
+        "stderr": {
+          "captured_bytes": 574,
+          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUCkMwQUYwM0FGRkZGRjAwMDA6ZXJyb3I6MEEwMDA0MUI6U1NMIHJvdXRpbmVzOnNzbDNfcmVhZF9ieXRlczp0bHN2MSBhbGVydCBkZWNyeXB0IGVycm9yOnNzbC9yZWNvcmQvcmVjX2xheWVyX3MzLmM6OTIzOlNTTCBhbGVydCBudW1iZXIgNTEKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDAgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
+          "encoding": "base64",
+          "sha256": "c980ce210797f61e3dd03704a41e9e030622a3cfc9c0f4b1c6e578537121fdff",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 548,
+          "data": "Q29ubmVjdGluZyB0byAxMjcuMC4wLjEKZGVwdGg9MCBDTj1jYXRhbHlzdCBsZWFmIGJhc2UtRUNEU0EgYWx0LU1MRFNBLCBPPXBxYy1wcm9iZSwgQz1LUgp2ZXJpZnkgZXJyb3I6bnVtPTc6Y2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKQzBDRjIyQkNGRkZGMDAwMDplcnJvcjowMzAwMDBFQTpkaWdpdGFsIGVudmVsb3BlIHJvdXRpbmVzOkVWUF9EaWdlc3RWZXJpZnlGaW5hbDpwcm92aWRlciBzaWduYXR1cmUgZmFpbHVyZTpjcnlwdG8vZXZwL21fc2lndmVyLmM6NTMzOkVDRFNBIGRpZ2VzdF92ZXJpZnlfZmluYWw6CkMwQ0YyMkJDRkZGRjAwMDA6ZXJyb3I6MDY4ODAwMDY6YXNuMSBlbmNvZGluZyByb3V0aW5lczpBU04xX2l0ZW1fdmVyaWZ5X2N0eDpFVlAgbGliOmNyeXB0by9hc24xL2FfdmVyaWZ5LmM6MjIwOgpDMENGMjJCQ0ZGRkYwMDAwOmVycm9yOjBBMDAwMDg2OlNTTCByb3V0aW5lczp0bHNfcG9zdF9wcm9jZXNzX3NlcnZlcl9jZXJ0aWZpY2F0ZTpjZXJ0aWZpY2F0ZSB2ZXJpZnkgZmFpbGVkOnNzbC9zdGF0ZW0vc3RhdGVtX2NsbnQuYzoyNDk3Ogo=",
+          "encoding": "base64",
+          "sha256": "ffd18b3beacdea9d716ce7cfbd6e677b81ee76e919369d762f74b104b3d669ad",
+          "truncated": false
+        },
+        "timed_out": false
+      },
+      "version": {
+        "elapsed_milliseconds": 329,
+        "status_code": 0,
+        "stderr": {
+          "captured_bytes": 0,
+          "data": "",
+          "encoding": "base64",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 61,
+          "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+          "encoding": "base64",
+          "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+          "truncated": false
+        },
+        "timed_out": false
+      }
+    },
+    "transcript_binding": {
+      "confidence": "unknown",
+      "state": "indeterminate"
+    }
+  },
+  "invalid_post_quantum_direct_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
+      "--",
+      "hybrid-x509-bouncycastle:1.85",
+      "--root",
+      "/input/root.pem",
+      "--intermediate",
+      "/input/intermediate.pem",
+      "--leaf",
+      "/input/leaf.pem",
+      "--time",
+      "2026-06-20T00:00:00Z",
+      "--mode",
+      "alternative-signature"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 2504,
+        "path": "tests/fixtures/paper-v1.0.2/catalyst-ica.pem",
+        "sha256": "1fde4f744201843472c10c5b8e193b79e02c67f1acdf59d52bc375ebc050fb66"
+      },
+      {
+        "bytes": 5937,
+        "path": "tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem",
+        "sha256": "6b8db3f27446996ab2f3d3cc4b036d5069f5bf1b464bf9e169a36b6df236f4ea"
+      }
+    ],
+    "observation": {
+      "adapter": "bouncycastle-java-current",
+      "execution_isolation": "container",
+      "validation_profile": "evidence-signature",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "not-applicable"
+      },
+      "verdict": "reject",
+      "version": "1.85",
+      "version_track": "current"
+    },
+    "source_instrumentation": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "ML-DSA",
+          "operation": "check-alternative-signature",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": []
+    },
+    "verification": {
+      "elapsed_milliseconds": 578,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 174,
+        "data": "eyJ2ZXJkaWN0IjoicmVqZWN0IiwiZXJyb3IiOiJhbHRlcm5hdGl2ZSBzaWduYXR1cmUgaXMgaW52YWxpZCIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1hbHRlcm5hdGl2ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBIiwib3V0Y29tZSI6InJlamVjdCJ9XX0K",
+        "encoding": "base64",
+        "sha256": "77c1b97de952484fdc2e837fa826811c4023237d7a52bcd7ea4c65b3879b1c4b",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 570,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 5,
+        "data": "MS44NQo=",
+        "encoding": "base64",
+        "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "invalid_post_quantum_tls": {
+    "authentication_signature": "ecdsa_secp256r1_sha256",
+    "certificate_selection": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    },
+    "certificate_sha256": "eed7146cd645a6a24b137978986ad6eeb1cfd717d5aa777b6102a9a4428ce57c",
+    "certificate_subject": "CN=catalyst leaf base-ECDSA alt-MLDSA, O=pqc-probe, C=KR",
+    "cipher_suite": "TLS_AES_256_GCM_SHA384",
+    "hostname_verification": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "key_exchange_group": "X25519MLKEM768",
+    "proof_of_possession": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    },
+    "protocol": "TLSv1.3",
+    "report": {
+      "api_version": "hybrid-x509-verifier/v1",
+      "arguments": [
+        "run",
+        "--rm",
+        "--pull=never",
+        "--network=none",
+        "--ipc=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--user=65532:65532",
+        "--pids-limit=64",
+        "--memory=768m",
+        "--cpus=2",
+        "--ulimit=nofile=64:64",
+        "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "--",
+        "hybrid-x509-openssl:4.0.1",
+        "--tls-server-client",
+        "/input/root.pem",
+        "/input/intermediate.pem",
+        "/input/leaf.pem",
+        "/input/key.pem",
+        "catalyst.pqc-probe.test",
+        "1781913600"
+      ],
+      "executable": "/usr/local/bin/docker",
+      "inputs": [
+        {
+          "bytes": 668,
+          "path": "tests/fixtures/paper-v1.0.2/root.pem",
+          "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+        },
+        {
+          "bytes": 2504,
+          "path": "tests/fixtures/paper-v1.0.2/catalyst-ica.pem",
+          "sha256": "1fde4f744201843472c10c5b8e193b79e02c67f1acdf59d52bc375ebc050fb66"
+        },
+        {
+          "bytes": 5937,
+          "path": "tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem",
+          "sha256": "6b8db3f27446996ab2f3d3cc4b036d5069f5bf1b464bf9e169a36b6df236f4ea"
+        },
+        {
+          "bytes": 258,
+          "path": "tests/fixtures/generated-controls/catalyst-leaf-base-key.pem",
+          "sha256": "85cbca770bffc341671a0f090d32239affd7f12172654602d1d80dfdd0499c80"
+        }
+      ],
+      "observation": {
+        "adapter": "openssl-current-tls",
+        "execution_isolation": "container",
+        "validation_profile": "web-pki-server",
+        "validation_time": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "verdict": "accept",
+        "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+        "version_track": "current"
+      },
+      "source_instrumentation": null,
+      "verification": {
+        "elapsed_milliseconds": 531,
+        "status_code": 0,
+        "stderr": {
+          "captured_bytes": 952,
+          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUClNTTC1TZXNzaW9uOgogICAgUHJvdG9jb2wgIDogVExTdjEuMwogICAgQ2lwaGVyICAgIDogVExTX0FFU18yNTZfR0NNX1NIQTM4NAogICAgU2Vzc2lvbi1JRDogOTA2NUM3QUYxRTM3NDJEOTZGNjBBMTg1MjM5NjY1OEE3MkFDNDE1MzlBQjQ4NTZGNTk3RjRFQzNEMTAxQUJDOQogICAgU2Vzc2lvbi1JRC1jdHg6IDAxMDAwMDAwCiAgICBSZXN1bXB0aW9uIFBTSzogRDY2Nzc0MzJFOEQ1OTQ5Njc1RUFEQjVBNEY2MzJEN0M1RDY5OUNENzNCMEM0MEUzRDk5QzgzNDczRjdEOEM0NUEwOUFDMjA5OTlCNEU4QTFDRDAwMTA4NzhDNjY3MjhFCiAgICBQU0sgaWRlbnRpdHk6IE5vbmUKICAgIFBTSyBpZGVudGl0eSBoaW50OiBOb25lCiAgICBTUlAgdXNlcm5hbWU6IE5vbmUKICAgIFN0YXJ0IFRpbWU6IDE3ODU5MzY3NTUKICAgIFRpbWVvdXQgICA6IDcyMDAgKHNlYykKICAgIFZlcmlmeSByZXR1cm4gY29kZTogMCAob2spCiAgICBFeHRlbmRlZCBtYXN0ZXIgc2VjcmV0OiBubwogICAgTWF4IEVhcmx5IERhdGE6IDAKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
+          "encoding": "base64",
+          "sha256": "1b1de64d020db09b093a5af2ba4f4c0fe036ad66b46ba5429438c2cd31c70de1",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 5461,
+          "data": "Q29ubmVjdGluZyB0byAxMjcuMC4wLjEKQ09OTkVDVElPTiBFU1RBQkxJU0hFRApQcm90b2NvbCB2ZXJzaW9uOiBUTFN2MS4zCkNpcGhlcnN1aXRlOiBUTFNfQUVTXzI1Nl9HQ01fU0hBMzg0ClBlZXIgY2VydGlmaWNhdGU6IENOPWNhdGFseXN0IGxlYWYgYmFzZS1FQ0RTQSBhbHQtTUxEU0EsIE89cHFjLXByb2JlLCBDPUtSCkhhc2ggdXNlZDogU0hBMjU2ClNpZ25hdHVyZSB0eXBlOiBlY2RzYV9zZWNwMjU2cjFfc2hhMjU2ClZlcmlmaWNhdGlvbjogT0sKVmVyaWZpZWQgcGVlcm5hbWU6IGNhdGFseXN0LnBxYy1wcm9iZS50ZXN0Ck5lZ290aWF0ZWQgVExTMS4zIGdyb3VwOiBYMjU1MTlNTEtFTTc2OApIVFRQLzEuMCAyMDAgb2sNCkNvbnRlbnQtdHlwZTogdGV4dC9odG1sDQoNCjxIVE1MPjxCT0RZIEJHQ09MT1I9IiNmZmZmZmYiPgo8cHJlPgoKc19zZXJ2ZXIgLWFjY2VwdCAxMjcuMC4wLjE6NDQzMyAtY2VydCAvaW5wdXQvbGVhZi5wZW0gLWNlcnRfY2hhaW4gL2lucHV0L2ludGVybWVkaWF0ZS5wZW0gLWtleSAvaW5wdXQva2V5LnBlbSAtd3d3IC10bHMxXzMgLW5hY2NlcHQgMSAKPGgxPk9wZW5TU0wgd2l0aCBFQ0g8L2gxPgo8aDI+CkVDSCBub3QgY29uZmlndXJlZAo8L2gyPgo8aDI+VExTIFNlc3Npb24gZGV0YWlsczwvaDI+CjxwcmU+CjxwcmU+CgpzX3NlcnZlciAtYWNjZXB0IDEyNy4wLjAuMTo0NDMzIC1jZXJ0IC9pbnB1dC9sZWFmLnBlbSAtY2VydF9jaGFpbiAvaW5wdXQvaW50ZXJtZWRpYXRlLnBlbSAta2V5IC9pbnB1dC9rZXkucGVtIC13d3cgLXRsczFfMyAtbmFjY2VwdCAxIApUaGlzIFRMUyB2ZXJzaW9uIGZvcmJpZHMgcmVuZWdvdGlhdGlvbi4KQ2lwaGVycyBzdXBwb3J0ZWQgaW4gc19zZXJ2ZXIgYmluYXJ5ClRMU3YxLjMgICAgOlRMU19BRVNfMjU2X0dDTV9TSEEzODQgICAgVExTdjEuMyAgICA6VExTX0NIQUNIQTIwX1BPTFkxMzA1X1NIQTI1NiAKVExTdjEuMyAgICA6VExTX0FFU18xMjhfR0NNX1NIQTI1NiAgICBUTFN2MS4yICAgIDpFQ0RIRS1FQ0RTQS1BRVMyNTYtR0NNLVNIQTM4NCAKVExTdjEuMiAgICA6RUNESEUtUlNBLUFFUzI1Ni1HQ00tU0hBMzg0IFRMU3YxLjIgICAgOkRIRS1SU0EtQUVTMjU2LUdDTS1TSEEzODQgClRMU3YxLjIgICAgOkVDREhFLUVDRFNBLUNIQUNIQTIwLVBPTFkxMzA1IFRMU3YxLjIgICAgOkVDREhFLVJTQS1DSEFDSEEyMC1QT0xZMTMwNSAKVExTdjEuMiAgICA6REhFLVJTQS1DSEFDSEEyMC1QT0xZMTMwNSBUTFN2MS4yICAgIDpFQ0RIRS1FQ0RTQS1BRVMxMjgtR0NNLVNIQTI1NiAKVExTdjEuMiAgICA6RUNESEUtUlNBLUFFUzEyOC1HQ00tU0hBMjU2IFRMU3YxLjIgICAgOkRIRS1SU0EtQUVTMTI4LUdDTS1TSEEyNTYgClRMU3YxLjIgICAgOkVDREhFLUVDRFNBLUFFUzI1Ni1TSEEzODQgVExTdjEuMiAgICA6RUNESEUtUlNBLUFFUzI1Ni1TSEEzODQgICAKVExTdjEuMiAgICA6REhFLVJTQS1BRVMyNTYtU0hBMjU2ICAgICBUTFN2MS4yICAgIDpFQ0RIRS1FQ0RTQS1BRVMxMjgtU0hBMjU2IApUTFN2MS4yICAgIDpFQ0RIRS1SU0EtQUVTMTI4LVNIQTI1NiAgIFRMU3YxLjIgICAgOkRIRS1SU0EtQUVTMTI4LVNIQTI1NiAgICAgClRMU3YxLjAgICAgOkVDREhFLUVDRFNBLUFFUzI1Ni1TSEEgICAgVExTdjEuMCAgICA6RUNESEUtUlNBLUFFUzI1Ni1TSEEgICAgICAKU1NMdjMgICAgICA6REhFLVJTQS1BRVMyNTYtU0hBICAgICAgICBUTFN2MS4wICAgIDpFQ0RIRS1FQ0RTQS1BRVMxMjgtU0hBICAgIApUTFN2MS4wICAgIDpFQ0RIRS1SU0EtQUVTMTI4LVNIQSAgICAgIFNTTHYzICAgICAgOkRIRS1SU0EtQUVTMTI4LVNIQSAgICAgICAgClRMU3YxLjIgICAgOlJTQS1QU0stQUVTMjU2LUdDTS1TSEEzODQgVExTdjEuMiAgICA6REhFLVBTSy1BRVMyNTYtR0NNLVNIQTM4NCAKVExTdjEuMiAgICA6UlNBLVBTSy1DSEFDSEEyMC1QT0xZMTMwNSBUTFN2MS4yICAgIDpESEUtUFNLLUNIQUNIQTIwLVBPTFkxMzA1IApUTFN2MS4yICAgIDpFQ0RIRS1QU0stQ0hBQ0hBMjAtUE9MWTEzMDUgVExTdjEuMiAgICA6QUVTMjU2LUdDTS1TSEEzODQgICAgICAgICAKVExTdjEuMiAgICA6UFNLLUFFUzI1Ni1HQ00tU0hBMzg0ICAgICBUTFN2MS4yICAgIDpQU0stQ0hBQ0hBMjAtUE9MWTEzMDUgICAgIApUTFN2MS4yICAgIDpSU0EtUFNLLUFFUzEyOC1HQ00tU0hBMjU2IFRMU3YxLjIgICAgOkRIRS1QU0stQUVTMTI4LUdDTS1TSEEyNTYgClRMU3YxLjIgICAgOkFFUzEyOC1HQ00tU0hBMjU2ICAgICAgICAgVExTdjEuMiAgICA6UFNLLUFFUzEyOC1HQ00tU0hBMjU2ICAgICAKVExTdjEuMiAgICA6QUVTMjU2LVNIQTI1NiAgICAgICAgICAgICBUTFN2MS4yICAgIDpBRVMxMjgtU0hBMjU2ICAgICAgICAgICAgIApUTFN2MS4wICAgIDpFQ0RIRS1QU0stQUVTMjU2LUNCQy1TSEEzODQgVExTdjEuMCAgICA6RUNESEUtUFNLLUFFUzI1Ni1DQkMtU0hBICAKU1NMdjMgICAgICA6U1JQLVJTQS1BRVMtMjU2LUNCQy1TSEEgICBTU0x2MyAgICAgIDpTUlAtQUVTLTI1Ni1DQkMtU0hBICAgICAgIApUTFN2MS4wICAgIDpSU0EtUFNLLUFFUzI1Ni1DQkMtU0hBMzg0IFRMU3YxLjAgICAgOkRIRS1QU0stQUVTMjU2LUNCQy1TSEEzODQgClNTTHYzICAgICAgOlJTQS1QU0stQUVTMjU2LUNCQy1TSEEgICAgU1NMdjMgICAgICA6REhFLVBTSy1BRVMyNTYtQ0JDLVNIQSAgICAKU1NMdjMgICAgICA6QUVTMjU2LVNIQSAgICAgICAgICAgICAgICBUTFN2MS4wICAgIDpQU0stQUVTMjU2LUNCQy1TSEEzODQgICAgIApTU0x2MyAgICAgIDpQU0stQUVTMjU2LUNCQy1TSEEgICAgICAgIFRMU3YxLjAgICAgOkVDREhFLVBTSy1BRVMxMjgtQ0JDLVNIQTI1NiAKVExTdjEuMCAgICA6RUNESEUtUFNLLUFFUzEyOC1DQkMtU0hBICBTU0x2MyAgICAgIDpTUlAtUlNBLUFFUy0xMjgtQ0JDLVNIQSAgIApTU0x2MyAgICAgIDpTUlAtQUVTLTEyOC1DQkMtU0hBICAgICAgIFRMU3YxLjAgICAgOlJTQS1QU0stQUVTMTI4LUNCQy1TSEEyNTYgClRMU3YxLjAgICAgOkRIRS1QU0stQUVTMTI4LUNCQy1TSEEyNTYgU1NMdjMgICAgICA6UlNBLVBTSy1BRVMxMjgtQ0JDLVNIQSAgICAKU1NMdjMgICAgICA6REhFLVBTSy1BRVMxMjgtQ0JDLVNIQSAgICBTU0x2MyAgICAgIDpBRVMxMjgtU0hBICAgICAgICAgICAgICAgIApUTFN2MS4wICAgIDpQU0stQUVTMTI4LUNCQy1TSEEyNTYgICAgIFNTTHYzICAgICAgOlBTSy1BRVMxMjgtQ0JDLVNIQSAgICAgICAgCi0tLQpDaXBoZXJzIGNvbW1vbiBiZXR3ZWVuIGJvdGggU1NMIGVuZCBwb2ludHM6ClRMU19BRVNfMjU2X0dDTV9TSEEzODQgICAgIFRMU19DSEFDSEEyMF9QT0xZMTMwNV9TSEEyNTYgVExTX0FFU18xMjhfR0NNX1NIQTI1NgpTaWduYXR1cmUgQWxnb3JpdGhtczogbWxkc2E2NTptbGRzYTg3Om1sZHNhNDQ6ZWNkc2Ffc2VjcDI1NnIxX3NoYTI1NjplY2RzYV9zZWNwMzg0cjFfc2hhMzg0OmVjZHNhX3NlY3A1MjFyMV9zaGE1MTI6ZWQyNTUxOTplZDQ0ODplY2RzYV9icmFpbnBvb2xQMjU2cjF0bHMxM19zaGEyNTY6ZWNkc2FfYnJhaW5wb29sUDM4NHIxdGxzMTNfc2hhMzg0OmVjZHNhX2JyYWlucG9vbFA1MTJyMXRsczEzX3NoYTUxMjpyc2FfcHNzX3Bzc19zaGEyNTY6cnNhX3Bzc19wc3Nfc2hhMzg0OnJzYV9wc3NfcHNzX3NoYTUxMjpyc2FfcHNzX3JzYWVfc2hhMjU2OnJzYV9wc3NfcnNhZV9zaGEzODQ6cnNhX3Bzc19yc2FlX3NoYTUxMjpyc2FfcGtjczFfc2hhMjU2OnJzYV9wa2NzMV9zaGEzODQ6cnNhX3BrY3MxX3NoYTUxMjpzbTJzaWdfc20zClNoYXJlZCBTaWduYXR1cmUgQWxnb3JpdGhtczogbWxkc2E2NTptbGRzYTg3Om1sZHNhNDQ6ZWNkc2Ffc2VjcDI1NnIxX3NoYTI1NjplY2RzYV9zZWNwMzg0cjFfc2hhMzg0OmVjZHNhX3NlY3A1MjFyMV9zaGE1MTI6ZWQyNTUxOTplZDQ0ODplY2RzYV9icmFpbnBvb2xQMjU2cjF0bHMxM19zaGEyNTY6ZWNkc2FfYnJhaW5wb29sUDM4NHIxdGxzMTNfc2hhMzg0OmVjZHNhX2JyYWlucG9vbFA1MTJyMXRsczEzX3NoYTUxMjpyc2FfcHNzX3Bzc19zaGEyNTY6cnNhX3Bzc19wc3Nfc2hhMzg0OnJzYV9wc3NfcHNzX3NoYTUxMjpyc2FfcHNzX3JzYWVfc2hhMjU2OnJzYV9wc3NfcnNhZV9zaGEzODQ6cnNhX3Bzc19yc2FlX3NoYTUxMjpyc2FfcGtjczFfc2hhMjU2OnJzYV9wa2NzMV9zaGEzODQ6cnNhX3BrY3MxX3NoYTUxMjpzbTJzaWdfc20zClN1cHBvcnRlZCBncm91cHM6IFgyNTUxOU1MS0VNNzY4OlNlY1AyNTZyMU1MS0VNNzY4OmN1cnZlU00yTUxLRU03Njg6eDI1NTE5OnNlY3AyNTZyMTp4NDQ4OnNlY3AzODRyMTpzZWNwNTIxcjE6Y3VydmVTTTI6ZmZkaGUyMDQ4OmZmZGhlMzA3MgpTaGFyZWQgZ3JvdXBzOiBYMjU1MTlNTEtFTTc2ODpTZWNQMjU2cjFNTEtFTTc2ODpjdXJ2ZVNNMk1MS0VNNzY4OngyNTUxOTpzZWNwMjU2cjE6eDQ0ODpzZWNwMzg0cjE6c2VjcDUyMXIxOmN1cnZlU00yOmZmZGhlMjA0ODpmZmRoZTMwNzIKLS0tCk5ldywgVExTdjEuMywgQ2lwaGVyIGlzIFRMU19BRVNfMjU2X0dDTV9TSEEzODQKU1NMLVNlc3Npb246CiAgICBQcm90b2NvbCAgOiBUTFN2MS4zCiAgICBDaXBoZXIgICAgOiBUTFNfQUVTXzI1Nl9HQ01fU0hBMzg0CiAgICBTZXNzaW9uLUlEOiA5MDY1QzdBRjFFMzc0MkQ5NkY2MEExODUyMzk2NjU4QTcyQUM0MTUzOUFCNDg1NkY1OTdGNEVDM0QxMDFBQkM5CiAgICBTZXNzaW9uLUlELWN0eDogMDEwMDAwMDAKICAgIFJlc3VtcHRpb24gUFNLOiBENjY3NzQzMkU4RDU5NDk2NzVFQURCNUE0RjYzMkQ3QzVENjk5Q0Q3M0IwQzQwRTNEOTlDODM0NzNGN0Q4QzQ1QTA5QUMyMDk5OUI0RThBMUNEMDAxMDg3OEM2NjcyOEUKICAgIFBTSyBpZGVudGl0eTogTm9uZQogICAgUFNLIGlkZW50aXR5IGhpbnQ6IE5vbmUKICAgIFNSUCB1c2VybmFtZTogTm9uZQogICAgU3RhcnQgVGltZTogMTc4NTkzNjc1NQogICAgVGltZW91dCAgIDogNzIwMCAoc2VjKQogICAgVmVyaWZ5IHJldHVybiBjb2RlOiAwIChvaykKICAgIEV4dGVuZGVkIG1hc3RlciBzZWNyZXQ6IG5vCiAgICBNYXggRWFybHkgRGF0YTogMAotLS0KICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCi0tLQpubyBjbGllbnQgY2VydGlmaWNhdGUgYXZhaWxhYmxlCjwvcHJlPjwvQk9EWT48L0hUTUw+DQoNCg==",
+          "encoding": "base64",
+          "sha256": "12e973e618768d894c40be0ba5ee599f8b09379c842efdb6ecc1310990ed94d3",
+          "truncated": false
+        },
+        "timed_out": false
+      },
+      "version": {
+        "elapsed_milliseconds": 374,
+        "status_code": 0,
+        "stderr": {
+          "captured_bytes": 0,
+          "data": "",
+          "encoding": "base64",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 61,
+          "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+          "encoding": "base64",
+          "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+          "truncated": false
+        },
+        "timed_out": false
+      }
+    },
+    "transcript_binding": {
+      "confidence": "inferred",
+      "state": "pass"
+    }
+  },
+  "result": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "certificate_path": [
+      {
+        "id": "end-entity",
+        "position": "end-entity",
+        "scheme": "catalyst"
+      }
+    ],
+    "classical_only_fallback": true,
+    "evaluated_evidence": [
+      {
+        "binding": {
+          "confidence": "observed",
+          "state": "not-applicable"
+        },
+        "certificate_id": "end-entity",
+        "id": "classical-base-signature",
+        "kind": "classical",
+        "outcome_bearing": {
+          "confidence": "behaviorally-established",
+          "state": "pass"
+        },
+        "path": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "position": "end-entity",
+        "present": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "recognized": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "revocation": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "signature": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "validity": {
+          "confidence": "observed",
+          "state": "pass"
+        }
+      },
+      {
+        "binding": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "certificate_id": "end-entity",
+        "id": "catalyst-alternative-signature",
+        "kind": "post-quantum",
+        "outcome_bearing": {
+          "confidence": "behaviorally-established",
+          "state": "fail"
+        },
+        "path": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "position": "end-entity",
+        "present": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "recognized": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "revocation": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "signature": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "validity": {
+          "confidence": "observed",
+          "state": "pass"
+        }
+      }
+    ],
+    "failed_checks": [
+      {
+        "check": "outcome-bearing",
+        "confidence": "behaviorally-established",
+        "evidence_id": "catalyst-alternative-signature",
+        "state": "fail"
+      }
+    ],
+    "lifecycle_desynchronization": false,
+    "path_scope": "end-entity",
+    "policy": "p2-required-hybrid",
+    "policy_verdict": "reject",
+    "previous_authentication": null,
+    "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+    "stack": {
+      "adapter": "openssl-current-tls",
+      "execution_isolation": "container",
+      "validation_profile": "web-pki-server",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "stack_verdict": "accept",
+    "validation_time": "2026-06-20T00:00:00Z"
+  },
+  "transcript_binding_control": {
+    "altered_transcript_rejected": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    },
+    "binding": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    },
+    "incompatible_signature_rejected": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    },
+    "report": {
+      "api_version": "hybrid-x509-verifier/v1",
+      "arguments": [
+        "run",
+        "--rm",
+        "--pull=never",
+        "--network=none",
+        "--ipc=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--user=65532:65532",
+        "--pids-limit=64",
+        "--memory=768m",
+        "--cpus=2",
+        "--ulimit=nofile=64:64",
+        "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "--",
+        "hybrid-x509-bouncycastle:1.85",
+        "--root",
+        "/input/root.pem",
+        "--intermediate",
+        "/input/intermediate.pem",
+        "--leaf",
+        "/input/leaf.pem",
+        "--time",
+        "2026-06-20T00:00:00Z",
+        "--mode",
+        "tls-transcript",
+        "--key",
+        "/input/key.pem"
+      ],
+      "executable": "/usr/local/bin/docker",
+      "inputs": [
+        {
+          "bytes": 668,
+          "path": "tests/fixtures/paper-v1.0.2/root.pem",
+          "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+        },
+        {
+          "bytes": 2504,
+          "path": "tests/fixtures/paper-v1.0.2/catalyst-ica.pem",
+          "sha256": "1fde4f744201843472c10c5b8e193b79e02c67f1acdf59d52bc375ebc050fb66"
+        },
+        {
+          "bytes": 5937,
+          "path": "tests/fixtures/paper-v1.0.2/catalyst-leaf.pem",
+          "sha256": "dc3e00e9668d64d9f9bd2a426b18dd9a4d34c12d73d031e902ae9d728601e132"
+        },
+        {
+          "bytes": 258,
+          "path": "tests/fixtures/generated-controls/catalyst-leaf-base-key.pem",
+          "sha256": "85cbca770bffc341671a0f090d32239affd7f12172654602d1d80dfdd0499c80"
+        }
+      ],
+      "observation": {
+        "adapter": "bouncycastle-java-current",
+        "execution_isolation": "container",
+        "validation_profile": "evidence-signature",
+        "validation_time": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "verdict": "accept",
+        "version": "1.85",
+        "version_track": "current"
+      },
+      "source_instrumentation": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": []
+      },
+      "verification": {
+        "elapsed_milliseconds": 740,
+        "status_code": 0,
+        "stderr": {
+          "captured_bytes": 0,
+          "data": "",
+          "encoding": "base64",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 599,
+          "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwidmFsaWRfaGFuZHNoYWtlIjoiYWNjZXB0IiwiYWx0ZXJlZF90cmFuc2NyaXB0X2hhbmRzaGFrZSI6InJlamVjdCIsImluY29tcGF0aWJsZV9zaWduYXR1cmVfaGFuZHNoYWtlIjoicmVqZWN0Iiwic2lnbmF0dXJlIjoiZWNkc2Ffc2VjcDI1NnIxX3NoYTI1NiIsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJ2YWxpZGF0ZS1wa2l4LXBhdGgiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjpudWxsLCJvdXRjb21lIjoicGFzcyJ9LHsib3BlcmF0aW9uIjoidGxzLWNlcnRpZmljYXRlLXZlcmlmeSIsInRhcmdldCI6ImxlYWYiLCJhbGdvcml0aG0iOiJlY2RzYV9zZWNwMjU2cjFfc2hhMjU2Iiwib3V0Y29tZSI6InBhc3MifSx7Im9wZXJhdGlvbiI6InRscy1hbHRlcmVkLXRyYW5zY3JpcHQiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiZWNkc2Ffc2VjcDI1NnIxX3NoYTI1NiIsIm91dGNvbWUiOiJyZWplY3QifSx7Im9wZXJhdGlvbiI6InRscy1pbmNvbXBhdGlibGUtc2lnbmF0dXJlIiwidGFyZ2V0IjoibGVhZiIsImFsZ29yaXRobSI6ImVjZHNhX3NlY3AyNTZyMV9zaGEyNTYiLCJvdXRjb21lIjoicmVqZWN0In1dfQo=",
+          "encoding": "base64",
+          "sha256": "29fd9e8b7265703ca91f10f7e074ae89f3ddf44263956d1ca185ee3e868e99e6",
+          "truncated": false
+        },
+        "timed_out": false
+      },
+      "version": {
+        "elapsed_milliseconds": 558,
+        "status_code": 0,
+        "stderr": {
+          "captured_bytes": 0,
+          "data": "",
+          "encoding": "base64",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 5,
+          "data": "MS44NQo=",
+          "encoding": "base64",
+          "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+          "truncated": false
+        },
+        "timed_out": false
+      }
+    },
+    "signature": "ecdsa_secp256r1_sha256",
+    "valid_handshake": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    }
+  },
+  "valid_post_quantum_direct_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+      "--",
+      "hybrid-x509-bouncycastle:1.85",
+      "--root",
+      "/input/root.pem",
+      "--intermediate",
+      "/input/intermediate.pem",
+      "--leaf",
+      "/input/leaf.pem",
+      "--time",
+      "2026-06-20T00:00:00Z",
+      "--mode",
+      "alternative-signature"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 2504,
+        "path": "tests/fixtures/paper-v1.0.2/catalyst-ica.pem",
+        "sha256": "1fde4f744201843472c10c5b8e193b79e02c67f1acdf59d52bc375ebc050fb66"
+      },
+      {
+        "bytes": 5937,
+        "path": "tests/fixtures/paper-v1.0.2/catalyst-leaf.pem",
+        "sha256": "dc3e00e9668d64d9f9bd2a426b18dd9a4d34c12d73d031e902ae9d728601e132"
+      }
+    ],
+    "observation": {
+      "adapter": "bouncycastle-java-current",
+      "execution_isolation": "container",
+      "validation_profile": "evidence-signature",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "not-applicable"
+      },
+      "verdict": "accept",
+      "version": "1.85",
+      "version_track": "current"
+    },
+    "source_instrumentation": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "ML-DSA",
+          "operation": "check-alternative-signature",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": []
+    },
+    "verification": {
+      "elapsed_milliseconds": 653,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 144,
+        "data": "eyJ2ZXJkaWN0IjoiYWNjZXB0IiwiZXJyb3IiOm51bGwsInRyYWNlIjpbeyJvcGVyYXRpb24iOiJjaGVjay1hbHRlcm5hdGl2ZS1zaWduYXR1cmUiLCJ0YXJnZXQiOiJsZWFmIiwiYWxnb3JpdGhtIjoiTUwtRFNBIiwib3V0Y29tZSI6ImFjY2VwdCJ9XX0K",
+        "encoding": "base64",
+        "sha256": "73a3cef9d0a6cb0663f6baf3f8c06cf907e35f2f8997568bd24b85245a562f30",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 596,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 5,
+        "data": "MS44NQo=",
+        "encoding": "base64",
+        "sha256": "3095ea9615eb54c6be35f5c59559471be352c0465da4135bec8524556184c9d8",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "valid_tls": {
+    "authentication_signature": "ecdsa_secp256r1_sha256",
+    "certificate_selection": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    },
+    "certificate_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+    "certificate_subject": "CN=catalyst leaf base-ECDSA alt-MLDSA, O=pqc-probe, C=KR",
+    "cipher_suite": "TLS_AES_256_GCM_SHA384",
+    "hostname_verification": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "key_exchange_group": "X25519MLKEM768",
+    "proof_of_possession": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    },
+    "protocol": "TLSv1.3",
+    "report": {
+      "api_version": "hybrid-x509-verifier/v1",
+      "arguments": [
+        "run",
+        "--rm",
+        "--pull=never",
+        "--network=none",
+        "--ipc=none",
+        "--read-only",
+        "--cap-drop=ALL",
+        "--security-opt=no-new-privileges",
+        "--user=65532:65532",
+        "--pids-limit=64",
+        "--memory=768m",
+        "--cpus=2",
+        "--ulimit=nofile=64:64",
+        "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+        "--mount",
+        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "--",
+        "hybrid-x509-openssl:4.0.1",
+        "--tls-server-client",
+        "/input/root.pem",
+        "/input/intermediate.pem",
+        "/input/leaf.pem",
+        "/input/key.pem",
+        "catalyst.pqc-probe.test",
+        "1781913600"
+      ],
+      "executable": "/usr/local/bin/docker",
+      "inputs": [
+        {
+          "bytes": 668,
+          "path": "tests/fixtures/paper-v1.0.2/root.pem",
+          "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+        },
+        {
+          "bytes": 2504,
+          "path": "tests/fixtures/paper-v1.0.2/catalyst-ica.pem",
+          "sha256": "1fde4f744201843472c10c5b8e193b79e02c67f1acdf59d52bc375ebc050fb66"
+        },
+        {
+          "bytes": 5937,
+          "path": "tests/fixtures/paper-v1.0.2/catalyst-leaf.pem",
+          "sha256": "dc3e00e9668d64d9f9bd2a426b18dd9a4d34c12d73d031e902ae9d728601e132"
+        },
+        {
+          "bytes": 258,
+          "path": "tests/fixtures/generated-controls/catalyst-leaf-base-key.pem",
+          "sha256": "85cbca770bffc341671a0f090d32239affd7f12172654602d1d80dfdd0499c80"
+        }
+      ],
+      "observation": {
+        "adapter": "openssl-current-tls",
+        "execution_isolation": "container",
+        "validation_profile": "web-pki-server",
+        "validation_time": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "verdict": "accept",
+        "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+        "version_track": "current"
+      },
+      "source_instrumentation": null,
+      "verification": {
+        "elapsed_milliseconds": 612,
+        "status_code": 0,
+        "stderr": {
+          "captured_bytes": 952,
+          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUClNTTC1TZXNzaW9uOgogICAgUHJvdG9jb2wgIDogVExTdjEuMwogICAgQ2lwaGVyICAgIDogVExTX0FFU18yNTZfR0NNX1NIQTM4NAogICAgU2Vzc2lvbi1JRDogMTM3M0JBRjRCNEQ4MjU3NDU1MDMxOUY5ODQ1Nzg3NjVBNDQyMDU4RjAyMUUwRkE0MzBCMjE0QjUxRUY5NjY4RAogICAgU2Vzc2lvbi1JRC1jdHg6IDAxMDAwMDAwCiAgICBSZXN1bXB0aW9uIFBTSzogREFCN0JCMkM2NkRCQzdERDU0NTk1OThGRjA1NzM4Q0E4QTBCQzUxMzQzN0RBRjVBN0QxM0UxREY2N0E0MzE0RjZFODkxODlCQjZDMDYxQTc0MTdEMDkxRkE2QTVCQzk4CiAgICBQU0sgaWRlbnRpdHk6IE5vbmUKICAgIFBTSyBpZGVudGl0eSBoaW50OiBOb25lCiAgICBTUlAgdXNlcm5hbWU6IE5vbmUKICAgIFN0YXJ0IFRpbWU6IDE3ODU5MzY3NTQKICAgIFRpbWVvdXQgICA6IDcyMDAgKHNlYykKICAgIFZlcmlmeSByZXR1cm4gY29kZTogMCAob2spCiAgICBFeHRlbmRlZCBtYXN0ZXIgc2VjcmV0OiBubwogICAgTWF4IEVhcmx5IERhdGE6IDAKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
+          "encoding": "base64",
+          "sha256": "46b8e745d66120993081e0edc0c51656df4b6bbc7d510b6a6b7a353af1190b8f",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 5461,
+          "data": "Q29ubmVjdGluZyB0byAxMjcuMC4wLjEKQ09OTkVDVElPTiBFU1RBQkxJU0hFRApQcm90b2NvbCB2ZXJzaW9uOiBUTFN2MS4zCkNpcGhlcnN1aXRlOiBUTFNfQUVTXzI1Nl9HQ01fU0hBMzg0ClBlZXIgY2VydGlmaWNhdGU6IENOPWNhdGFseXN0IGxlYWYgYmFzZS1FQ0RTQSBhbHQtTUxEU0EsIE89cHFjLXByb2JlLCBDPUtSCkhhc2ggdXNlZDogU0hBMjU2ClNpZ25hdHVyZSB0eXBlOiBlY2RzYV9zZWNwMjU2cjFfc2hhMjU2ClZlcmlmaWNhdGlvbjogT0sKVmVyaWZpZWQgcGVlcm5hbWU6IGNhdGFseXN0LnBxYy1wcm9iZS50ZXN0Ck5lZ290aWF0ZWQgVExTMS4zIGdyb3VwOiBYMjU1MTlNTEtFTTc2OApIVFRQLzEuMCAyMDAgb2sNCkNvbnRlbnQtdHlwZTogdGV4dC9odG1sDQoNCjxIVE1MPjxCT0RZIEJHQ09MT1I9IiNmZmZmZmYiPgo8cHJlPgoKc19zZXJ2ZXIgLWFjY2VwdCAxMjcuMC4wLjE6NDQzMyAtY2VydCAvaW5wdXQvbGVhZi5wZW0gLWNlcnRfY2hhaW4gL2lucHV0L2ludGVybWVkaWF0ZS5wZW0gLWtleSAvaW5wdXQva2V5LnBlbSAtd3d3IC10bHMxXzMgLW5hY2NlcHQgMSAKPGgxPk9wZW5TU0wgd2l0aCBFQ0g8L2gxPgo8aDI+CkVDSCBub3QgY29uZmlndXJlZAo8L2gyPgo8aDI+VExTIFNlc3Npb24gZGV0YWlsczwvaDI+CjxwcmU+CjxwcmU+CgpzX3NlcnZlciAtYWNjZXB0IDEyNy4wLjAuMTo0NDMzIC1jZXJ0IC9pbnB1dC9sZWFmLnBlbSAtY2VydF9jaGFpbiAvaW5wdXQvaW50ZXJtZWRpYXRlLnBlbSAta2V5IC9pbnB1dC9rZXkucGVtIC13d3cgLXRsczFfMyAtbmFjY2VwdCAxIApUaGlzIFRMUyB2ZXJzaW9uIGZvcmJpZHMgcmVuZWdvdGlhdGlvbi4KQ2lwaGVycyBzdXBwb3J0ZWQgaW4gc19zZXJ2ZXIgYmluYXJ5ClRMU3YxLjMgICAgOlRMU19BRVNfMjU2X0dDTV9TSEEzODQgICAgVExTdjEuMyAgICA6VExTX0NIQUNIQTIwX1BPTFkxMzA1X1NIQTI1NiAKVExTdjEuMyAgICA6VExTX0FFU18xMjhfR0NNX1NIQTI1NiAgICBUTFN2MS4yICAgIDpFQ0RIRS1FQ0RTQS1BRVMyNTYtR0NNLVNIQTM4NCAKVExTdjEuMiAgICA6RUNESEUtUlNBLUFFUzI1Ni1HQ00tU0hBMzg0IFRMU3YxLjIgICAgOkRIRS1SU0EtQUVTMjU2LUdDTS1TSEEzODQgClRMU3YxLjIgICAgOkVDREhFLUVDRFNBLUNIQUNIQTIwLVBPTFkxMzA1IFRMU3YxLjIgICAgOkVDREhFLVJTQS1DSEFDSEEyMC1QT0xZMTMwNSAKVExTdjEuMiAgICA6REhFLVJTQS1DSEFDSEEyMC1QT0xZMTMwNSBUTFN2MS4yICAgIDpFQ0RIRS1FQ0RTQS1BRVMxMjgtR0NNLVNIQTI1NiAKVExTdjEuMiAgICA6RUNESEUtUlNBLUFFUzEyOC1HQ00tU0hBMjU2IFRMU3YxLjIgICAgOkRIRS1SU0EtQUVTMTI4LUdDTS1TSEEyNTYgClRMU3YxLjIgICAgOkVDREhFLUVDRFNBLUFFUzI1Ni1TSEEzODQgVExTdjEuMiAgICA6RUNESEUtUlNBLUFFUzI1Ni1TSEEzODQgICAKVExTdjEuMiAgICA6REhFLVJTQS1BRVMyNTYtU0hBMjU2ICAgICBUTFN2MS4yICAgIDpFQ0RIRS1FQ0RTQS1BRVMxMjgtU0hBMjU2IApUTFN2MS4yICAgIDpFQ0RIRS1SU0EtQUVTMTI4LVNIQTI1NiAgIFRMU3YxLjIgICAgOkRIRS1SU0EtQUVTMTI4LVNIQTI1NiAgICAgClRMU3YxLjAgICAgOkVDREhFLUVDRFNBLUFFUzI1Ni1TSEEgICAgVExTdjEuMCAgICA6RUNESEUtUlNBLUFFUzI1Ni1TSEEgICAgICAKU1NMdjMgICAgICA6REhFLVJTQS1BRVMyNTYtU0hBICAgICAgICBUTFN2MS4wICAgIDpFQ0RIRS1FQ0RTQS1BRVMxMjgtU0hBICAgIApUTFN2MS4wICAgIDpFQ0RIRS1SU0EtQUVTMTI4LVNIQSAgICAgIFNTTHYzICAgICAgOkRIRS1SU0EtQUVTMTI4LVNIQSAgICAgICAgClRMU3YxLjIgICAgOlJTQS1QU0stQUVTMjU2LUdDTS1TSEEzODQgVExTdjEuMiAgICA6REhFLVBTSy1BRVMyNTYtR0NNLVNIQTM4NCAKVExTdjEuMiAgICA6UlNBLVBTSy1DSEFDSEEyMC1QT0xZMTMwNSBUTFN2MS4yICAgIDpESEUtUFNLLUNIQUNIQTIwLVBPTFkxMzA1IApUTFN2MS4yICAgIDpFQ0RIRS1QU0stQ0hBQ0hBMjAtUE9MWTEzMDUgVExTdjEuMiAgICA6QUVTMjU2LUdDTS1TSEEzODQgICAgICAgICAKVExTdjEuMiAgICA6UFNLLUFFUzI1Ni1HQ00tU0hBMzg0ICAgICBUTFN2MS4yICAgIDpQU0stQ0hBQ0hBMjAtUE9MWTEzMDUgICAgIApUTFN2MS4yICAgIDpSU0EtUFNLLUFFUzEyOC1HQ00tU0hBMjU2IFRMU3YxLjIgICAgOkRIRS1QU0stQUVTMTI4LUdDTS1TSEEyNTYgClRMU3YxLjIgICAgOkFFUzEyOC1HQ00tU0hBMjU2ICAgICAgICAgVExTdjEuMiAgICA6UFNLLUFFUzEyOC1HQ00tU0hBMjU2ICAgICAKVExTdjEuMiAgICA6QUVTMjU2LVNIQTI1NiAgICAgICAgICAgICBUTFN2MS4yICAgIDpBRVMxMjgtU0hBMjU2ICAgICAgICAgICAgIApUTFN2MS4wICAgIDpFQ0RIRS1QU0stQUVTMjU2LUNCQy1TSEEzODQgVExTdjEuMCAgICA6RUNESEUtUFNLLUFFUzI1Ni1DQkMtU0hBICAKU1NMdjMgICAgICA6U1JQLVJTQS1BRVMtMjU2LUNCQy1TSEEgICBTU0x2MyAgICAgIDpTUlAtQUVTLTI1Ni1DQkMtU0hBICAgICAgIApUTFN2MS4wICAgIDpSU0EtUFNLLUFFUzI1Ni1DQkMtU0hBMzg0IFRMU3YxLjAgICAgOkRIRS1QU0stQUVTMjU2LUNCQy1TSEEzODQgClNTTHYzICAgICAgOlJTQS1QU0stQUVTMjU2LUNCQy1TSEEgICAgU1NMdjMgICAgICA6REhFLVBTSy1BRVMyNTYtQ0JDLVNIQSAgICAKU1NMdjMgICAgICA6QUVTMjU2LVNIQSAgICAgICAgICAgICAgICBUTFN2MS4wICAgIDpQU0stQUVTMjU2LUNCQy1TSEEzODQgICAgIApTU0x2MyAgICAgIDpQU0stQUVTMjU2LUNCQy1TSEEgICAgICAgIFRMU3YxLjAgICAgOkVDREhFLVBTSy1BRVMxMjgtQ0JDLVNIQTI1NiAKVExTdjEuMCAgICA6RUNESEUtUFNLLUFFUzEyOC1DQkMtU0hBICBTU0x2MyAgICAgIDpTUlAtUlNBLUFFUy0xMjgtQ0JDLVNIQSAgIApTU0x2MyAgICAgIDpTUlAtQUVTLTEyOC1DQkMtU0hBICAgICAgIFRMU3YxLjAgICAgOlJTQS1QU0stQUVTMTI4LUNCQy1TSEEyNTYgClRMU3YxLjAgICAgOkRIRS1QU0stQUVTMTI4LUNCQy1TSEEyNTYgU1NMdjMgICAgICA6UlNBLVBTSy1BRVMxMjgtQ0JDLVNIQSAgICAKU1NMdjMgICAgICA6REhFLVBTSy1BRVMxMjgtQ0JDLVNIQSAgICBTU0x2MyAgICAgIDpBRVMxMjgtU0hBICAgICAgICAgICAgICAgIApUTFN2MS4wICAgIDpQU0stQUVTMTI4LUNCQy1TSEEyNTYgICAgIFNTTHYzICAgICAgOlBTSy1BRVMxMjgtQ0JDLVNIQSAgICAgICAgCi0tLQpDaXBoZXJzIGNvbW1vbiBiZXR3ZWVuIGJvdGggU1NMIGVuZCBwb2ludHM6ClRMU19BRVNfMjU2X0dDTV9TSEEzODQgICAgIFRMU19DSEFDSEEyMF9QT0xZMTMwNV9TSEEyNTYgVExTX0FFU18xMjhfR0NNX1NIQTI1NgpTaWduYXR1cmUgQWxnb3JpdGhtczogbWxkc2E2NTptbGRzYTg3Om1sZHNhNDQ6ZWNkc2Ffc2VjcDI1NnIxX3NoYTI1NjplY2RzYV9zZWNwMzg0cjFfc2hhMzg0OmVjZHNhX3NlY3A1MjFyMV9zaGE1MTI6ZWQyNTUxOTplZDQ0ODplY2RzYV9icmFpbnBvb2xQMjU2cjF0bHMxM19zaGEyNTY6ZWNkc2FfYnJhaW5wb29sUDM4NHIxdGxzMTNfc2hhMzg0OmVjZHNhX2JyYWlucG9vbFA1MTJyMXRsczEzX3NoYTUxMjpyc2FfcHNzX3Bzc19zaGEyNTY6cnNhX3Bzc19wc3Nfc2hhMzg0OnJzYV9wc3NfcHNzX3NoYTUxMjpyc2FfcHNzX3JzYWVfc2hhMjU2OnJzYV9wc3NfcnNhZV9zaGEzODQ6cnNhX3Bzc19yc2FlX3NoYTUxMjpyc2FfcGtjczFfc2hhMjU2OnJzYV9wa2NzMV9zaGEzODQ6cnNhX3BrY3MxX3NoYTUxMjpzbTJzaWdfc20zClNoYXJlZCBTaWduYXR1cmUgQWxnb3JpdGhtczogbWxkc2E2NTptbGRzYTg3Om1sZHNhNDQ6ZWNkc2Ffc2VjcDI1NnIxX3NoYTI1NjplY2RzYV9zZWNwMzg0cjFfc2hhMzg0OmVjZHNhX3NlY3A1MjFyMV9zaGE1MTI6ZWQyNTUxOTplZDQ0ODplY2RzYV9icmFpbnBvb2xQMjU2cjF0bHMxM19zaGEyNTY6ZWNkc2FfYnJhaW5wb29sUDM4NHIxdGxzMTNfc2hhMzg0OmVjZHNhX2JyYWlucG9vbFA1MTJyMXRsczEzX3NoYTUxMjpyc2FfcHNzX3Bzc19zaGEyNTY6cnNhX3Bzc19wc3Nfc2hhMzg0OnJzYV9wc3NfcHNzX3NoYTUxMjpyc2FfcHNzX3JzYWVfc2hhMjU2OnJzYV9wc3NfcnNhZV9zaGEzODQ6cnNhX3Bzc19yc2FlX3NoYTUxMjpyc2FfcGtjczFfc2hhMjU2OnJzYV9wa2NzMV9zaGEzODQ6cnNhX3BrY3MxX3NoYTUxMjpzbTJzaWdfc20zClN1cHBvcnRlZCBncm91cHM6IFgyNTUxOU1MS0VNNzY4OlNlY1AyNTZyMU1MS0VNNzY4OmN1cnZlU00yTUxLRU03Njg6eDI1NTE5OnNlY3AyNTZyMTp4NDQ4OnNlY3AzODRyMTpzZWNwNTIxcjE6Y3VydmVTTTI6ZmZkaGUyMDQ4OmZmZGhlMzA3MgpTaGFyZWQgZ3JvdXBzOiBYMjU1MTlNTEtFTTc2ODpTZWNQMjU2cjFNTEtFTTc2ODpjdXJ2ZVNNMk1MS0VNNzY4OngyNTUxOTpzZWNwMjU2cjE6eDQ0ODpzZWNwMzg0cjE6c2VjcDUyMXIxOmN1cnZlU00yOmZmZGhlMjA0ODpmZmRoZTMwNzIKLS0tCk5ldywgVExTdjEuMywgQ2lwaGVyIGlzIFRMU19BRVNfMjU2X0dDTV9TSEEzODQKU1NMLVNlc3Npb246CiAgICBQcm90b2NvbCAgOiBUTFN2MS4zCiAgICBDaXBoZXIgICAgOiBUTFNfQUVTXzI1Nl9HQ01fU0hBMzg0CiAgICBTZXNzaW9uLUlEOiAxMzczQkFGNEI0RDgyNTc0NTUwMzE5Rjk4NDU3ODc2NUE0NDIwNThGMDIxRTBGQTQzMEIyMTRCNTFFRjk2NjhECiAgICBTZXNzaW9uLUlELWN0eDogMDEwMDAwMDAKICAgIFJlc3VtcHRpb24gUFNLOiBEQUI3QkIyQzY2REJDN0RENTQ1OTU5OEZGMDU3MzhDQThBMEJDNTEzNDM3REFGNUE3RDEzRTFERjY3QTQzMTRGNkU4OTE4OUJCNkMwNjFBNzQxN0QwOTFGQTZBNUJDOTgKICAgIFBTSyBpZGVudGl0eTogTm9uZQogICAgUFNLIGlkZW50aXR5IGhpbnQ6IE5vbmUKICAgIFNSUCB1c2VybmFtZTogTm9uZQogICAgU3RhcnQgVGltZTogMTc4NTkzNjc1NAogICAgVGltZW91dCAgIDogNzIwMCAoc2VjKQogICAgVmVyaWZ5IHJldHVybiBjb2RlOiAwIChvaykKICAgIEV4dGVuZGVkIG1hc3RlciBzZWNyZXQ6IG5vCiAgICBNYXggRWFybHkgRGF0YTogMAotLS0KICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCi0tLQpubyBjbGllbnQgY2VydGlmaWNhdGUgYXZhaWxhYmxlCjwvcHJlPjwvQk9EWT48L0hUTUw+DQoNCg==",
+          "encoding": "base64",
+          "sha256": "f4621401be4649bc3529fdb89093906ee5f1eab8a6cb63f002c7c3ea305fa7a7",
+          "truncated": false
+        },
+        "timed_out": false
+      },
+      "version": {
+        "elapsed_milliseconds": 635,
+        "status_code": 0,
+        "stderr": {
+          "captured_bytes": 0,
+          "data": "",
+          "encoding": "base64",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "truncated": false
+        },
+        "stdout": {
+          "captured_bytes": 61,
+          "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+          "encoding": "base64",
+          "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+          "truncated": false
+        },
+        "timed_out": false
+      }
+    },
+    "transcript_binding": {
+      "confidence": "behaviorally-established",
+      "state": "pass"
+    }
+  }
+}

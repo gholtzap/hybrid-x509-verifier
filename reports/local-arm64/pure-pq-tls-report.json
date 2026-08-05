@@ -1,0 +1,134 @@
+{
+  "authentication_signature": null,
+  "certificate_selection": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  },
+  "certificate_sha256": "75dfc08fca9d6afb2cbee94aeadf441f162518344cb30b1ccfe26db45fd31007",
+  "certificate_subject": null,
+  "cipher_suite": null,
+  "hostname_verification": {
+    "confidence": "observed",
+    "state": "indeterminate"
+  },
+  "key_exchange_group": null,
+  "proof_of_possession": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  },
+  "protocol": null,
+  "report": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-leaf.pem,dst=/input/leaf.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-leaf-key.pem,dst=/input/key.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "--tls-server-client",
+      "/input/root.pem",
+      "/input/intermediate.pem",
+      "/input/leaf.pem",
+      "/input/key.pem",
+      "pure.pqc-probe.test",
+      "1781913600"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 5555,
+        "path": "tests/fixtures/generated-controls/pure-path-root.pem",
+        "sha256": "3a6550eeb78017e818dd27687c69c95e753c9b69d9714582d97837838302e037"
+      },
+      {
+        "bytes": 5555,
+        "path": "tests/fixtures/generated-controls/pure-path-ica.pem",
+        "sha256": "e38b5e7fcb7a6764949aa218c8d8f0c20183c2c2777facbff6d6f510836be227"
+      },
+      {
+        "bytes": 5628,
+        "path": "tests/fixtures/generated-controls/pure-path-leaf.pem",
+        "sha256": "085819c484c4d0e92449c78a0c5441ea304eea72c750d6a52088e947b1db9d8f"
+      },
+      {
+        "bytes": 3613,
+        "path": "tests/fixtures/generated-controls/pure-leaf-key.pem",
+        "sha256": "3281caa94b2690155ea603c0e7f3148da1f9b94326dae1b6b376088d389ea2cf"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current-tls",
+      "execution_isolation": "container",
+      "validation_profile": "web-pki-server",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "reject",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 657,
+      "status_code": 1,
+      "stderr": {
+        "captured_bytes": 193,
+        "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKZXJyb3Igc2V0dGluZyBwcml2YXRlIGtleQpDMDlGOEJCMkZGRkYwMDAwOmVycm9yOjA1ODAwMDc0Ong1MDkgY2VydGlmaWNhdGUgcm91dGluZXM6b3NzbF94NTA5X2NoZWNrX3ByaXZhdGVfa2V5OmtleSB2YWx1ZXMgbWlzbWF0Y2g6Y3J5cHRvL3g1MDkveDUwOV9jbXAuYzo0MTY6Cg==",
+        "encoding": "base64",
+        "sha256": "509fc22e6550c1319ab16542f02e139cbda75784fce5b309e4f73967923e71f7",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 240,
+        "data": "QzA1RkEzQjhGRkZGMDAwMDplcnJvcjo4MDAwMDA2RjpzeXN0ZW0gbGlicmFyeTpCSU9fY29ubmVjdDpDb25uZWN0aW9uIHJlZnVzZWQ6Y3J5cHRvL2Jpby9iaW9fc29jazIuYzoxODM6Y2FsbGluZyBjb25uZWN0KCkKQzA1RkEzQjhGRkZGMDAwMDplcnJvcjoxMDAwMDA2NzpCSU8gcm91dGluZXM6QklPX2Nvbm5lY3Q6Y29ubmVjdCBlcnJvcjpjcnlwdG8vYmlvL2Jpb19zb2NrMi5jOjE4NToKY29ubmVjdDplcnJubz0xMTEK",
+        "encoding": "base64",
+        "sha256": "2833bcfc3308f1b0e9320ae943a645c60f3c25892d2eb2caea545fd39988ab83",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 1271,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "transcript_binding": {
+    "confidence": "unknown",
+    "state": "indeterminate"
+  }
+}

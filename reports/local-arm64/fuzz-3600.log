@@ -1,0 +1,66 @@
+
+  nightly-2026-08-04-aarch64-apple-darwin installed - rustc 1.99.0-nightly (504869653 2026-08-03)
+
+== pem ==
+#83502848	REDUCE cov: 82 ft: 205 corp: 41/1969b lim: 4096 exec/s: 77389 rss: 524Mb L: 713/713 MS: 1 EraseBytes-
+#91260985	REDUCE cov: 82 ft: 205 corp: 41/1968b lim: 4096 exec/s: 77274 rss: 525Mb L: 712/712 MS: 1 EraseBytes-
+#103483107	REDUCE cov: 82 ft: 205 corp: 41/1967b lim: 4096 exec/s: 77053 rss: 525Mb L: 711/711 MS: 1 EraseBytes-
+#106046720	REDUCE cov: 82 ft: 205 corp: 41/1966b lim: 4096 exec/s: 77068 rss: 525Mb L: 710/710 MS: 2 ChangeBit-EraseBytes-
+#109643807	REDUCE cov: 82 ft: 205 corp: 41/1965b lim: 4096 exec/s: 77051 rss: 525Mb L: 709/709 MS: 1 EraseBytes-
+#134217728	pulse  cov: 82 ft: 205 corp: 41/1965b lim: 4096 exec/s: 77003 rss: 525Mb
+#169975684	REDUCE cov: 82 ft: 205 corp: 41/1964b lim: 4096 exec/s: 76946 rss: 525Mb L: 708/708 MS: 1 EraseBytes-
+#226774241	REDUCE cov: 82 ft: 205 corp: 41/1963b lim: 4096 exec/s: 76846 rss: 526Mb L: 707/707 MS: 1 EraseBytes-
+#268435456	pulse  cov: 82 ft: 205 corp: 41/1963b lim: 4096 exec/s: 76805 rss: 527Mb
+Slowest unit: 33 s:
+artifact_prefix='/Users/gmh/dev/quantum/fuzz/artifacts/pem/'; Test unit written to /Users/gmh/dev/quantum/fuzz/artifacts/pem/slow-unit-8f3b259241c61b0dea6c026da31dd9a3c2d6a847
+Base64: CgoKCgoKCgoKCgoKCgoKCgr1CoEK/QqBCvX1CoEK/QqBCvUKgQr9CvUBAAAAAAAAA8rKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKCgoKCgoKCgo=
+#270973987	DONE   cov: 82 ft: 205 corp: 41/1963b lim: 4096 exec/s: 75228 rss: 527Mb
+###### Recommended dictionary. ######
+"\001\000\000\000\000\000\000\026" # Uses: 7106892
+"\001\000\000\000\000\000\000\015" # Uses: 6710018
+"\000\000" # Uses: 4852246
+",\000\000\000" # Uses: 4536410
+###### End of recommended dictionary. ######
+Done 270973987 runs in 3602 second(s)
+== oracle-json ==
+"\001\000\000\000\000\000\000\023" # Uses: 1246551
+"\377\377\377\377\377\377\377\377" # Uses: 1238679
+"\000\000\000D" # Uses: 1341430
+"\376\377\377\377\377\377\377\377" # Uses: 1151336
+"\374\377\377\377" # Uses: 1108150
+"\376\377\377m" # Uses: 987642
+"\265\377\377\377" # Uses: 978115
+"\000\000\000\000" # Uses: 752448
+"\377\377\377\377\377\377\377\001" # Uses: 624647
+"\020\000" # Uses: 715109
+"\020\000\000\000\000\000\000\000" # Uses: 437829
+"\377\377\377\377\377\377\377I" # Uses: 435707
+"6\001\000\000" # Uses: 463457
+"\377\377" # Uses: 412655
+"\002\374\267\305" # Uses: 295067
+"\000\000\376\225" # Uses: 279188
+"\374\377\377\377\377\377\377\377" # Uses: 203558
+"\004\000\000\000\000\000\000\000" # Uses: 136381
+###### End of recommended dictionary. ######
+Done 298856673 runs in 3602 second(s)
+== ocsp-der ==
+	NEW_FUNC[1/1]: 0x000100df1ee0  (/Users/gmh/dev/quantum/fuzz/target/aarch64-apple-darwin/release/ocsp-der:arm64+0x1003c9ee0)
+#230765903	NEW    cov: 1825 ft: 3074 corp: 575/206Kb lim: 4096 exec/s: 65764 rss: 536Mb L: 471/479 MS: 3 CopyPart-ShuffleBytes-ShuffleBytes-
+#232053158	DONE   cov: 1825 ft: 3074 corp: 575/206Kb lim: 4096 exec/s: 64441 rss: 536Mb
+###### Recommended dictionary. ######
+"\001\000\0000" # Uses: 2323353
+"\020\000\000\000\000\000\000\200" # Uses: 2254244
+"\000\000\001\323" # Uses: 2163839
+"\001\000\000:\377\364A\177" # Uses: 1868144
+"\225\000\000\000\000\000\000\000" # Uses: 1848221
+"\0010" # Uses: 1777474
+"\000\000\000\000\000\000\000\024" # Uses: 1764104
+"\001\000\000\015" # Uses: 1698152
+"\000\000\000\000\000\000\000\001" # Uses: 1599516
+"\000\000\000\000\000\000\002\271" # Uses: 1313461
+"\010\000\000\000\000\000\000\000" # Uses: 912982
+"\001\000\000\001" # Uses: 487626
+"\000\241" # Uses: 274415
+"\006\000\000\000\000\000\000\000" # Uses: 125886
+###### End of recommended dictionary. ######
+Done 232053158 runs in 3601 second(s)

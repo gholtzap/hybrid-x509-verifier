@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.hybridx509</groupId>
+    <artifactId>bc-x509-adapter</artifactId>
+    <version>1.85.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>bc-x509-adapter-study</artifactId>
+  <version>1.84.0</version>
+  <properties><bc.version>1.84</bc.version></properties>
+</project>

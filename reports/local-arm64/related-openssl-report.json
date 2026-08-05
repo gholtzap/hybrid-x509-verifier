@@ -1,0 +1,828 @@
+{
+  "api_version": "hybrid-x509-verifier/v1",
+  "binding": {
+    "calculated_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+    "check": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+    "embedded_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8"
+  },
+  "classical_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-certA.pem,dst=/input/leaf.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "-attime",
+      "1781913600",
+      "-CAfile",
+      "/input/root.pem",
+      "-untrusted",
+      "/input/intermediate.pem",
+      "-crl_check",
+      "-CRLfile",
+      "/input/crl.pem",
+      "/input/leaf.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 672,
+        "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+        "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+      },
+      {
+        "bytes": 1298,
+        "path": "tests/fixtures/paper-v1.0.2/related-certA.pem",
+        "sha256": "d555f99039056e7ce6f02cb21b130ff3755bd9f00de43f21f9f67c2ceaa509a1"
+      },
+      {
+        "bytes": 430,
+        "path": "tests/fixtures/paper-v1.0.2/related-crl.pem",
+        "sha256": "0d363e45188b5f6ac6e0f7d91a9d925bfdb49984e659fede150589c481631aee"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 366,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 20,
+        "data": "L2lucHV0L2xlYWYucGVtOiBPSwo=",
+        "encoding": "base64",
+        "sha256": "eefb6296f05aa7b5dc591fe874c1016270f00f05a71600667e12502cc4755b1c",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 674,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "classical_crl_status": {
+    "freshness": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "issuer": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "revocation": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "signature": {
+      "confidence": "observed",
+      "state": "pass"
+    }
+  },
+  "classical_invalid_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpScX2HJ,dst=/input/leaf.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "-attime",
+      "1781913600",
+      "-CAfile",
+      "/input/root.pem",
+      "-untrusted",
+      "/input/intermediate.pem",
+      "-crl_check",
+      "-CRLfile",
+      "/input/crl.pem",
+      "/input/leaf.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 672,
+        "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+        "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+      },
+      {
+        "bytes": 1298,
+        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpScX2HJ",
+        "sha256": "a238b58cc7286ee212956a0ae827677e2ed8233d8eb2657e7b6d394bc9b1f1f4"
+      },
+      {
+        "bytes": 430,
+        "path": "tests/fixtures/paper-v1.0.2/related-crl.pem",
+        "sha256": "0d363e45188b5f6ac6e0f7d91a9d925bfdb49984e659fede150589c481631aee"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "reject",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 338,
+      "status_code": 2,
+      "stderr": {
+        "captured_bytes": 420,
+        "data": "Q049cmVsYXRlZCBDZXJ0IEEgKFJTQS0zMDcyKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgNyBhdCAwIGRlcHRoIGxvb2t1cDogY2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKZXJyb3IgL2lucHV0L2xlYWYucGVtOiB2ZXJpZmljYXRpb24gZmFpbGVkCkMwRUZGQkFDRkZGRjAwMDA6ZXJyb3I6MDMwMDAwRUE6ZGlnaXRhbCBlbnZlbG9wZSByb3V0aW5lczpFVlBfRGlnZXN0VmVyaWZ5RmluYWw6cHJvdmlkZXIgc2lnbmF0dXJlIGZhaWx1cmU6Y3J5cHRvL2V2cC9tX3NpZ3Zlci5jOjUzMzpFQ0RTQSBkaWdlc3RfdmVyaWZ5X2ZpbmFsOgpDMEVGRkJBQ0ZGRkYwMDAwOmVycm9yOjA2ODgwMDA2OmFzbjEgZW5jb2Rpbmcgcm91dGluZXM6QVNOMV9pdGVtX3ZlcmlmeV9jdHg6RVZQIGxpYjpjcnlwdG8vYXNuMS9hX3ZlcmlmeS5jOjIyMDoK",
+        "encoding": "base64",
+        "sha256": "0977e6857b3df85e889b74e5e296ed08eb510d126c29d75a6b787666c4d3300c",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 345,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "invalid_binding": {
+    "calculated_digest": "36b328a224eba83d062178126af2afe3e52919d37ed3db3822fe2220e5c74eff",
+    "check": {
+      "confidence": "observed",
+      "state": "fail"
+    },
+    "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+    "embedded_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8"
+  },
+  "post_quantum_crl_status": {
+    "freshness": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "issuer": {
+      "confidence": "observed",
+      "state": "pass"
+    },
+    "revocation": {
+      "confidence": "observed",
+      "state": "fail"
+    },
+    "signature": {
+      "confidence": "observed",
+      "state": "pass"
+    }
+  },
+  "post_quantum_expired_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-leafB-expired.pem,dst=/input/leaf.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "-attime",
+      "1781913600",
+      "-CAfile",
+      "/input/root.pem",
+      "-untrusted",
+      "/input/intermediate.pem",
+      "/input/leaf.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 672,
+        "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+        "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+      },
+      {
+        "bytes": 2455,
+        "path": "tests/fixtures/paper-v1.0.2/related-leafB-expired.pem",
+        "sha256": "0d60e9d1507a4360b83da376822af9132ab0d035ff4bd3718daa6ca7aa2a8556"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "reject",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 344,
+      "status_code": 2,
+      "stderr": {
+        "captured_bytes": 149,
+        "data": "Q049cmVsYXRlZCBMZWFmIEIgRVhQSVJFRCAoTUwtRFNBKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgMTAgYXQgMCBkZXB0aCBsb29rdXA6IGNlcnRpZmljYXRlIGhhcyBleHBpcmVkCmVycm9yIC9pbnB1dC9sZWFmLnBlbTogdmVyaWZpY2F0aW9uIGZhaWxlZAo=",
+        "encoding": "base64",
+        "sha256": "88b781aef4d5182efccc0c6833cd543e4b9d39b18ef7a491316f956dfde1cab2",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 320,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "post_quantum_invalid_binding_path_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-leafB-unbound.pem,dst=/input/leaf.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "-attime",
+      "1781913600",
+      "-CAfile",
+      "/input/root.pem",
+      "-untrusted",
+      "/input/intermediate.pem",
+      "/input/leaf.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 672,
+        "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+        "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+      },
+      {
+        "bytes": 2455,
+        "path": "tests/fixtures/generated-controls/related-leafB-unbound.pem",
+        "sha256": "068316a6aa03ed5288275e8aea398d0bd6cdbfc33110c4910406867f5660b487"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 329,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 20,
+        "data": "L2lucHV0L2xlYWYucGVtOiBPSwo=",
+        "encoding": "base64",
+        "sha256": "eefb6296f05aa7b5dc591fe874c1016270f00f05a71600667e12502cc4755b1c",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 315,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "post_quantum_revocation_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-leafB.pem,dst=/input/leaf.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "-attime",
+      "1781913600",
+      "-CAfile",
+      "/input/root.pem",
+      "-untrusted",
+      "/input/intermediate.pem",
+      "-crl_check",
+      "-CRLfile",
+      "/input/crl.pem",
+      "/input/leaf.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 672,
+        "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+        "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+      },
+      {
+        "bytes": 2443,
+        "path": "tests/fixtures/paper-v1.0.2/related-leafB.pem",
+        "sha256": "ccfe3c46cd33113fd1006dd0e513d6c000800efa51bdb28bed7449c2e427e50c"
+      },
+      {
+        "bytes": 430,
+        "path": "tests/fixtures/paper-v1.0.2/related-crl.pem",
+        "sha256": "0d363e45188b5f6ac6e0f7d91a9d925bfdb49984e659fede150589c481631aee"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "reject",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 319,
+      "status_code": 2,
+      "stderr": {
+        "captured_bytes": 137,
+        "data": "Q049cmVsYXRlZCBMZWFmIEIgKE1MLURTQSksIE89cHFjLXByb2JlLCBDPUtSCmVycm9yIDIzIGF0IDAgZGVwdGggbG9va3VwOiBjZXJ0aWZpY2F0ZSByZXZva2VkCmVycm9yIC9pbnB1dC9sZWFmLnBlbTogdmVyaWZpY2F0aW9uIGZhaWxlZAo=",
+        "encoding": "base64",
+        "sha256": "f79fe44bb3137d370f28c61b5862f9d173127e06f1d4eb9c56470f3fcd7e36c7",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 324,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "post_quantum_validity_control": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "arguments": [
+      "run",
+      "--rm",
+      "--pull=never",
+      "--network=none",
+      "--ipc=none",
+      "--read-only",
+      "--cap-drop=ALL",
+      "--security-opt=no-new-privileges",
+      "--user=65532:65532",
+      "--pids-limit=64",
+      "--memory=768m",
+      "--cpus=2",
+      "--ulimit=nofile=64:64",
+      "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "--mount",
+      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-leafB.pem,dst=/input/leaf.pem,readonly",
+      "--",
+      "hybrid-x509-openssl:4.0.1",
+      "-attime",
+      "1781913600",
+      "-CAfile",
+      "/input/root.pem",
+      "-untrusted",
+      "/input/intermediate.pem",
+      "/input/leaf.pem"
+    ],
+    "executable": "/usr/local/bin/docker",
+    "inputs": [
+      {
+        "bytes": 668,
+        "path": "tests/fixtures/paper-v1.0.2/root.pem",
+        "sha256": "4668237765f0635cf327059fc9aa89423d0cb720b1bc4e74719c28789a7f6dcb"
+      },
+      {
+        "bytes": 672,
+        "path": "tests/fixtures/paper-v1.0.2/ica.pem",
+        "sha256": "39b53d929787b790bbed07e1eb0a23bd9b5238529e2645eed6ca863e9bac6fe6"
+      },
+      {
+        "bytes": 2443,
+        "path": "tests/fixtures/paper-v1.0.2/related-leafB.pem",
+        "sha256": "ccfe3c46cd33113fd1006dd0e513d6c000800efa51bdb28bed7449c2e427e50c"
+      }
+    ],
+    "observation": {
+      "adapter": "openssl-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "source_instrumentation": null,
+    "verification": {
+      "elapsed_milliseconds": 323,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 20,
+        "data": "L2lucHV0L2xlYWYucGVtOiBPSwo=",
+        "encoding": "base64",
+        "sha256": "eefb6296f05aa7b5dc591fe874c1016270f00f05a71600667e12502cc4755b1c",
+        "truncated": false
+      },
+      "timed_out": false
+    },
+    "version": {
+      "elapsed_milliseconds": 332,
+      "status_code": 0,
+      "stderr": {
+        "captured_bytes": 0,
+        "data": "",
+        "encoding": "base64",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "truncated": false
+      },
+      "stdout": {
+        "captured_bytes": 61,
+        "data": "T3BlblNTTCA0LjAuMSA5IEp1biAyMDI2IChMaWJyYXJ5OiBPcGVuU1NMIDQuMC4xIDkgSnVuIDIwMjYpCg==",
+        "encoding": "base64",
+        "sha256": "b848cb252f999aa2923ecec4b0e933b43222ce33d0f629dd8b0d2c6f03624747",
+        "truncated": false
+      },
+      "timed_out": false
+    }
+  },
+  "result": {
+    "api_version": "hybrid-x509-verifier/v1",
+    "certificate_path": [
+      {
+        "id": "end-entity",
+        "position": "end-entity",
+        "scheme": "related"
+      }
+    ],
+    "classical_only_fallback": true,
+    "evaluated_evidence": [
+      {
+        "binding": {
+          "confidence": "observed",
+          "state": "not-applicable"
+        },
+        "certificate_id": "end-entity",
+        "id": "classical-certificate-path",
+        "kind": "classical",
+        "outcome_bearing": {
+          "confidence": "behaviorally-established",
+          "state": "pass"
+        },
+        "path": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "position": "end-entity",
+        "present": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "recognized": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "revocation": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "signature": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "validity": {
+          "confidence": "observed",
+          "state": "pass"
+        }
+      },
+      {
+        "binding": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "certificate_id": "end-entity",
+        "id": "related-post-quantum-certificate",
+        "kind": "post-quantum",
+        "outcome_bearing": {
+          "confidence": "behaviorally-established",
+          "state": "fail"
+        },
+        "path": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "position": "end-entity",
+        "present": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "recognized": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "revocation": {
+          "confidence": "observed",
+          "state": "fail"
+        },
+        "signature": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "validity": {
+          "confidence": "observed",
+          "state": "pass"
+        }
+      }
+    ],
+    "failed_checks": [
+      {
+        "check": "revocation",
+        "confidence": "observed",
+        "evidence_id": "related-post-quantum-certificate",
+        "state": "fail"
+      },
+      {
+        "check": "outcome-bearing",
+        "confidence": "behaviorally-established",
+        "evidence_id": "related-post-quantum-certificate",
+        "state": "fail"
+      }
+    ],
+    "lifecycle_desynchronization": true,
+    "path_scope": "end-entity",
+    "policy": "p2-required-hybrid",
+    "policy_verdict": "reject",
+    "previous_authentication": null,
+    "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+    "stack": {
+      "adapter": "openssl-current",
+      "execution_isolation": "container",
+      "validation_profile": "x509-path",
+      "validation_time": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "verdict": "accept",
+      "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
+      "version_track": "current"
+    },
+    "stack_verdict": "accept",
+    "validation_time": "2026-06-20T00:00:00Z"
+  }
+}

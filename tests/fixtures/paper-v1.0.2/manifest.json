@@ -1,0 +1,174 @@
+{
+  "_about": "Per-artifact DER SHA-256 digests for the deterministic synthetic corpus. All certificates are synthetic, issued under a dedicated test hierarchy; no real credentials.",
+  "corpus_root": "corpus/out",
+  "digest": "sha256(DER)",
+  "determinism": "Fixed signing randomness, validity dates, and serial numbers make the deterministic test-vector corpus byte-identical, EXCEPT composite-*. The auxiliary wolfgen/* controls (used only for the interop-fracture roundtrip) are separately committed, non-byte-reproducible fixed vectors. See per-entry notes.",
+  "count": 20,
+  "artifacts": [
+    {
+      "path": "catalyst-ica.pem",
+      "type": "certificate",
+      "der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
+      "der_bytes": 1808,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "catalyst-leaf.pem",
+      "type": "certificate",
+      "der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+      "der_bytes": 4342,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "chameleon-base.pem",
+      "type": "certificate",
+      "der_sha256": "63b7d0592b7d3a1c70617d6a0d7000a51edba1f2bebd129d8398c183b60ee734",
+      "der_bytes": 2065,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "composite-ica.pem",
+      "type": "certificate",
+      "der_sha256": "f78197fc9ba8eb7b0adbe9b6b05702ad5458ee9f7ebbac79836073eea82e7369",
+      "der_bytes": 1765,
+      "deterministic": false,
+      "generator": "gen.GenValid (BouncyCastle)",
+      "note": "byte-identical regeneration EXCEPTION: BouncyCastle composite KeyPairGenerator ignores the injected SecureRandom -> committed fixed vector (BC gen.GenValid)."
+    },
+    {
+      "path": "composite-leaf.pem",
+      "type": "certificate",
+      "der_sha256": "d5507f200642d53097ec8a5a6498f7ed199d533c134c45401995536cffde8907",
+      "der_bytes": 2944,
+      "deterministic": false,
+      "generator": "gen.GenValid (BouncyCastle)",
+      "note": "byte-identical regeneration EXCEPTION: BouncyCastle composite KeyPairGenerator ignores the injected SecureRandom -> committed fixed vector (BC gen.GenValid)."
+    },
+    {
+      "path": "ica.pem",
+      "type": "certificate",
+      "der_sha256": "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87",
+      "der_bytes": 455,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "orientation-control/canon-certA.pem",
+      "type": "certificate",
+      "der_sha256": "1568f31349f3c82b06bf7133516fc50c79f357e056b789cc9bf22f8509ec1c14",
+      "der_bytes": 857,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "orientation-control/canon-crl.pem",
+      "type": "crl",
+      "der_sha256": "1a5d7af2c73de088fcf947f1192d55394e869940e3ef64548a15d62d1f3a8355",
+      "der_bytes": 284,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "orientation-control/canon-leafB.pem",
+      "type": "certificate",
+      "der_sha256": "193a41eb662b65b23e7be850052a577ece7e38d820942b387f1cd59fefe1757b",
+      "der_bytes": 1830,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "pure-leaf.pem",
+      "type": "certificate",
+      "der_sha256": "71793580c19e1a31a3c69326d7e25eb975e41473723ade4358e9e18b219ef38c",
+      "der_bytes": 1752,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "pure-mldsa-ica.pem",
+      "type": "certificate",
+      "der_sha256": "fadd0c90cd4bb47706739f88f7c183c6c86cfbc9bcdb671aaa81349bf53d5370",
+      "der_bytes": 1698,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "pure-mldsa-signed-leaf.pem",
+      "type": "certificate",
+      "der_sha256": "43cb718134765e3a532eed9a9029490fc84d68e22c9e1a5f4db1ac024e03adcd",
+      "der_bytes": 2872,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "related-certA.pem",
+      "type": "certificate",
+      "der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+      "der_bytes": 917,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "related-crl.pem",
+      "type": "crl",
+      "der_sha256": "7f624be0923cfeb23344f8b6a88c95b3e11fd44dcd9c68a711d3930dabd9b708",
+      "der_bytes": 282,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "related-leafB-expired.pem",
+      "type": "certificate",
+      "der_sha256": "346320e5c3c15c0070dfbbefa82a5a065bc5cfc766ec3914913aff6f95df5cc0",
+      "der_bytes": 1773,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "related-leafB.pem",
+      "type": "certificate",
+      "der_sha256": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+      "der_bytes": 1764,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "root.pem",
+      "type": "certificate",
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "der_bytes": 451,
+      "deterministic": true,
+      "generator": "gen.GenValid (BouncyCastle)"
+    },
+    {
+      "path": "wolfgen/wolfgen-ca.pem",
+      "type": "certificate",
+      "der_sha256": "f013cec9c9f33e1e1df6a3cdbca4b07925db33cdf526931b8c6c4cbffc538a5a",
+      "der_bytes": 1777,
+      "deterministic": false,
+      "generator": "wolfssl_gen_catalyst.c",
+      "note": "byte-identical regeneration EXCEPTION: generated by the wolfSSL cert-gen tool (adapters/wolfssl/wolfssl_gen_catalyst.c); wolfSSL WC_RNG is not seed-fixed -> committed fixed vector. Verified by roundtrip (mode2 accept-good / reject-bad), not byte-identity."
+    },
+    {
+      "path": "wolfgen/wolfgen-leaf-bad.pem",
+      "type": "certificate",
+      "der_sha256": "66145782587a463aeab617d100c669e98b0b12d383cb5cbe9cf70392731fdddb",
+      "der_bytes": 4204,
+      "deterministic": false,
+      "generator": "wolfssl_gen_catalyst.c",
+      "note": "byte-identical regeneration EXCEPTION: generated by the wolfSSL cert-gen tool (adapters/wolfssl/wolfssl_gen_catalyst.c); wolfSSL WC_RNG is not seed-fixed -> committed fixed vector. Verified by roundtrip (mode2 accept-good / reject-bad), not byte-identity."
+    },
+    {
+      "path": "wolfgen/wolfgen-leaf-good.pem",
+      "type": "certificate",
+      "der_sha256": "f77248dea12f137fb6a397cf9679e1d3825871dfbc3c13dc45f9d9b1e7b1b563",
+      "der_bytes": 4202,
+      "deterministic": false,
+      "generator": "wolfssl_gen_catalyst.c",
+      "note": "byte-identical regeneration EXCEPTION: generated by the wolfSSL cert-gen tool (adapters/wolfssl/wolfssl_gen_catalyst.c); wolfSSL WC_RNG is not seed-fixed -> committed fixed vector. Verified by roundtrip (mode2 accept-good / reject-bad), not byte-identity."
+    }
+  ]
+}
