@@ -4,5 +4,3 @@ fuzz/artifacts/
 fuzz/corpus/
 __pycache__/
 *.tmp
-*/*.md
-*.md

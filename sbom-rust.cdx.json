@@ -13,31 +13,31 @@
     ],
     "component": {
       "type": "application",
-      "bom-ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-verifier@0.1.0",
-      "name": "hybrid-x509-verifier",
+      "bom-ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-evidence@0.1.0",
+      "name": "hybrid-x509-evidence",
       "version": "0.1.0",
-      "description": "Policy verifier for classical and post-quantum X.509 authentication evidence",
+      "description": "Policy evaluator for classical and post-quantum X.509 authentication evidence",
       "scope": "required",
       "licenses": [
         {
           "expression": "Apache-2.0"
         }
       ],
-      "purl": "pkg:cargo/hybrid-x509-verifier@0.1.0?download_url=file://.",
+      "purl": "pkg:cargo/hybrid-x509-evidence@0.1.0?download_url=file://.",
       "components": [
         {
           "type": "library",
-          "bom-ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-verifier@0.1.0 bin-target-0",
-          "name": "hybrid_x509_verifier",
+          "bom-ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-evidence@0.1.0 bin-target-0",
+          "name": "hybrid_x509_evidence",
           "version": "0.1.0",
-          "purl": "pkg:cargo/hybrid-x509-verifier@0.1.0?download_url=file://.#src/lib.rs"
+          "purl": "pkg:cargo/hybrid-x509-evidence@0.1.0?download_url=file://.#src/lib.rs"
         },
         {
           "type": "application",
-          "bom-ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-verifier@0.1.0 bin-target-1",
-          "name": "hybrid-x509-verify",
+          "bom-ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-evidence@0.1.0 bin-target-1",
+          "name": "hybrid-x509-evaluate",
           "version": "0.1.0",
-          "purl": "pkg:cargo/hybrid-x509-verifier@0.1.0?download_url=file://.#src/main.rs"
+          "purl": "pkg:cargo/hybrid-x509-evidence@0.1.0?download_url=file://.#src/main.rs"
         }
       ]
     },
@@ -2987,7 +2987,7 @@
   ],
   "dependencies": [
     {
-      "ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-verifier@0.1.0",
+      "ref": "path+file:///Users/gmh/dev/quantum#hybrid-x509-evidence@0.1.0",
       "dependsOn": [
         "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1",
         "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.45",

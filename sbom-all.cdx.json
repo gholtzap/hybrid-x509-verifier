@@ -18,7 +18,7 @@
     "component": {
       "bom-ref": "7c494fc3b6cdc0b7",
       "type": "file",
-      "name": "hybrid-x509-verifier",
+      "name": "hybrid-x509-evidence",
       "version": "0.1.0"
     }
   },
@@ -39,11 +39,11 @@
       ]
     },
     {
-      "bom-ref": "3100d5dc994ef272",
+      "bom-ref": "1ff8f358fa8f2b89",
       "type": "library",
-      "name": "hybrid-x509-verifier",
+      "name": "hybrid-x509-evidence",
       "version": "0.1.0",
-      "cpe": "cpe:2.3:a:hybrid-x509-verifier:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*",
+      "cpe": "cpe:2.3:a:hybrid-x509-evidence:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*",
       "properties": [
         {
           "name": "syft:package:foundBy",
@@ -63,39 +63,39 @@
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509-verifier:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid-x509-evidence:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid_x509_evidence:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid_x509_evidence:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid-x509:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid-x509:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid_x509:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid_x509:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
+          "value": "cpe:2.3:a:hybrid:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
         },
         {
           "name": "syft:location:0:path",
@@ -115,6 +115,87 @@
         {
           "alg": "SHA-256",
           "content": "700f6dde3a821e177d71f5889e69f328c70259a8875ce5551d4bc111114bc860"
+        }
+      ]
+    },
+    {
+      "bom-ref": "679706f840eae991",
+      "type": "library",
+      "name": "hybrid-x509-evidence-fuzz",
+      "version": "0.0.0",
+      "cpe": "cpe:2.3:a:hybrid-x509-evidence-fuzz:hybrid-x509-evidence-fuzz:0.0.0:*:*:*:*:*:*:*",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "rust-cargo-lock-cataloger"
+        },
+        {
+          "name": "syft:package:language",
+          "value": "rust"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "rust-crate"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "rust-cargo-lock-entry"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509-evidence-fuzz:hybrid_x509_evidence_fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509_evidence_fuzz:hybrid-x509-evidence-fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509_evidence_fuzz:hybrid_x509_evidence_fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509-evidence:hybrid-x509-evidence-fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509-evidence:hybrid_x509_evidence_fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509_evidence:hybrid-x509-evidence-fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509_evidence:hybrid_x509_evidence_fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509:hybrid-x509-evidence-fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509:hybrid_x509_evidence_fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509:hybrid-x509-evidence-fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509:hybrid_x509_evidence_fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid:hybrid-x509-evidence-fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid:hybrid_x509_evidence_fuzz:0.0.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/fuzz/Cargo.lock"
         }
       ]
     },
@@ -149,6 +230,71 @@
       ]
     },
     {
+      "bom-ref": "ac0478855fa9a091",
+      "type": "library",
+      "name": "hybrid-x509-evidence",
+      "version": "0.1.0",
+      "cpe": "cpe:2.3:a:hybrid-x509-evidence:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "rust-cargo-lock-cataloger"
+        },
+        {
+          "name": "syft:package:language",
+          "value": "rust"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "rust-crate"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "rust-cargo-lock-entry"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509-evidence:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509_evidence:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509_evidence:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid-x509:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid_x509:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid:hybrid-x509-evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:hybrid:hybrid_x509_evidence:0.1.0:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/fuzz/Cargo.lock"
+        }
+      ]
+    },
+    {
       "bom-ref": "ae686b761c07c0d5",
       "type": "file",
       "name": "/source/tools/bc-x509-adapter/study/pom.xml",
@@ -179,98 +325,17 @@
       ]
     },
     {
-      "bom-ref": "bee7554364659f34",
-      "type": "library",
-      "name": "hybrid-x509-verifier-fuzz",
-      "version": "0.0.0",
-      "cpe": "cpe:2.3:a:hybrid-x509-verifier-fuzz:hybrid-x509-verifier-fuzz:0.0.0:*:*:*:*:*:*:*",
-      "properties": [
-        {
-          "name": "syft:package:foundBy",
-          "value": "rust-cargo-lock-cataloger"
-        },
-        {
-          "name": "syft:package:language",
-          "value": "rust"
-        },
-        {
-          "name": "syft:package:type",
-          "value": "rust-crate"
-        },
-        {
-          "name": "syft:package:metadataType",
-          "value": "rust-cargo-lock-entry"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509-verifier-fuzz:hybrid_x509_verifier_fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier_fuzz:hybrid-x509-verifier-fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier_fuzz:hybrid_x509_verifier_fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509-verifier:hybrid-x509-verifier-fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509-verifier:hybrid_x509_verifier_fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier:hybrid-x509-verifier-fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier:hybrid_x509_verifier_fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509:hybrid-x509-verifier-fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509:hybrid_x509_verifier_fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509:hybrid-x509-verifier-fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509:hybrid_x509_verifier_fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid:hybrid-x509-verifier-fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid:hybrid_x509_verifier_fuzz:0.0.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:location:0:path",
-          "value": "/fuzz/Cargo.lock"
-        }
-      ]
-    },
-    {
       "bom-ref": "c6bea2c24af05bc1",
       "type": "file",
       "name": "/source/Cargo.lock",
       "hashes": [
         {
           "alg": "SHA-1",
-          "content": "3414fec52561166ded14e57fed63781391625db3"
+          "content": "77bc60c6ae7594fe406984cb870e0e131644a258"
         },
         {
           "alg": "SHA-256",
-          "content": "e2e706e0628cfd038d8dbf0b8b5a2d760c2a0358270c103f905819ffb0616238"
+          "content": "278c09b808f6c0d8c7ff026a819443ec0ccd686a0e2a121fadccd8b80983328e"
         }
       ]
     },
@@ -281,76 +346,11 @@
       "hashes": [
         {
           "alg": "SHA-1",
-          "content": "ffdca6eb8328c6114a133c9bd549d6a54b81912e"
+          "content": "6bb8bc3a347e5874e8d7176dc77be74c314d3837"
         },
         {
           "alg": "SHA-256",
-          "content": "6289dc06b0fc02f326fe57ad2f8207f67939ad1c62993c3ca0e139110ac52ad3"
-        }
-      ]
-    },
-    {
-      "bom-ref": "ecab1b149dbf0e74",
-      "type": "library",
-      "name": "hybrid-x509-verifier",
-      "version": "0.1.0",
-      "cpe": "cpe:2.3:a:hybrid-x509-verifier:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*",
-      "properties": [
-        {
-          "name": "syft:package:foundBy",
-          "value": "rust-cargo-lock-cataloger"
-        },
-        {
-          "name": "syft:package:language",
-          "value": "rust"
-        },
-        {
-          "name": "syft:package:type",
-          "value": "rust-crate"
-        },
-        {
-          "name": "syft:package:metadataType",
-          "value": "rust-cargo-lock-entry"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509-verifier:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509_verifier:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid-x509:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid_x509:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid:hybrid-x509-verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:hybrid:hybrid_x509_verifier:0.1.0:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:location:0:path",
-          "value": "/fuzz/Cargo.lock"
+          "content": "fe713532bc6c4626b833665436ecda575c5e4fa026d66bc807f4f7b044230ed9"
         }
       ]
     },
@@ -13062,7 +13062,7 @@
   ],
   "dependencies": [
     {
-      "ref": "3100d5dc994ef272",
+      "ref": "1ff8f358fa8f2b89",
       "dependsOn": [
         "pkg:cargo/base64@0.22.1?package-id=f7b13e75f7c80b9c",
         "pkg:cargo/chrono@0.4.45?package-id=aad7aa71fd718dcb",
@@ -13083,15 +13083,15 @@
       ]
     },
     {
-      "ref": "bee7554364659f34",
+      "ref": "679706f840eae991",
       "dependsOn": [
-        "ecab1b149dbf0e74",
+        "ac0478855fa9a091",
         "pkg:cargo/libfuzzer-sys@0.4.13?package-id=aea676747fed553b",
         "pkg:cargo/serde_json@1.0.151?package-id=3a4c29e4125c75c3"
       ]
     },
     {
-      "ref": "ecab1b149dbf0e74",
+      "ref": "ac0478855fa9a091",
       "dependsOn": [
         "pkg:cargo/base64@0.22.1?package-id=476484336db29a09",
         "pkg:cargo/chrono@0.4.45?package-id=5504e462d60b515d",
