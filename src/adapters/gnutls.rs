@@ -161,7 +161,7 @@ fn verify_container_as(
         (config.leaf.as_path(), "/input/leaf.pem"),
     ];
     let version_arguments =
-        isolated_arguments(&config.image, &mounts, &[OsString::from("--version")])?;
+        isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(GnuTlsError::VersionFailed);
@@ -234,8 +234,21 @@ fn classify(output: &ProcessOutput) -> StackVerdict {
             .any(|oid| message.contains(&format!("Signature algorithm: {oid}")))
     {
         StackVerdict::Unsupported
-    } else {
+    } else if [
+        "not verified",
+        "not trusted",
+        "signature in the certificate is invalid",
+        "certificate is revoked",
+        "certificate has expired",
+        "issuer is unknown",
+        "error parsing",
+    ]
+    .iter()
+    .any(|marker| message.to_lowercase().contains(marker))
+    {
         StackVerdict::Reject
+    } else {
+        StackVerdict::Indeterminate
     }
 }
 
@@ -285,5 +298,24 @@ mod tests {
         assert_eq!(result.observation.verdict, StackVerdict::Accept);
         assert!(result.observation.version.contains("3.8.13"));
         assert_eq!(result.observation.version_track, VersionTrack::Current);
+    }
+
+    #[test]
+    fn unrelated_nonzero_exit_is_indeterminate() {
+        let output = ProcessOutput {
+            status_code: Some(1),
+            timed_out: false,
+            elapsed: Duration::from_millis(1),
+            stdout: crate::process::CapturedStream {
+                bytes: Vec::new(),
+                truncated: false,
+            },
+            stderr: crate::process::CapturedStream {
+                bytes: b"container runtime failed before certificate validation".to_vec(),
+                truncated: false,
+            },
+        };
+
+        assert_eq!(classify(&output), StackVerdict::Indeterminate);
     }
 }

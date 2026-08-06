@@ -124,10 +124,16 @@ pub(crate) fn cached_version_output(
         return Ok(output);
     }
     let output = crate::process::run_program(executable, arguments, limits)?;
-    cache
-        .lock()
-        .map_err(|_| io::Error::other("adapter version cache is poisoned"))?
-        .insert(key, output.clone());
+    if output.status_code == Some(0)
+        && !output.timed_out
+        && !output.stdout.truncated
+        && !output.stderr.truncated
+    {
+        cache
+            .lock()
+            .map_err(|_| io::Error::other("adapter version cache is poisoned"))?
+            .insert(key, output.clone());
+    }
     Ok(output)
 }
 
@@ -257,6 +263,36 @@ mod tests {
         assert_eq!(first.stdout.bytes, b"cached-version");
         assert_eq!(second.stdout.bytes, b"cached-version");
         assert_eq!(std::fs::read_to_string(count).unwrap(), "1");
+    }
+
+    #[test]
+    fn failed_version_output_is_not_cached() {
+        let directory = tempfile::tempdir().unwrap();
+        let count = directory.path().join("count");
+        let script = directory.path().join("version.sh");
+        std::fs::write(
+            &script,
+            format!(
+                "count=$(cat '{}' 2>/dev/null || echo 0)\ncount=$((count + 1))\nprintf '%s' \"$count\" > '{}'\nif [ \"$count\" = 1 ]; then exit 7; fi\nprintf 'cached-version'\n",
+                count.display(),
+                count.display()
+            ),
+        )
+        .unwrap();
+        let arguments = [OsString::from(script.as_os_str())];
+        let limits = ProcessLimits {
+            timeout: Duration::from_secs(1),
+            max_output_bytes: 1024,
+        };
+
+        let first = cached_version_output(Path::new("/bin/sh"), &arguments, limits).unwrap();
+        let second = cached_version_output(Path::new("/bin/sh"), &arguments, limits).unwrap();
+        let third = cached_version_output(Path::new("/bin/sh"), &arguments, limits).unwrap();
+
+        assert_eq!(first.status_code, Some(7));
+        assert_eq!(second.stdout.bytes, b"cached-version");
+        assert_eq!(third.stdout.bytes, b"cached-version");
+        assert_eq!(std::fs::read_to_string(count).unwrap(), "2");
     }
 }
 

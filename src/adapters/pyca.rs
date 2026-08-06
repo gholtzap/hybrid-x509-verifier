@@ -152,7 +152,7 @@ pub fn verify_container(config: &PycaContainerConfig) -> Result<AdapterExecution
         (config.leaf.as_path(), "/input/leaf.pem"),
     ];
     let version_arguments =
-        isolated_arguments(&config.image, &mounts, &[OsString::from("--version")])?;
+        isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(PycaError::VersionFailed);

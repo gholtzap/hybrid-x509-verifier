@@ -475,11 +475,11 @@ mod tests {
         );
         assert_eq!(
             report.scopes[0].result.policy_verdict,
-            PolicyVerdict::HybridClaimSetSatisfied
+            PolicyVerdict::Indeterminate
         );
         assert_eq!(
             report.scopes[1].result.policy_verdict,
-            PolicyVerdict::HybridClaimSetSatisfied
+            PolicyVerdict::Indeterminate
         );
     }
 }

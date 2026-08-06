@@ -1,7 +1,7 @@
 use crate::model::{
     API_VERSION, AlgorithmSecurity, BindingDesign, CheckState, Evidence, EvidenceKind, FailedCheck,
-    PathPosition, Policy, PolicyVerdict, StackVerdict, ValidationProfile, VerificationRequest,
-    VerificationResult,
+    PathObservationSource, PathPosition, Policy, PolicyVerdict, StackVerdict, ValidationProfile,
+    VerificationRequest, VerificationResult,
 };
 use thiserror::Error;
 
@@ -595,6 +595,9 @@ fn authentication_profile_state(profile: ValidationProfile) -> AggregateState {
 }
 
 fn validated_path_state(request: &VerificationRequest) -> AggregateState {
+    if request.stack.selected_path_source != PathObservationSource::AdapterSelected {
+        return AggregateState::Indeterminate;
+    }
     let mut has_end_entity = false;
     let mut has_trust_anchor = false;
     for certificate in &request.certificate_path {

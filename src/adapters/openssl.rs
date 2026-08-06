@@ -180,7 +180,7 @@ pub fn verify_tls(config: &OpenSslTlsConfig) -> Result<OpenSslResult, OpenSslErr
         (config.private_key.as_path(), "/input/key.pem"),
     ];
     let version_arguments =
-        isolated_arguments(&config.image, &mounts, &[OsString::from("--version")])?;
+        isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(OpenSslError::VersionFailed);
@@ -269,7 +269,7 @@ pub(crate) fn verify_container_with_prefix(
     }
     let mut version_command = prefix.to_vec();
     version_command.push(OsString::from("--version"));
-    let version_arguments = isolated_arguments(&config.image, &mounts, &version_command)?;
+    let version_arguments = isolated_arguments(&config.image, &[], &version_command)?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(OpenSslError::VersionFailed);
@@ -342,8 +342,25 @@ pub(crate) fn classify(output: &ProcessOutput) -> StackVerdict {
     .any(|marker| message.contains(marker))
     {
         StackVerdict::Unsupported
-    } else {
+    } else if [
+        "verification failed",
+        "certificate signature failure",
+        "certificate revoked",
+        "certificate has expired",
+        "unable to get",
+        "self-signed certificate",
+        "invalid ca certificate",
+        "path length constraint exceeded",
+        "permitted subtree violation",
+        "excluded subtree violation",
+        "unhandled critical extension",
+    ]
+    .iter()
+    .any(|marker| message.contains(marker))
+    {
         StackVerdict::Reject
+    } else {
+        StackVerdict::Indeterminate
     }
 }
 
@@ -421,6 +438,25 @@ mod tests {
         assert_eq!(report.verification.stdout.encoding, "base64");
         assert_eq!(report.verification.stdout.sha256.len(), 64);
         assert!(!report.verification.stdout.truncated);
+    }
+
+    #[test]
+    fn unrelated_nonzero_exit_is_indeterminate() {
+        let output = ProcessOutput {
+            status_code: Some(2),
+            timed_out: false,
+            elapsed: Duration::from_millis(1),
+            stdout: crate::process::CapturedStream {
+                bytes: Vec::new(),
+                truncated: false,
+            },
+            stderr: crate::process::CapturedStream {
+                bytes: b"container runtime failed before certificate validation".to_vec(),
+                truncated: false,
+            },
+        };
+
+        assert_eq!(classify(&output), StackVerdict::Indeterminate);
     }
 
     #[test]

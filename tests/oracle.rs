@@ -41,7 +41,7 @@ fn request(policy: Policy) -> VerificationRequest {
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: hybrid_x509_evidence::ExecutionIsolation::Container,
             selected_path_der_sha256: vec![LEAF_DER.to_owned(), ROOT_DER.to_owned()],
-            selected_path_source: PathObservationSource::PresentedInput,
+            selected_path_source: PathObservationSource::AdapterSelected,
             trust_anchor_der_sha256: ROOT_DER.to_owned(),
             applied_validation_time: "2026-06-20T00:00:00Z".to_owned(),
             validation_time: CheckResult::observed(CheckState::Pass),
@@ -86,6 +86,16 @@ fn p2_accepts_only_when_both_evidence_sets_pass() {
         PolicyVerdict::HybridClaimSetSatisfied
     );
     assert!(!result.classical_only_fallback);
+}
+
+#[test]
+fn p2_with_presented_input_path_source_is_indeterminate() {
+    let mut request = request(Policy::P2RequiredHybrid);
+    request.stack.selected_path_source = PathObservationSource::PresentedInput;
+
+    let result = evaluate(&request).unwrap();
+
+    assert_eq!(result.policy_verdict, PolicyVerdict::Indeterminate);
 }
 
 #[test]

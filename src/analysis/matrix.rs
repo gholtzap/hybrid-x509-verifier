@@ -549,8 +549,8 @@ fn push(entries: &mut Vec<MatrixEntry>, case: Case, variant: MatrixVariant, repo
         operation,
         allowed_stack_verdicts: allowed_stack_verdicts(case, variant, &adapter, operation),
         process_execution: MatrixProcessExecution {
-            version: process_record_check(&report.version),
-            verification: process_record_check(&report.verification),
+            version: process_record_check(&report.version, StackVerdict::Accept),
+            verification: process_record_check(&report.verification, report.observation.verdict),
         },
         claim_id: format!(
             "fixture-matrix:{}:{variant:?}:{operation:?}:{adapter}",
@@ -562,13 +562,15 @@ fn push(entries: &mut Vec<MatrixEntry>, case: Case, variant: MatrixVariant, repo
     });
 }
 
-fn process_record_check(record: &ProcessRecord) -> CheckResult {
+fn process_record_check(record: &ProcessRecord, verdict: StackVerdict) -> CheckResult {
     let completed = record.status_code.is_some()
         && !record.timed_out
         && !record.stdout.truncated
         && !record.stderr.truncated;
+    let has_semantic_result =
+        record.status_code == Some(0) || verdict != StackVerdict::Indeterminate;
     CheckResult {
-        state: if completed {
+        state: if completed && has_semantic_result {
             CheckState::Pass
         } else {
             CheckState::Fail
@@ -737,10 +739,21 @@ mod tests {
                 truncated: false,
             },
         };
-        assert_eq!(process_record_check(&record).state, CheckState::Pass);
+        assert_eq!(
+            process_record_check(&record, StackVerdict::Reject).state,
+            CheckState::Pass
+        );
+
+        assert_eq!(
+            process_record_check(&record, StackVerdict::Indeterminate).state,
+            CheckState::Fail
+        );
 
         record.timed_out = true;
-        assert_eq!(process_record_check(&record).state, CheckState::Fail);
+        assert_eq!(
+            process_record_check(&record, StackVerdict::Reject).state,
+            CheckState::Fail
+        );
     }
 
     #[test]

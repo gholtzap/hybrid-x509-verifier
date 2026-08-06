@@ -78,7 +78,7 @@ pub fn verify(config: &WolfSslConfig) -> Result<AdapterExecution, WolfSslError> 
     }
     let version_arguments = isolated_arguments(
         &config.image,
-        &mounts,
+        &[],
         &[
             OsString::from(config.mode.argument()),
             OsString::from("--version"),

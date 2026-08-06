@@ -76,7 +76,8 @@ pub fn verify(config: &BouncyCastleConfig) -> Result<AdapterExecution, BouncyCas
         timeout: config.timeout,
         max_output_bytes: config.max_output_bytes,
     };
-    let version_arguments = container_arguments(config, &[OsString::from("--version")])?;
+    let version_arguments =
+        isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(BouncyCastleError::VersionFailed {
@@ -210,6 +211,9 @@ fn container_arguments(
 mod tests {
     use super::*;
     use crate::StackVerdict;
+    use std::fs;
+    #[cfg(unix)]
+    use std::os::unix::fs::PermissionsExt;
     use std::path::Path;
 
     fn config(leaf: PathBuf, mode: BouncyCastleMode) -> BouncyCastleConfig {
@@ -295,5 +299,49 @@ mod tests {
             }
             other => panic!("unexpected error: {other:?}"),
         }
+    }
+
+    #[test]
+    fn version_probe_is_cached_per_image_not_per_leaf() {
+        let directory = tempfile::tempdir().unwrap();
+        let count = directory.path().join("count");
+        let docker = directory.path().join("docker");
+        fs::write(
+            &docker,
+            format!(
+                "#!/bin/sh\nfor argument in \"$@\"; do\n  if [ \"$argument\" = --version ]; then\n    count=$(cat '{}' 2>/dev/null || echo 0)\n    count=$((count + 1))\n    printf '%s' \"$count\" > '{}'\n    printf '1.84'\n    exit 0\n  fi\ndone\nprintf '{{\"verdict\":\"reject\"}}'\n",
+                count.display(),
+                count.display()
+            ),
+        )
+        .unwrap();
+        #[cfg(unix)]
+        {
+            let mut permissions = fs::metadata(&docker).unwrap().permissions();
+            permissions.set_mode(0o755);
+            fs::set_permissions(&docker, permissions).unwrap();
+        }
+
+        let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
+        let base = BouncyCastleConfig {
+            docker,
+            image: "hybrid-x509-bouncycastle:1.84".to_owned(),
+            trust_store: repository.join("tests/fixtures/paper-v1.0.2/root.pem"),
+            intermediate: repository.join("tests/fixtures/paper-v1.0.2/ica.pem"),
+            leaf: repository.join("tests/fixtures/paper-v1.0.2/related-certA.pem"),
+            validation_time: "2026-06-20T00:00:00Z".to_owned(),
+            timeout: Duration::from_secs(1),
+            max_output_bytes: 64 * 1024,
+            mode: BouncyCastleMode::Path,
+            private_key: None,
+            crl: None,
+        };
+        let mut other = base.clone();
+        other.leaf = repository.join("tests/fixtures/paper-v1.0.2/pure-leaf.pem");
+
+        verify(&base).unwrap();
+        verify(&other).unwrap();
+
+        assert_eq!(fs::read_to_string(count).unwrap(), "1");
     }
 }
