@@ -76,6 +76,7 @@
     ],
     "observation": {
       "adapter": "bouncycastle-java-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "evidence-signature",
       "validation_time": {
@@ -87,7 +88,7 @@
       "version_track": "current"
     },
     "source_instrumentation": {
-      "confidence": "observed",
+      "confidence": "behaviorally-established",
       "events": [
         {
           "algorithm": null,
@@ -114,10 +115,11 @@
           "target": "leaf"
         }
       ],
-      "extensions": []
+      "extensions": [],
+      "instrumentation_scope": "adapter"
     },
     "verification": {
-      "elapsed_milliseconds": 880,
+      "elapsed_milliseconds": 670,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -136,7 +138,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 1242,
+      "elapsed_milliseconds": 577,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

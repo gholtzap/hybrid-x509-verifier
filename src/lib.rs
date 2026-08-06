@@ -11,3 +11,9 @@ pub mod process;
 
 pub use model::*;
 pub use oracle::{OracleError, evaluate};
+
+#[cfg(test)]
+pub(crate) fn adapter_test_lock() -> std::sync::MutexGuard<'static, ()> {
+    static LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+    LOCK.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
+}

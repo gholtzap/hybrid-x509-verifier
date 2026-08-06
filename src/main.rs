@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand, ValueEnum};
-use hybrid_x509_verifier::{
+use hybrid_x509_evidence::{
     AdapterReport, AuthenticationLevel, VerificationRequest, VerificationResult,
     adapters::bouncy_castle::{
         BouncyCastleConfig, BouncyCastleMode, verify as verify_bouncy_castle,
@@ -65,8 +65,8 @@ use hybrid_x509_verifier::{
 use std::{fs, path::PathBuf, process::ExitCode, time::Duration};
 
 #[derive(Debug, Parser)]
-#[command(name = "hybrid-x509-verify")]
-#[command(about = "Evaluate X.509 authentication evidence against an explicit hybrid policy")]
+#[command(name = "hybrid-x509-evaluate")]
+#[command(about = "Evaluate trusted X.509 evidence claims against an explicit hybrid policy")]
 struct Args {
     #[command(subcommand)]
     command: Command,
@@ -948,7 +948,7 @@ impl From<BouncyCastleModeArgument> for BouncyCastleMode {
     }
 }
 
-impl From<PolicyArgument> for hybrid_x509_verifier::Policy {
+impl From<PolicyArgument> for hybrid_x509_evidence::Policy {
     fn from(policy: PolicyArgument) -> Self {
         match policy {
             PolicyArgument::P0 => Self::P0Classical,
@@ -1051,6 +1051,8 @@ fn run(args: Args) -> Result<(), Box<dyn std::error::Error>> {
             OcspPolicy {
                 max_age: Duration::from_secs(max_age_seconds),
                 clock_skew: Duration::from_secs(clock_skew_seconds),
+                revocation_mode: hybrid_x509_evidence::ocsp::RevocationPolicyMode::SoftFail,
+                delegated_responder_revocation: None,
             },
             input_limit_bytes,
         )?)?,

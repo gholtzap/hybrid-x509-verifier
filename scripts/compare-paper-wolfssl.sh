@@ -8,7 +8,7 @@ trap 'rm -rf "$tmp"' EXIT
 
 for mode in default dual-algorithm; do
   for case in good bad; do
-    cargo run --quiet --locked --manifest-path "$repo/Cargo.toml" --bin hybrid-x509-verify -- \
+    cargo run --quiet --locked --manifest-path "$repo/Cargo.toml" --bin hybrid-x509-evaluate -- \
       probe-wolf-ssl \
       --mode "$mode" \
       --scheme catalyst-wolfgen \

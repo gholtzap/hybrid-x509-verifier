@@ -1,5 +1,5 @@
 [package]
-name = "hybrid-x509-verifier-fuzz"
+name = "hybrid-x509-evidence-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2024"
@@ -10,7 +10,7 @@ cargo-fuzz = true
 [dependencies]
 libfuzzer-sys = "0.4"
 serde_json = "1.0"
-hybrid-x509-verifier = { path = ".." }
+hybrid-x509-evidence = { path = ".." }
 
 [[bin]]
 name = "pem"

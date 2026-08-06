@@ -1,7 +1,7 @@
 use crate::{
-    API_VERSION, AdapterReport, CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind,
-    OracleError, PathPosition, PathScope, Policy, Scheme, StackVerdict, VerificationRequest,
-    VerificationResult,
+    API_VERSION, AdapterReport, AlgorithmSecurity, BindingDesign, CheckResult, CheckState,
+    Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, StackVerdict,
+    VerificationRequest, VerificationResult,
     adapters::{
         AdapterSupportError,
         bouncy_castle::{
@@ -9,7 +9,8 @@ use crate::{
         },
     },
     analysis::{
-        behavioral_check,
+        LeafPathProperties, behavioral_check, certificate_der_hash, end_entity_certification_path,
+        issuer_edge_hash,
         tls::{
             TlsObservationError, TlsTranscriptConfig, TlsTranscriptEvidence, observe_transcript,
         },
@@ -79,7 +80,8 @@ pub fn analyze(config: &ChameleonTlsConfig) -> Result<ChameleonTlsReport, Chamel
         &config.valid_base_certificate,
         &config.invalid_delta_base_certificate,
     ] {
-        if inspect_certificate(certificate, INPUT_LIMIT)?.scheme != Scheme::Chameleon {
+        if inspect_certificate(certificate, INPUT_LIMIT)?.binding_design != BindingDesign::Chameleon
+        {
             return Err(ChameleonTlsError::WrongScheme);
         }
     }
@@ -143,6 +145,9 @@ pub fn analyze(config: &ChameleonTlsConfig) -> Result<ChameleonTlsReport, Chamel
         &config.validation_time,
         INPUT_LIMIT,
     )?;
+    let certificate_der_sha256 = certificate_der_hash(&config.valid_base_certificate, INPUT_LIMIT)?;
+    let issuer_edge_sha256 =
+        issuer_edge_hash(&config.valid_base_certificate, &config.issuer, INPUT_LIMIT)?;
     let present = CheckResult::observed(CheckState::Pass);
     let revocation = CheckResult::observed(CheckState::NotChecked);
     let delta_signature = CheckResult::observed(match valid_delta.observation.verdict {
@@ -157,16 +162,24 @@ pub fn analyze(config: &ChameleonTlsConfig) -> Result<ChameleonTlsReport, Chamel
         validation_time: config.validation_time.clone(),
         previous_authentication: None,
         stack: valid_base_tls.report.observation.clone(),
-        certificate_path: vec![CertificateNode {
-            id: "end-entity".to_owned(),
-            position: PathPosition::EndEntity,
-            scheme: Scheme::Chameleon,
-        }],
+        certificate_path: end_entity_certification_path(
+            &config.valid_base_certificate,
+            &config.issuer,
+            &config.trust_store,
+            LeafPathProperties {
+                subject_public_key_scheme: AlgorithmSecurity::Classical,
+                certificate_signature_scheme: AlgorithmSecurity::Classical,
+                binding_design: BindingDesign::Chameleon,
+            },
+            INPUT_LIMIT,
+        )?,
         evidence: vec![
             Evidence {
                 id: "delta-classical-certificate".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::Classical,
                 present,
                 recognized: present,
@@ -181,12 +194,14 @@ pub fn analyze(config: &ChameleonTlsConfig) -> Result<ChameleonTlsReport, Chamel
                 ),
                 validity: delta_validity,
                 revocation,
-                outcome_bearing: classical_outcome,
+                decision_sensitive_for_fixture: classical_outcome,
             },
             Evidence {
                 id: "base-mldsa-certificate".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::PostQuantum,
                 present,
                 recognized: present,
@@ -195,7 +210,7 @@ pub fn analyze(config: &ChameleonTlsConfig) -> Result<ChameleonTlsReport, Chamel
                 path,
                 validity: base_validity,
                 revocation,
-                outcome_bearing: post_quantum_outcome,
+                decision_sensitive_for_fixture: post_quantum_outcome,
             },
         ],
     };
@@ -256,7 +271,8 @@ mod tests {
     use std::path::Path;
 
     #[test]
-    fn base_tls_does_not_make_delta_evidence_outcome_bearing() {
+    fn base_tls_does_not_make_delta_evidence_decision_sensitive_for_fixture() {
+        let _guard = crate::adapter_test_lock();
         let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
         let fixtures = repository.join("tests/fixtures/paper-v1.0.2");
         let controls = repository.join("tests/fixtures/generated-controls");

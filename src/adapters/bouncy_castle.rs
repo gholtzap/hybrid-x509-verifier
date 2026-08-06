@@ -1,11 +1,13 @@
 use super::{
-    AdapterExecution, AdapterSupportError, classify_json_verdict, container::isolated_arguments,
-    record_inputs, resolve_executable,
+    AdapterExecution, AdapterSupportError, cached_version_output, classify_json_verdict,
+    container::isolated_arguments, record_inputs, resolve_executable, selected_path_hashes,
 };
 use crate::{
-    CheckResult, CheckState, ExecutionIsolation, StackObservation, ValidationProfile, VersionTrack,
+    CheckResult, CheckState, ExecutionIsolation, PathObservationSource, ProcessRecord,
+    StackObservation, ValidationProfile, VersionTrack,
     process::{ProcessLimits, run_program},
 };
+use serde::Deserialize;
 use std::{ffi::OsString, io, path::PathBuf, time::Duration};
 use thiserror::Error;
 
@@ -35,10 +37,15 @@ pub enum BouncyCastleMode {
     CertificateSignature,
 }
 
+#[derive(Debug, Deserialize)]
+struct PathBuilderOutput {
+    selected_path_sha256: Vec<String>,
+}
+
 #[derive(Debug, Error)]
 pub enum BouncyCastleError {
-    #[error("Bouncy Castle adapter version command did not complete successfully")]
-    VersionFailed,
+    #[error("Bouncy Castle adapter version command did not complete successfully: {output:?}")]
+    VersionFailed { output: Box<ProcessRecord> },
     #[error("TLS transcript mode requires a private key")]
     MissingPrivateKey,
     #[error("CRL status mode requires a CRL")]
@@ -70,9 +77,11 @@ pub fn verify(config: &BouncyCastleConfig) -> Result<AdapterExecution, BouncyCas
         max_output_bytes: config.max_output_bytes,
     };
     let version_arguments = container_arguments(config, &[OsString::from("--version")])?;
-    let version_output = run_program(&executable, &version_arguments, limits)?;
+    let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
-        return Err(BouncyCastleError::VersionFailed);
+        return Err(BouncyCastleError::VersionFailed {
+            output: Box::new(ProcessRecord::from(&version_output)),
+        });
     }
     let version = String::from_utf8_lossy(&version_output.stdout.bytes)
         .trim()
@@ -111,6 +120,34 @@ pub fn verify(config: &BouncyCastleConfig) -> Result<AdapterExecution, BouncyCas
     let arguments = container_arguments(config, &adapter_arguments)?;
     let verification_output = run_program(&executable, &arguments, limits)?;
     let verdict = classify_json_verdict(&verification_output);
+    let (selected_path_der_sha256, selected_path_source, trust_anchor_der_sha256) =
+        if config.mode == BouncyCastleMode::PathBuilder && verdict == crate::StackVerdict::Accept {
+            let output: PathBuilderOutput =
+                serde_json::from_slice(&verification_output.stdout.bytes)
+                    .map_err(io::Error::other)?;
+            let trust_anchor =
+                output.selected_path_sha256.last().cloned().ok_or_else(|| {
+                    io::Error::other("path-builder did not report a selected path")
+                })?;
+            (
+                output.selected_path_sha256,
+                PathObservationSource::AdapterSelected,
+                trust_anchor,
+            )
+        } else if config.mode == BouncyCastleMode::PathBuilder {
+            (
+                Vec::new(),
+                PathObservationSource::NotReported,
+                String::new(),
+            )
+        } else {
+            let (path, anchor) = selected_path_hashes(
+                &config.leaf,
+                Some(&config.intermediate),
+                &config.trust_store,
+            )?;
+            (path, PathObservationSource::PresentedInput, anchor)
+        };
 
     Ok(AdapterExecution {
         observation: StackObservation {
@@ -129,6 +166,10 @@ pub fn verify(config: &BouncyCastleConfig) -> Result<AdapterExecution, BouncyCas
                 BouncyCastleMode::CertificateSignature => ValidationProfile::EvidenceSignature,
             },
             execution_isolation: ExecutionIsolation::Container,
+            selected_path_der_sha256,
+            selected_path_source,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(match config.mode {
                 BouncyCastleMode::Path | BouncyCastleMode::PathBuilder => CheckState::Pass,
                 BouncyCastleMode::AlternativeSignature | BouncyCastleMode::DeltaSignature => {
@@ -190,6 +231,7 @@ mod tests {
 
     #[test]
     fn chameleon_delta_signature_is_independent_from_default_path_acceptance() {
+        let _guard = crate::adapter_test_lock();
         let controls =
             Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/generated-controls");
         let valid = controls.join("chameleon-base-valid-delta.pem");
@@ -227,5 +269,31 @@ mod tests {
                 .operation,
             "check-delta-certificate-signature"
         );
+    }
+
+    #[test]
+    fn version_failure_preserves_process_evidence() {
+        let error = verify(&BouncyCastleConfig {
+            docker: "/usr/bin/false".into(),
+            image: "unused".to_owned(),
+            trust_store: "tests/fixtures/paper-v1.0.2/root.pem".into(),
+            intermediate: "tests/fixtures/paper-v1.0.2/ica.pem".into(),
+            leaf: "tests/fixtures/paper-v1.0.2/related-certA.pem".into(),
+            validation_time: "2026-06-20T00:00:00Z".to_owned(),
+            timeout: Duration::from_secs(1),
+            max_output_bytes: 64 * 1024,
+            mode: BouncyCastleMode::Path,
+            private_key: None,
+            crl: None,
+        })
+        .unwrap_err();
+
+        match error {
+            BouncyCastleError::VersionFailed { output } => {
+                assert_eq!(output.status_code, Some(1));
+                assert!(!output.timed_out);
+            }
+            other => panic!("unexpected error: {other:?}"),
+        }
     }
 }

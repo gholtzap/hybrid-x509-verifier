@@ -22,11 +22,22 @@ use x509_parser::{
 
 const BASIC_OCSP_RESPONSE_OID: &str = "1.3.6.1.5.5.7.48.1.1";
 const OCSP_NONCE_OID: &str = "1.3.6.1.5.5.7.48.1.2";
+const OCSP_NOCHECK_OID: &str = "1.3.6.1.5.5.7.48.1.5";
 
 #[derive(Debug, Clone, Copy)]
 pub struct OcspPolicy {
     pub max_age: Duration,
     pub clock_skew: Duration,
+    pub revocation_mode: RevocationPolicyMode,
+    pub delegated_responder_revocation: Option<CheckResult>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum RevocationPolicyMode {
+    HardFail,
+    SoftFail,
+    NotRequired,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -50,7 +61,8 @@ pub struct OcspStatusResult {
     pub extensions: CheckResult,
     pub nonce: CheckResult,
     pub revocation: CheckResult,
-    pub certificate_status: OcspCertificateStatus,
+    pub response_certificate_status: OcspCertificateStatus,
+    pub effective_status_at_validation_time: OcspCertificateStatus,
 }
 
 #[derive(Debug, Error)]
@@ -136,7 +148,7 @@ pub fn check_ocsp_status(
     }
 
     let (responder_state, signature_state) =
-        responder_and_signature_states(&basic, &issuer, validation_timestamp)?;
+        responder_and_signature_states(&basic, &issuer, validation_timestamp, &policy)?;
     let issuer_state = if certificate.issuer() != issuer.subject()
         || certificate.signature_algorithm != certificate.tbs_certificate.signature
     {
@@ -171,13 +183,13 @@ pub fn check_ocsp_status(
     });
     let nonce_state = check_nonce(&basic, expected_nonce.as_deref());
     let extensions_state = state(ocsp_extensions_valid(&basic));
-    let certificate_status = single.map_or(OcspCertificateStatus::Unknown, |single| {
-        match single.cert_status {
-            CertStatus::Good(_) => OcspCertificateStatus::Good,
-            CertStatus::Revoked(_) => OcspCertificateStatus::Revoked,
-            CertStatus::Unknown(_) => OcspCertificateStatus::Unknown,
-        }
-    });
+    let (response_certificate_status, effective_status_at_validation_time) = single.map_or(
+        (
+            OcspCertificateStatus::Unknown,
+            OcspCertificateStatus::Unknown,
+        ),
+        |single| certificate_status_at(&single.cert_status, validation_timestamp),
+    );
     let prerequisites = responder_state == CheckState::Pass
         && signature_state == CheckState::Pass
         && issuer_state == CheckState::Pass
@@ -185,14 +197,11 @@ pub fn check_ocsp_status(
         && freshness
         && extensions_state == CheckState::Pass
         && (expected_nonce.is_none() || nonce_state == CheckState::Pass);
-    let revocation_state = if !prerequisites || certificate_status == OcspCertificateStatus::Unknown
-    {
-        CheckState::Indeterminate
-    } else if certificate_status == OcspCertificateStatus::Revoked {
-        CheckState::Fail
-    } else {
-        CheckState::Pass
-    };
+    let revocation_state = revocation_state(
+        policy.revocation_mode,
+        prerequisites,
+        effective_status_at_validation_time,
+    );
 
     Ok(OcspStatusResult {
         response_status: observed(CheckState::Pass),
@@ -204,7 +213,8 @@ pub fn check_ocsp_status(
         extensions: observed(extensions_state),
         nonce: observed(nonce_state),
         revocation: observed(revocation_state),
-        certificate_status,
+        response_certificate_status,
+        effective_status_at_validation_time,
     })
 }
 
@@ -242,6 +252,54 @@ fn parse_ocsp_der(bytes: &[u8], source: &str) -> Result<Option<BasicOcspResponse
         })
 }
 
+fn certificate_status_at(
+    status: &CertStatus,
+    validation_timestamp: i64,
+) -> (OcspCertificateStatus, OcspCertificateStatus) {
+    match status {
+        CertStatus::Good(_) => (OcspCertificateStatus::Good, OcspCertificateStatus::Good),
+        CertStatus::Unknown(_) => (
+            OcspCertificateStatus::Unknown,
+            OcspCertificateStatus::Unknown,
+        ),
+        CertStatus::Revoked(info) => {
+            let revocation_timestamp = info.revocation_time.0.to_unix_duration().as_secs();
+            let is_currently_revoked = u64::try_from(validation_timestamp)
+                .is_ok_and(|validation| revocation_timestamp <= validation);
+            (
+                OcspCertificateStatus::Revoked,
+                if is_currently_revoked {
+                    OcspCertificateStatus::Revoked
+                } else {
+                    OcspCertificateStatus::Good
+                },
+            )
+        }
+    }
+}
+
+fn revocation_state(
+    mode: RevocationPolicyMode,
+    prerequisites: bool,
+    effective_status: OcspCertificateStatus,
+) -> CheckState {
+    match mode {
+        RevocationPolicyMode::NotRequired => CheckState::NotApplicable,
+        RevocationPolicyMode::SoftFail
+            if !prerequisites || effective_status == OcspCertificateStatus::Unknown =>
+        {
+            CheckState::Indeterminate
+        }
+        RevocationPolicyMode::HardFail
+            if !prerequisites || effective_status == OcspCertificateStatus::Unknown =>
+        {
+            CheckState::Fail
+        }
+        _ if effective_status == OcspCertificateStatus::Revoked => CheckState::Fail,
+        _ => CheckState::Pass,
+    }
+}
+
 fn read_bounded(path: &Path, limit: usize) -> Result<Vec<u8>, OcspError> {
     let display = path.display().to_string();
     read_bounded_file(path, limit).map_err(|error| match error {
@@ -268,7 +326,8 @@ fn unavailable_result() -> OcspStatusResult {
         extensions: indeterminate,
         nonce: indeterminate,
         revocation: indeterminate,
-        certificate_status: OcspCertificateStatus::Unavailable,
+        response_certificate_status: OcspCertificateStatus::Unavailable,
+        effective_status_at_validation_time: OcspCertificateStatus::Unavailable,
     }
 }
 
@@ -336,6 +395,7 @@ fn responder_and_signature_states(
     basic: &BasicOcspResponse,
     issuer: &x509_parser::certificate::X509Certificate<'_>,
     validation_timestamp: i64,
+    policy: &OcspPolicy,
 ) -> Result<(CheckState, CheckState), OcspError> {
     if responder_matches_certificate(basic, issuer) {
         return Ok((CheckState::Pass, basic_signature_state(basic, issuer)?));
@@ -360,7 +420,7 @@ fn responder_and_signature_states(
             return Ok((CheckState::Fail, CheckState::Indeterminate));
         }
         result = Some((
-            delegated_responder_state(&candidate, issuer, validation_timestamp),
+            delegated_responder_state(&candidate, issuer, validation_timestamp, policy),
             basic_signature_state(basic, &candidate)?,
         ));
     }
@@ -371,6 +431,7 @@ fn delegated_responder_state(
     responder: &x509_parser::certificate::X509Certificate<'_>,
     issuer: &x509_parser::certificate::X509Certificate<'_>,
     validation_timestamp: i64,
+    policy: &OcspPolicy,
 ) -> CheckState {
     if responder.issuer() != issuer.subject()
         || responder.signature_algorithm != responder.tbs_certificate.signature
@@ -396,8 +457,25 @@ fn delegated_responder_state(
     match responder.key_usage() {
         Ok(Some(usage)) if !usage.value.digital_signature() => CheckState::Fail,
         Err(_) => CheckState::Fail,
-        _ => CheckState::Pass,
+        _ => {
+            if responder_has_ocsp_nocheck(responder)
+                || policy
+                    .delegated_responder_revocation
+                    .is_some_and(|check| check.state == CheckState::Pass)
+            {
+                CheckState::Pass
+            } else {
+                CheckState::Indeterminate
+            }
+        }
     }
+}
+
+fn responder_has_ocsp_nocheck(responder: &x509_parser::certificate::X509Certificate<'_>) -> bool {
+    responder
+        .extensions()
+        .iter()
+        .any(|extension| !extension.critical && extension.oid.to_id_string() == OCSP_NOCHECK_OID)
 }
 
 fn basic_signature_state(
@@ -563,6 +641,8 @@ mod tests {
             OcspPolicy {
                 max_age: Duration::from_secs(7 * 24 * 60 * 60),
                 clock_skew: Duration::from_secs(5 * 60),
+                revocation_mode: RevocationPolicyMode::SoftFail,
+                delegated_responder_revocation: None,
             },
             64 * 1024,
         )
@@ -593,8 +673,64 @@ mod tests {
         assert_eq!(result.response_status, observed(CheckState::Fail));
         assert_eq!(result.revocation, observed(CheckState::Indeterminate));
         assert_eq!(
-            result.certificate_status,
+            result.response_certificate_status,
             OcspCertificateStatus::Unavailable
+        );
+    }
+
+    #[test]
+    fn revoked_status_uses_the_revocation_time() {
+        let status = CertStatus::Revoked(x509_ocsp::RevokedInfo {
+            revocation_time: x509_ocsp::OcspGeneralizedTime::from(
+                der::DateTime::new(2026, 6, 22, 0, 0, 0).unwrap(),
+            ),
+            revocation_reason: None,
+        });
+        let before = chrono::DateTime::parse_from_rfc3339("2026-06-21T00:00:00Z")
+            .unwrap()
+            .timestamp();
+        let after = chrono::DateTime::parse_from_rfc3339("2026-06-23T00:00:00Z")
+            .unwrap()
+            .timestamp();
+
+        assert_eq!(
+            certificate_status_at(&status, before),
+            (OcspCertificateStatus::Revoked, OcspCertificateStatus::Good)
+        );
+        assert_eq!(
+            certificate_status_at(&status, after),
+            (
+                OcspCertificateStatus::Revoked,
+                OcspCertificateStatus::Revoked
+            )
+        );
+    }
+
+    #[test]
+    fn revocation_policy_modes_are_explicit() {
+        assert_eq!(
+            revocation_state(
+                RevocationPolicyMode::HardFail,
+                false,
+                OcspCertificateStatus::Good
+            ),
+            CheckState::Fail
+        );
+        assert_eq!(
+            revocation_state(
+                RevocationPolicyMode::SoftFail,
+                false,
+                OcspCertificateStatus::Good
+            ),
+            CheckState::Indeterminate
+        );
+        assert_eq!(
+            revocation_state(
+                RevocationPolicyMode::NotRequired,
+                false,
+                OcspCertificateStatus::Revoked
+            ),
+            CheckState::NotApplicable
         );
     }
 
@@ -608,7 +744,10 @@ mod tests {
         assert_eq!(result.certificate_id, observed(CheckState::Pass));
         assert_eq!(result.freshness, observed(CheckState::Pass));
         assert_eq!(result.revocation, observed(CheckState::Pass));
-        assert_eq!(result.certificate_status, OcspCertificateStatus::Good);
+        assert_eq!(
+            result.response_certificate_status,
+            OcspCertificateStatus::Good
+        );
     }
 
     #[test]
@@ -642,6 +781,8 @@ mod tests {
             OcspPolicy {
                 max_age: Duration::from_secs(60),
                 clock_skew: Duration::ZERO,
+                revocation_mode: RevocationPolicyMode::SoftFail,
+                delegated_responder_revocation: None,
             },
             64 * 1024,
         )
@@ -717,11 +858,13 @@ mod tests {
                 OcspPolicy {
                     max_age: Duration::from_secs(7 * 24 * 60 * 60),
                     clock_skew: Duration::from_secs(5 * 60),
+                    revocation_mode: RevocationPolicyMode::SoftFail,
+                    delegated_responder_revocation: None,
                 },
                 64 * 1024,
             )
             .unwrap();
-            assert_eq!(result.certificate_status, status, "{response}");
+            assert_eq!(result.response_certificate_status, status, "{response}");
             assert_eq!(result.freshness.state, freshness, "{response}");
             assert_eq!(result.revocation.state, revocation, "{response}");
         }
@@ -743,6 +886,8 @@ mod tests {
                 OcspPolicy {
                     max_age: Duration::from_secs(7 * 24 * 60 * 60),
                     clock_skew: Duration::from_secs(5 * 60),
+                    revocation_mode: RevocationPolicyMode::SoftFail,
+                    delegated_responder_revocation: None,
                 },
                 64 * 1024,
             )
@@ -770,13 +915,13 @@ mod tests {
     }
 
     #[test]
-    fn delegated_responder_requires_ocsp_signing_authorization() {
+    fn delegated_responder_requires_ocsp_signing_and_revocation_policy() {
         let paper = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2");
         for (name, responder_state, revocation_state) in [
             (
                 "related-leafB-delegated-ocsp.der.b64",
-                CheckState::Pass,
-                CheckState::Pass,
+                CheckState::Indeterminate,
+                CheckState::Indeterminate,
             ),
             (
                 "related-leafB-delegated-no-eku-ocsp.der.b64",
@@ -795,6 +940,8 @@ mod tests {
                 OcspPolicy {
                     max_age: Duration::from_secs(7 * 24 * 60 * 60),
                     clock_skew: Duration::from_secs(5 * 60),
+                    revocation_mode: RevocationPolicyMode::SoftFail,
+                    delegated_responder_revocation: None,
                 },
                 64 * 1024,
             )
@@ -803,5 +950,26 @@ mod tests {
             assert_eq!(result.signature.state, CheckState::Pass, "{name}");
             assert_eq!(result.revocation.state, revocation_state, "{name}");
         }
+
+        let mut file = tempfile::NamedTempFile::new().unwrap();
+        file.write_all(&generated_response("related-leafB-delegated-ocsp.der.b64"))
+            .unwrap();
+        let result = check_ocsp_status(
+            &paper.join("related-leafB.pem"),
+            &paper.join("ica.pem"),
+            file.path(),
+            "2026-06-21T00:00:00Z",
+            None,
+            OcspPolicy {
+                max_age: Duration::from_secs(7 * 24 * 60 * 60),
+                clock_skew: Duration::from_secs(5 * 60),
+                revocation_mode: RevocationPolicyMode::SoftFail,
+                delegated_responder_revocation: Some(observed(CheckState::Pass)),
+            },
+            64 * 1024,
+        )
+        .unwrap();
+        assert_eq!(result.responder.state, CheckState::Pass);
+        assert_eq!(result.revocation.state, CheckState::Pass);
     }
 }

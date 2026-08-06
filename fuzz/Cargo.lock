@@ -377,7 +377,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "hybrid-x509-verifier"
+name = "hybrid-x509-evidence"
 version = "0.1.0"
 dependencies = [
  "base64",
@@ -398,10 +398,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "hybrid-x509-verifier-fuzz"
+name = "hybrid-x509-evidence-fuzz"
 version = "0.0.0"
 dependencies = [
- "hybrid-x509-verifier",
+ "hybrid-x509-evidence",
  "libfuzzer-sys",
  "serde_json",
 ]

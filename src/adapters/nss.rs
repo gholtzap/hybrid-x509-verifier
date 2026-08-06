@@ -1,6 +1,6 @@
 use super::{
-    AdapterExecution, AdapterSupportError, classify_json_verdict, container::isolated_arguments,
-    record_inputs, resolve_executable,
+    AdapterExecution, AdapterSupportError, cached_version_output, classify_json_verdict,
+    container::isolated_arguments, record_inputs, resolve_executable, selected_path_hashes,
 };
 use crate::{
     CheckResult, CheckState, ExecutionIsolation, StackObservation, ValidationProfile, VersionTrack,
@@ -50,6 +50,11 @@ pub fn verify(config: &NssConfig) -> Result<AdapterExecution, NssError> {
         config.intermediate.as_path(),
         config.leaf.as_path(),
     ])?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        Some(&config.intermediate),
+        &config.trust_store,
+    )?;
     let time = DateTime::parse_from_rfc3339(&config.validation_time)
         .map_err(|_| NssError::InvalidValidationTime(config.validation_time.clone()))?
         .with_timezone(&Utc);
@@ -67,7 +72,7 @@ pub fn verify(config: &NssConfig) -> Result<AdapterExecution, NssError> {
     ];
     let version_arguments =
         isolated_arguments(&config.image, &mounts, &[OsString::from("--version")])?;
-    let version_output = run_program(&executable, &version_arguments, limits)?;
+    let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(NssError::VersionFailed);
     }
@@ -106,6 +111,10 @@ pub fn verify(config: &NssConfig) -> Result<AdapterExecution, NssError> {
             },
             validation_profile: ValidationProfile::WebPkiServer,
             execution_isolation: ExecutionIsolation::Container,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,

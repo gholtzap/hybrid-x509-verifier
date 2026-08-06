@@ -18,7 +18,7 @@ build_digest() {
     --mount "type=bind,src=$repo,dst=/source,readonly" \
     -w /work \
     "$image" \
-    sh -c 'tar -C /source --exclude=.git --exclude=target --exclude=fuzz/target --exclude=fuzz/corpus -cf - . | tar --no-same-owner -xf - && cargo build --quiet --locked --release --bin hybrid-x509-verify && sha256sum target/release/hybrid-x509-verify | cut -d " " -f 1'
+    sh -c 'tar -C /source --exclude=.git --exclude=target --exclude=fuzz/target --exclude=fuzz/corpus -cf - . | tar --no-same-owner -xf - && cargo build --quiet --locked --release --bin hybrid-x509-evaluate && sha256sum target/release/hybrid-x509-evaluate | cut -d " " -f 1'
 }
 
 first=$(build_digest)

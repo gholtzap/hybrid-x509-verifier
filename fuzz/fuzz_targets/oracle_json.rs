@@ -1,6 +1,6 @@
 #![no_main]
 
-use hybrid_x509_verifier::{VerificationRequest, evaluate};
+use hybrid_x509_evidence::{VerificationRequest, evaluate};
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {

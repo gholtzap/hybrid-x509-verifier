@@ -1,7 +1,7 @@
 use crate::{
-    API_VERSION, AdapterReport, AuthenticationLevel, CertificateNode, CheckResult, CheckState,
-    Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, Scheme, StackVerdict,
-    VerificationRequest,
+    API_VERSION, AdapterReport, AlgorithmSecurity, AuthenticationLevel, BindingDesign,
+    CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError, PathPosition,
+    PathScope, Policy, StackVerdict, VerificationRequest,
     adapters::{
         AdapterExecution, AdapterSupportError,
         bouncy_castle::{
@@ -9,7 +9,9 @@ use crate::{
         },
         check_from_verdict,
     },
-    analysis::{ScopedVerificationResult, behavioral_check},
+    analysis::{
+        ScopedVerificationResult, behavioral_check, certificate_der_hash, issuer_edge_hash,
+    },
     evaluate,
     pem::{PemError, check_certificate_validity, inspect_certificate},
 };
@@ -56,8 +58,8 @@ pub struct AtomicPathPositionReport {
     pub invalid_post_quantum_signature: AdapterReport,
     pub invalid_classical_default_path: AdapterReport,
     pub invalid_post_quantum_default_path: AdapterReport,
-    pub classical_outcome_bearing: CheckResult,
-    pub post_quantum_outcome_bearing: CheckResult,
+    pub classical_decision_sensitive_for_fixture: CheckResult,
+    pub post_quantum_decision_sensitive_for_fixture: CheckResult,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -85,6 +87,8 @@ pub enum AtomicPathScopeError {
 
 struct PositionAnalysis {
     position: PathPosition,
+    certificate_der_sha256: String,
+    issuer_edge_sha256: Option<String>,
     validity: CheckResult,
     crl: AdapterExecution,
     valid_signature: AdapterExecution,
@@ -110,7 +114,9 @@ pub fn analyze(
         &config.invalid_classical_leaf,
         &config.invalid_post_quantum_leaf,
     ] {
-        if inspect_certificate(certificate, INPUT_LIMIT)?.scheme != Scheme::AtomicComposite {
+        if inspect_certificate(certificate, INPUT_LIMIT)?.binding_design
+            != BindingDesign::AtomicComposite
+        {
             return Err(AtomicPathScopeError::WrongScheme);
         }
     }
@@ -133,44 +139,40 @@ pub fn analyze(
             valid_path.observation.verdict,
         )?,
     ];
-    let certificate_path = [
-        ("leaf", PathPosition::EndEntity),
-        ("intermediate", PathPosition::Intermediate),
-        ("root", PathPosition::TrustAnchor),
-    ]
-    .into_iter()
-    .map(|(id, position)| CertificateNode {
-        id: id.to_owned(),
-        position,
-        scheme: Scheme::AtomicComposite,
-    })
-    .collect::<Vec<_>>();
+    let certificate_path = analyses
+        .iter()
+        .map(|analysis| CertificateNode {
+            id: position_id(analysis.position).to_owned(),
+            position: analysis.position,
+            subject_public_key_scheme: AlgorithmSecurity::Classical,
+            certificate_signature_scheme: AlgorithmSecurity::Hybrid,
+            binding_design: BindingDesign::AtomicComposite,
+            der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
+        })
+        .collect::<Vec<_>>();
     let evidence = analyses
         .iter()
         .flat_map(|analysis| position_evidence(analysis, valid_path.observation.verdict))
         .collect::<Vec<_>>();
-    let scopes = [
-        PathScope::EndEntity,
-        PathScope::IssuingPath,
-        PathScope::FullPath,
-    ]
-    .into_iter()
-    .map(|scope| {
-        Ok(ScopedVerificationResult {
-            scope,
-            result: evaluate(&VerificationRequest {
-                api_version: API_VERSION.to_owned(),
-                policy: config.policy,
-                path_scope: scope,
-                validation_time: config.validation_time.clone(),
-                previous_authentication: config.previous_authentication,
-                stack: valid_path.observation.clone(),
-                certificate_path: certificate_path.clone(),
-                evidence: evidence.clone(),
-            })?,
+    let scopes = [PathScope::EndEntity, PathScope::CertificationPath]
+        .into_iter()
+        .map(|scope| {
+            Ok(ScopedVerificationResult {
+                scope,
+                result: evaluate(&VerificationRequest {
+                    api_version: API_VERSION.to_owned(),
+                    policy: config.policy,
+                    path_scope: scope,
+                    validation_time: config.validation_time.clone(),
+                    previous_authentication: config.previous_authentication,
+                    stack: valid_path.observation.clone(),
+                    certificate_path: certificate_path.clone(),
+                    evidence: evidence.clone(),
+                })?,
+            })
         })
-    })
-    .collect::<Result<Vec<_>, OracleError>>()?;
+        .collect::<Result<Vec<_>, OracleError>>()?;
     let positions = analyses
         .into_iter()
         .map(|analysis| {
@@ -183,8 +185,8 @@ pub fn analyze(
                 invalid_post_quantum_signature: analysis.invalid_post_quantum_signature.report()?,
                 invalid_classical_default_path: analysis.invalid_classical_path.report()?,
                 invalid_post_quantum_default_path: analysis.invalid_post_quantum_path.report()?,
-                classical_outcome_bearing: analysis.classical_outcome,
-                post_quantum_outcome_bearing: analysis.post_quantum_outcome,
+                classical_decision_sensitive_for_fixture: analysis.classical_outcome,
+                post_quantum_decision_sensitive_for_fixture: analysis.post_quantum_outcome,
             })
         })
         .collect::<Result<Vec<_>, AdapterSupportError>>()?;
@@ -234,6 +236,10 @@ fn analyze_position(
 
     Ok(PositionAnalysis {
         position,
+        certificate_der_sha256: certificate_der_hash(certificate, INPUT_LIMIT)?,
+        issuer_edge_sha256: (position != PathPosition::TrustAnchor)
+            .then(|| issuer_edge_hash(certificate, issuer, INPUT_LIMIT))
+            .transpose()?,
         validity: check_certificate_validity(certificate, &config.validation_time, INPUT_LIMIT)?,
         crl: run_crl(config, issuer, certificate, crl)?,
         valid_signature,
@@ -270,11 +276,7 @@ fn outcome_check(valid: StackVerdict, invalid: StackVerdict, established: bool) 
 }
 
 fn position_evidence(analysis: &PositionAnalysis, valid_path: StackVerdict) -> [Evidence; 2] {
-    let id = match analysis.position {
-        PathPosition::EndEntity => "leaf",
-        PathPosition::Intermediate => "intermediate",
-        PathPosition::TrustAnchor => "root",
-    };
+    let id = position_id(analysis.position);
     let pass = CheckResult::observed(CheckState::Pass);
     let signature = check_from_verdict(analysis.valid_signature.observation.verdict);
     let path = check_from_verdict(valid_path);
@@ -284,6 +286,8 @@ fn position_evidence(analysis: &PositionAnalysis, valid_path: StackVerdict) -> [
             id: format!("{id}-ecdsa-component"),
             certificate_id: id.to_owned(),
             position: analysis.position,
+            certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
             kind: EvidenceKind::Classical,
             present: pass,
             recognized: pass,
@@ -292,12 +296,14 @@ fn position_evidence(analysis: &PositionAnalysis, valid_path: StackVerdict) -> [
             path,
             validity: analysis.validity,
             revocation,
-            outcome_bearing: analysis.classical_outcome,
+            decision_sensitive_for_fixture: analysis.classical_outcome,
         },
         Evidence {
             id: format!("{id}-mldsa-component"),
             certificate_id: id.to_owned(),
             position: analysis.position,
+            certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
             kind: EvidenceKind::PostQuantum,
             present: pass,
             recognized: pass,
@@ -306,9 +312,17 @@ fn position_evidence(analysis: &PositionAnalysis, valid_path: StackVerdict) -> [
             path,
             validity: analysis.validity,
             revocation,
-            outcome_bearing: analysis.post_quantum_outcome,
+            decision_sensitive_for_fixture: analysis.post_quantum_outcome,
         },
     ]
+}
+
+fn position_id(position: PathPosition) -> &'static str {
+    match position {
+        PathPosition::EndEntity => "leaf",
+        PathPosition::Intermediate => "intermediate",
+        PathPosition::TrustAnchor => "root",
+    }
 }
 
 fn path_with_replacement(
@@ -413,7 +427,8 @@ mod tests {
     use std::path::Path;
 
     #[test]
-    fn atomic_components_are_decisive_except_in_the_trust_anchor_self_signature() {
+    fn atomic_components_are_decisive_for_certification_path_not_trust_anchor() {
+        let _guard = crate::adapter_test_lock();
         let controls =
             Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/generated-controls");
         let report = analyze(&AtomicPathScopeConfig {
@@ -443,28 +458,28 @@ mod tests {
             StackVerdict::Accept
         );
         assert!(report.positions[..2].iter().all(|position| {
-            position.classical_outcome_bearing.state == CheckState::Pass
-                && position.post_quantum_outcome_bearing.state == CheckState::Pass
+            position.classical_decision_sensitive_for_fixture.state == CheckState::Pass
+                && position.post_quantum_decision_sensitive_for_fixture.state == CheckState::Pass
         }));
         assert_eq!(
-            report.positions[2].classical_outcome_bearing.state,
+            report.positions[2]
+                .classical_decision_sensitive_for_fixture
+                .state,
             CheckState::Fail
         );
         assert_eq!(
-            report.positions[2].post_quantum_outcome_bearing.state,
+            report.positions[2]
+                .post_quantum_decision_sensitive_for_fixture
+                .state,
             CheckState::Fail
         );
         assert_eq!(
             report.scopes[0].result.policy_verdict,
-            PolicyVerdict::AcceptHybrid
+            PolicyVerdict::HybridClaimSetSatisfied
         );
         assert_eq!(
             report.scopes[1].result.policy_verdict,
-            PolicyVerdict::AcceptHybrid
-        );
-        assert_eq!(
-            report.scopes[2].result.policy_verdict,
-            PolicyVerdict::Reject
+            PolicyVerdict::HybridClaimSetSatisfied
         );
     }
 }

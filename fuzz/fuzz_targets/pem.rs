@@ -1,6 +1,6 @@
 #![no_main]
 
-use hybrid_x509_verifier::pem::{PemKind, decode_pem};
+use hybrid_x509_evidence::pem::{PemKind, decode_pem};
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {

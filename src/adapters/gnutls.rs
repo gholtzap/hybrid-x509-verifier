@@ -1,6 +1,6 @@
 use super::{
-    AdapterExecution, AdapterSupportError, container::isolated_arguments, record_inputs,
-    resolve_executable,
+    AdapterExecution, AdapterSupportError, cached_version_output, container::isolated_arguments,
+    record_inputs, resolve_executable, selected_path_hashes,
 };
 use crate::{
     CheckResult, CheckState, Confidence, ExecutionIsolation, StackObservation, StackVerdict,
@@ -59,12 +59,18 @@ pub fn verify(config: &GnuTlsConfig) -> Result<AdapterExecution, GnuTlsError> {
     let mut input_paths = vec![config.trust_store.as_path(), config.leaf.as_path()];
     input_paths.extend(config.untrusted_chain.as_deref());
     let inputs = record_inputs(&input_paths)?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        config.untrusted_chain.as_deref(),
+        &config.trust_store,
+    )?;
 
     let limits = ProcessLimits {
         timeout: config.timeout,
         max_output_bytes: config.max_output_bytes,
     };
-    let version_output = run_program(&executable, &[OsString::from("--version")], limits)?;
+    let version_output =
+        cached_version_output(&executable, &[OsString::from("--version")], limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(GnuTlsError::VersionFailed);
     }
@@ -99,6 +105,10 @@ pub fn verify(config: &GnuTlsConfig) -> Result<AdapterExecution, GnuTlsError> {
             version_track: VersionTrack::UserSupplied,
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: ExecutionIsolation::ProcessOnly,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: String::new(),
             validation_time: CheckResult {
                 state: CheckState::NotChecked,
                 confidence: Confidence::Observed,
@@ -131,6 +141,11 @@ fn verify_container_as(
         config.intermediate.as_path(),
         config.leaf.as_path(),
     ])?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        Some(&config.intermediate),
+        &config.trust_store,
+    )?;
     let validation_time = chrono::DateTime::parse_from_rfc3339(&config.validation_time)
         .map_err(|_| GnuTlsError::InvalidValidationTime(config.validation_time.clone()))?
         .with_timezone(&chrono::Utc)
@@ -147,7 +162,7 @@ fn verify_container_as(
     ];
     let version_arguments =
         isolated_arguments(&config.image, &mounts, &[OsString::from("--version")])?;
-    let version_output = run_program(&executable, &version_arguments, limits)?;
+    let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(GnuTlsError::VersionFailed);
     }
@@ -177,6 +192,10 @@ fn verify_container_as(
             version_track,
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: ExecutionIsolation::Container,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,
@@ -233,6 +252,7 @@ mod tests {
 
     #[test]
     fn accepts_the_valid_classical_path_of_a_related_certificate() {
+        let _guard = crate::adapter_test_lock();
         let result = verify(&GnuTlsConfig {
             executable: "/opt/homebrew/opt/gnutls/bin/gnutls-certtool".into(),
             trust_store: fixture("root.pem"),
@@ -249,6 +269,7 @@ mod tests {
 
     #[test]
     fn current_container_accepts_the_valid_related_path() {
+        let _guard = crate::adapter_test_lock();
         let result = verify_container(&GnuTlsContainerConfig {
             docker: "docker".into(),
             image: "hybrid-x509-gnutls:3.8.13".to_owned(),

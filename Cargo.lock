@@ -375,7 +375,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "hybrid-x509-verifier"
+name = "hybrid-x509-evidence"
 version = "0.1.0"
 dependencies = [
  "base64",

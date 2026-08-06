@@ -1,6 +1,6 @@
 use super::{
-    AdapterExecution, AdapterSupportError, container::isolated_arguments, record_inputs,
-    resolve_executable,
+    AdapterExecution, AdapterSupportError, cached_version_output, container::isolated_arguments,
+    record_inputs, resolve_executable, selected_path_hashes,
 };
 use crate::{
     CheckResult, CheckState, ExecutionIsolation, StackObservation, StackVerdict, ValidationProfile,
@@ -74,6 +74,11 @@ pub fn verify(config: &OpenSslConfig) -> Result<OpenSslResult, OpenSslError> {
     input_paths.extend(config.untrusted_chain.as_deref());
     input_paths.extend(config.crl.as_deref());
     let inputs = record_inputs(&input_paths)?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        config.untrusted_chain.as_deref(),
+        &config.trust_store,
+    )?;
 
     let validation_time = DateTime::parse_from_rfc3339(&config.validation_time)
         .map_err(|_| OpenSslError::InvalidValidationTime(config.validation_time.clone()))?;
@@ -81,7 +86,7 @@ pub fn verify(config: &OpenSslConfig) -> Result<OpenSslResult, OpenSslError> {
         timeout: config.timeout,
         max_output_bytes: config.max_output_bytes,
     };
-    let version_output = run_program(&executable, &[OsString::from("version")], limits)?;
+    let version_output = cached_version_output(&executable, &[OsString::from("version")], limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(OpenSslError::VersionFailed);
     }
@@ -119,6 +124,10 @@ pub fn verify(config: &OpenSslConfig) -> Result<OpenSslResult, OpenSslError> {
             version_track: VersionTrack::UserSupplied,
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: ExecutionIsolation::ProcessOnly,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,
@@ -155,6 +164,11 @@ pub fn verify_tls(config: &OpenSslTlsConfig) -> Result<OpenSslResult, OpenSslErr
         config.leaf.as_path(),
         config.private_key.as_path(),
     ])?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        Some(&config.intermediate),
+        &config.trust_store,
+    )?;
     let limits = ProcessLimits {
         timeout: config.timeout,
         max_output_bytes: config.max_output_bytes,
@@ -167,7 +181,7 @@ pub fn verify_tls(config: &OpenSslTlsConfig) -> Result<OpenSslResult, OpenSslErr
     ];
     let version_arguments =
         isolated_arguments(&config.image, &mounts, &[OsString::from("--version")])?;
-    let version_output = run_program(&executable, &version_arguments, limits)?;
+    let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(OpenSslError::VersionFailed);
     }
@@ -198,6 +212,10 @@ pub fn verify_tls(config: &OpenSslTlsConfig) -> Result<OpenSslResult, OpenSslErr
             version_track: VersionTrack::Current,
             validation_profile: ValidationProfile::WebPkiServer,
             execution_isolation: ExecutionIsolation::Container,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,
@@ -230,6 +248,11 @@ pub(crate) fn verify_container_with_prefix(
     ];
     input_paths.extend(config.crl.as_deref());
     let inputs = record_inputs(&input_paths)?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        Some(&config.intermediate),
+        &config.trust_store,
+    )?;
     let validation_time = DateTime::parse_from_rfc3339(&config.validation_time)
         .map_err(|_| OpenSslError::InvalidValidationTime(config.validation_time.clone()))?;
     let limits = ProcessLimits {
@@ -247,7 +270,7 @@ pub(crate) fn verify_container_with_prefix(
     let mut version_command = prefix.to_vec();
     version_command.push(OsString::from("--version"));
     let version_arguments = isolated_arguments(&config.image, &mounts, &version_command)?;
-    let version_output = run_program(&executable, &version_arguments, limits)?;
+    let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(OpenSslError::VersionFailed);
     }
@@ -285,6 +308,10 @@ pub(crate) fn verify_container_with_prefix(
             version_track,
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: ExecutionIsolation::Container,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,
@@ -352,6 +379,7 @@ mod tests {
 
     #[test]
     fn accepts_the_valid_classical_path_of_a_related_certificate() {
+        let _guard = crate::adapter_test_lock();
         let result = verify(&config("related-certA.pem")).unwrap();
 
         assert_eq!(result.observation.verdict, StackVerdict::Accept);
@@ -360,6 +388,7 @@ mod tests {
 
     #[test]
     fn detects_revocation_when_the_pq_certificate_is_checked_directly() {
+        let _guard = crate::adapter_test_lock();
         let mut config = config("related-leafB.pem");
         config.crl = Some(fixture("related-crl.pem"));
 
@@ -376,6 +405,7 @@ mod tests {
 
     #[test]
     fn report_preserves_raw_output_as_hashed_base64() {
+        let _guard = crate::adapter_test_lock();
         let report = verify(&config("related-certA.pem"))
             .unwrap()
             .report()
@@ -395,6 +425,7 @@ mod tests {
 
     #[test]
     fn current_container_accepts_the_valid_related_path() {
+        let _guard = crate::adapter_test_lock();
         let result = verify_container(&OpenSslContainerConfig {
             docker: "docker".into(),
             image: "hybrid-x509-openssl:4.0.1".to_owned(),
@@ -415,6 +446,7 @@ mod tests {
 
     #[test]
     fn current_container_proves_pure_post_quantum_tls_key_possession() {
+        let _guard = crate::adapter_test_lock();
         let result = verify_tls(&OpenSslTlsConfig {
             docker: "docker".into(),
             image: "hybrid-x509-openssl:4.0.1".to_owned(),

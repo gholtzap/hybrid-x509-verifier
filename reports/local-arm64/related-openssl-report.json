@@ -72,6 +72,7 @@
     ],
     "observation": {
       "adapter": "openssl-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {
@@ -84,7 +85,7 @@
     },
     "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 366,
+      "elapsed_milliseconds": 417,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -103,7 +104,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 674,
+      "elapsed_milliseconds": 704,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -162,7 +163,7 @@
       "--mount",
       "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpScX2HJ,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpuF8iwN,dst=/input/leaf.pem,readonly",
       "--mount",
       "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
       "--",
@@ -192,7 +193,7 @@
       },
       {
         "bytes": 1298,
-        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpScX2HJ",
+        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpuF8iwN",
         "sha256": "a238b58cc7286ee212956a0ae827677e2ed8233d8eb2657e7b6d394bc9b1f1f4"
       },
       {
@@ -203,6 +204,7 @@
     ],
     "observation": {
       "adapter": "openssl-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {
@@ -215,13 +217,13 @@
     },
     "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 338,
+      "elapsed_milliseconds": 330,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 420,
-        "data": "Q049cmVsYXRlZCBDZXJ0IEEgKFJTQS0zMDcyKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgNyBhdCAwIGRlcHRoIGxvb2t1cDogY2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKZXJyb3IgL2lucHV0L2xlYWYucGVtOiB2ZXJpZmljYXRpb24gZmFpbGVkCkMwRUZGQkFDRkZGRjAwMDA6ZXJyb3I6MDMwMDAwRUE6ZGlnaXRhbCBlbnZlbG9wZSByb3V0aW5lczpFVlBfRGlnZXN0VmVyaWZ5RmluYWw6cHJvdmlkZXIgc2lnbmF0dXJlIGZhaWx1cmU6Y3J5cHRvL2V2cC9tX3NpZ3Zlci5jOjUzMzpFQ0RTQSBkaWdlc3RfdmVyaWZ5X2ZpbmFsOgpDMEVGRkJBQ0ZGRkYwMDAwOmVycm9yOjA2ODgwMDA2OmFzbjEgZW5jb2Rpbmcgcm91dGluZXM6QVNOMV9pdGVtX3ZlcmlmeV9jdHg6RVZQIGxpYjpjcnlwdG8vYXNuMS9hX3ZlcmlmeS5jOjIyMDoK",
+        "data": "Q049cmVsYXRlZCBDZXJ0IEEgKFJTQS0zMDcyKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgNyBhdCAwIGRlcHRoIGxvb2t1cDogY2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKZXJyb3IgL2lucHV0L2xlYWYucGVtOiB2ZXJpZmljYXRpb24gZmFpbGVkCkMwNUZCRDk2RkZGRjAwMDA6ZXJyb3I6MDMwMDAwRUE6ZGlnaXRhbCBlbnZlbG9wZSByb3V0aW5lczpFVlBfRGlnZXN0VmVyaWZ5RmluYWw6cHJvdmlkZXIgc2lnbmF0dXJlIGZhaWx1cmU6Y3J5cHRvL2V2cC9tX3NpZ3Zlci5jOjUzMzpFQ0RTQSBkaWdlc3RfdmVyaWZ5X2ZpbmFsOgpDMDVGQkQ5NkZGRkYwMDAwOmVycm9yOjA2ODgwMDA2OmFzbjEgZW5jb2Rpbmcgcm91dGluZXM6QVNOMV9pdGVtX3ZlcmlmeV9jdHg6RVZQIGxpYjpjcnlwdG8vYXNuMS9hX3ZlcmlmeS5jOjIyMDoK",
         "encoding": "base64",
-        "sha256": "0977e6857b3df85e889b74e5e296ed08eb510d126c29d75a6b787666c4d3300c",
+        "sha256": "64dc4bfa7dc7824ff35995e546d0c3ec961e1006f6ee566d91669bea1832557e",
         "truncated": false
       },
       "stdout": {
@@ -234,7 +236,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 345,
+      "elapsed_milliseconds": 363,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -333,6 +335,7 @@
     ],
     "observation": {
       "adapter": "openssl-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {
@@ -345,7 +348,7 @@
     },
     "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 344,
+      "elapsed_milliseconds": 306,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 149,
@@ -364,7 +367,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 320,
+      "elapsed_milliseconds": 344,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -436,6 +439,7 @@
     ],
     "observation": {
       "adapter": "openssl-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {
@@ -448,7 +452,7 @@
     },
     "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 329,
+      "elapsed_milliseconds": 311,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -467,7 +471,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 315,
+      "elapsed_milliseconds": 333,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -549,6 +553,7 @@
     ],
     "observation": {
       "adapter": "openssl-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {
@@ -561,7 +566,7 @@
     },
     "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 319,
+      "elapsed_milliseconds": 341,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 137,
@@ -580,7 +585,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 324,
+      "elapsed_milliseconds": 327,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -652,6 +657,7 @@
     ],
     "observation": {
       "adapter": "openssl-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {
@@ -664,7 +670,7 @@
     },
     "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 323,
+      "elapsed_milliseconds": 310,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -683,7 +689,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 332,
+      "elapsed_milliseconds": 336,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -812,6 +818,7 @@
     "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
     "stack": {
       "adapter": "openssl-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {

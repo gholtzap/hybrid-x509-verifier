@@ -1,5 +1,6 @@
 use crate::{
-    API_VERSION, AdapterReport, Scheme,
+    API_VERSION, AdapterReport, AlgorithmSecurity, BindingDesign, CheckResult, CheckState,
+    Confidence, ProcessRecord, StackVerdict, ValidationProfile,
     adapters::{
         AdapterSupportError,
         bouncy_castle::{
@@ -63,9 +64,24 @@ pub struct AvailableMatrixConfig {
 #[serde(deny_unknown_fields)]
 pub struct MatrixEntry {
     pub case_id: String,
-    pub scheme: Scheme,
+    pub subject_public_key_scheme: AlgorithmSecurity,
+    pub certificate_signature_scheme: AlgorithmSecurity,
+    pub binding_design: BindingDesign,
     pub variant: MatrixVariant,
+    pub operation: ValidationProfile,
+    pub allowed_stack_verdicts: Vec<StackVerdict>,
+    pub process_execution: MatrixProcessExecution,
+    pub claim_id: String,
+    pub specification: String,
+    pub specification_revision: String,
     pub report: AdapterReport,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct MatrixProcessExecution {
+    pub version: CheckResult,
+    pub verification: CheckResult,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -122,7 +138,9 @@ pub enum MatrixError {
 #[derive(Debug, Clone, Copy)]
 struct Case {
     id: &'static str,
-    scheme: Scheme,
+    subject_public_key_scheme: AlgorithmSecurity,
+    certificate_signature_scheme: AlgorithmSecurity,
+    binding_design: BindingDesign,
     leaf: &'static str,
     issuer: &'static str,
     dns: &'static str,
@@ -132,7 +150,9 @@ struct Case {
 const CASES: [Case; 7] = [
     Case {
         id: "pure-pq-key",
-        scheme: Scheme::PurePostQuantum,
+        subject_public_key_scheme: AlgorithmSecurity::PostQuantum,
+        certificate_signature_scheme: AlgorithmSecurity::Classical,
+        binding_design: BindingDesign::None,
         leaf: "pure-leaf.pem",
         issuer: "ica.pem",
         dns: "pure.pqc-probe.test",
@@ -140,7 +160,9 @@ const CASES: [Case; 7] = [
     },
     Case {
         id: "pure-pq-signature",
-        scheme: Scheme::PurePostQuantum,
+        subject_public_key_scheme: AlgorithmSecurity::Classical,
+        certificate_signature_scheme: AlgorithmSecurity::PostQuantum,
+        binding_design: BindingDesign::None,
         leaf: "pure-mldsa-signed-leaf.pem",
         issuer: "pure-mldsa-ica.pem",
         dns: "mldsa-signed.pqc-probe.test",
@@ -148,7 +170,9 @@ const CASES: [Case; 7] = [
     },
     Case {
         id: "atomic-composite",
-        scheme: Scheme::AtomicComposite,
+        subject_public_key_scheme: AlgorithmSecurity::Classical,
+        certificate_signature_scheme: AlgorithmSecurity::Hybrid,
+        binding_design: BindingDesign::AtomicComposite,
         leaf: "composite-leaf.pem",
         issuer: "composite-ica.pem",
         dns: "composite.pqc-probe.test",
@@ -156,7 +180,9 @@ const CASES: [Case; 7] = [
     },
     Case {
         id: "catalyst",
-        scheme: Scheme::Catalyst,
+        subject_public_key_scheme: AlgorithmSecurity::Classical,
+        certificate_signature_scheme: AlgorithmSecurity::Classical,
+        binding_design: BindingDesign::Catalyst,
         leaf: "catalyst-leaf.pem",
         issuer: "catalyst-ica.pem",
         dns: "catalyst.pqc-probe.test",
@@ -164,7 +190,9 @@ const CASES: [Case; 7] = [
     },
     Case {
         id: "chameleon",
-        scheme: Scheme::Chameleon,
+        subject_public_key_scheme: AlgorithmSecurity::Classical,
+        certificate_signature_scheme: AlgorithmSecurity::Classical,
+        binding_design: BindingDesign::Chameleon,
         leaf: "chameleon-base.pem",
         issuer: "ica.pem",
         dns: "chameleon.pqc-probe.test",
@@ -172,7 +200,9 @@ const CASES: [Case; 7] = [
     },
     Case {
         id: "related",
-        scheme: Scheme::Related,
+        subject_public_key_scheme: AlgorithmSecurity::Classical,
+        certificate_signature_scheme: AlgorithmSecurity::Classical,
+        binding_design: BindingDesign::RelatedCertificate,
         leaf: "related-certA.pem",
         issuer: "ica.pem",
         dns: "related-a.pqc-probe.test",
@@ -180,7 +210,9 @@ const CASES: [Case; 7] = [
     },
     Case {
         id: "classical",
-        scheme: Scheme::Classical,
+        subject_public_key_scheme: AlgorithmSecurity::Classical,
+        certificate_signature_scheme: AlgorithmSecurity::Classical,
+        binding_design: BindingDesign::None,
         leaf: "related-certA-missing.pem",
         issuer: "ica.pem",
         dns: "related-a.pqc-probe.test",
@@ -506,12 +538,122 @@ fn run_case(
 }
 
 fn push(entries: &mut Vec<MatrixEntry>, case: Case, variant: MatrixVariant, report: AdapterReport) {
+    let operation = report.observation.validation_profile;
+    let adapter = report.observation.adapter.clone();
     entries.push(MatrixEntry {
         case_id: case.id.to_owned(),
-        scheme: case.scheme,
+        subject_public_key_scheme: case.subject_public_key_scheme,
+        certificate_signature_scheme: case.certificate_signature_scheme,
+        binding_design: case.binding_design,
         variant,
+        operation,
+        allowed_stack_verdicts: allowed_stack_verdicts(case, variant, &adapter, operation),
+        process_execution: MatrixProcessExecution {
+            version: process_record_check(&report.version),
+            verification: process_record_check(&report.verification),
+        },
+        claim_id: format!(
+            "fixture-matrix:{}:{variant:?}:{operation:?}:{adapter}",
+            case.id
+        ),
+        specification: specification(case.binding_design).to_owned(),
+        specification_revision: specification_revision(case.binding_design).to_owned(),
         report,
     });
+}
+
+fn process_record_check(record: &ProcessRecord) -> CheckResult {
+    let completed = record.status_code.is_some()
+        && !record.timed_out
+        && !record.stdout.truncated
+        && !record.stderr.truncated;
+    CheckResult {
+        state: if completed {
+            CheckState::Pass
+        } else {
+            CheckState::Fail
+        },
+        confidence: Confidence::Observed,
+    }
+}
+
+fn allowed_stack_verdicts(
+    case: Case,
+    variant: MatrixVariant,
+    adapter: &str,
+    operation: ValidationProfile,
+) -> Vec<StackVerdict> {
+    if case.id == "pure-pq-signature"
+        && variant == MatrixVariant::Valid
+        && operation == ValidationProfile::WebPkiServer
+        && adapter == "mozilla-nss-current"
+    {
+        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
+    }
+    if case.id == "pure-pq-signature"
+        && variant == MatrixVariant::Valid
+        && operation == ValidationProfile::X509Path
+        && adapter == "gnutls-current"
+    {
+        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
+    }
+    if case.binding_design == BindingDesign::Catalyst
+        && variant == MatrixVariant::Valid
+        && adapter == "wolfssl-mode2"
+    {
+        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
+    }
+    if case.binding_design == BindingDesign::Chameleon
+        && variant == MatrixVariant::InvalidHybridEvidenceSignature
+    {
+        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
+    }
+    let expected = match variant {
+        MatrixVariant::Valid | MatrixVariant::PublishedStudyFixture => vec![StackVerdict::Accept],
+        MatrixVariant::MissingHybridEvidence
+        | MatrixVariant::BrokenBinding
+        | MatrixVariant::UnknownHybridAlgorithm
+        | MatrixVariant::MalformedHybridEvidence => vec![StackVerdict::Accept],
+        MatrixVariant::InvalidCertificateSignature
+        | MatrixVariant::CriticalHybridExtension
+        | MatrixVariant::InvalidHybridEvidenceSignature => vec![StackVerdict::Reject],
+        MatrixVariant::InvalidPostQuantumSignature
+            if case.binding_design == BindingDesign::Catalyst =>
+        {
+            vec![StackVerdict::Accept, StackVerdict::Reject]
+        }
+        MatrixVariant::InvalidPostQuantumSignature => vec![StackVerdict::Reject],
+    };
+    with_unsupported(expected)
+}
+
+fn with_unsupported(mut verdicts: Vec<StackVerdict>) -> Vec<StackVerdict> {
+    if !verdicts.contains(&StackVerdict::Unsupported) {
+        verdicts.push(StackVerdict::Unsupported);
+    }
+    verdicts
+}
+
+fn specification(binding_design: BindingDesign) -> &'static str {
+    match binding_design {
+        BindingDesign::RelatedCertificate => "RFC 9763",
+        BindingDesign::AtomicComposite => "draft-ietf-lamps-pq-composite-sigs",
+        BindingDesign::Catalyst => "local Catalyst fixture design",
+        BindingDesign::Chameleon => "draft-bonnell-lamps-chameleon-certs",
+        BindingDesign::None => "RFC 5280",
+        BindingDesign::Unknown => "unknown",
+    }
+}
+
+fn specification_revision(binding_design: BindingDesign) -> &'static str {
+    match binding_design {
+        BindingDesign::RelatedCertificate => "RFC 9763",
+        BindingDesign::AtomicComposite => "draft-ietf-lamps-pq-composite-sigs-19",
+        BindingDesign::Catalyst => "local experiment",
+        BindingDesign::Chameleon => "draft-bonnell-lamps-chameleon-certs-07 expired",
+        BindingDesign::None => "RFC 5280",
+        BindingDesign::Unknown => "unknown",
+    }
 }
 
 pub fn default_fixture_path() -> &'static Path {
@@ -521,9 +663,89 @@ pub fn default_fixture_path() -> &'static Path {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::StackVerdict;
+
+    #[test]
+    fn matrix_variants_have_explicit_expected_verdicts() {
+        for (case, variant, expected) in [
+            (CASES[2], MatrixVariant::Valid, StackVerdict::Accept),
+            (
+                CASES[2],
+                MatrixVariant::InvalidCertificateSignature,
+                StackVerdict::Reject,
+            ),
+            (
+                CASES[2],
+                MatrixVariant::InvalidPostQuantumSignature,
+                StackVerdict::Reject,
+            ),
+            (
+                CASES[3],
+                MatrixVariant::InvalidPostQuantumSignature,
+                StackVerdict::Accept,
+            ),
+            (
+                CASES[5],
+                MatrixVariant::MissingHybridEvidence,
+                StackVerdict::Accept,
+            ),
+            (CASES[5], MatrixVariant::BrokenBinding, StackVerdict::Accept),
+            (
+                CASES[5],
+                MatrixVariant::CriticalHybridExtension,
+                StackVerdict::Reject,
+            ),
+        ] {
+            assert!(
+                allowed_stack_verdicts(case, variant, "test-adapter", ValidationProfile::X509Path)
+                    .contains(&expected),
+                "{variant:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn matrix_cases_record_their_standards_status() {
+        assert_eq!(specification(BindingDesign::RelatedCertificate), "RFC 9763");
+        assert_eq!(
+            specification_revision(BindingDesign::Chameleon),
+            "draft-bonnell-lamps-chameleon-certs-07 expired"
+        );
+        assert_eq!(
+            specification_revision(BindingDesign::Catalyst),
+            "local experiment"
+        );
+    }
+
+    #[test]
+    fn process_execution_is_separate_from_the_semantic_verdict() {
+        let mut record = ProcessRecord {
+            status_code: Some(2),
+            timed_out: false,
+            elapsed_milliseconds: 1,
+            stdout: crate::EncodedStream {
+                encoding: "base64".to_owned(),
+                data: String::new(),
+                sha256: String::new(),
+                captured_bytes: 0,
+                truncated: false,
+            },
+            stderr: crate::EncodedStream {
+                encoding: "base64".to_owned(),
+                data: String::new(),
+                sha256: String::new(),
+                captured_bytes: 0,
+                truncated: false,
+            },
+        };
+        assert_eq!(process_record_check(&record).state, CheckState::Pass);
+
+        record.timed_out = true;
+        assert_eq!(process_record_check(&record).state, CheckState::Fail);
+    }
+
     #[test]
     fn available_matrix_records_every_case_and_adapter() {
+        let _guard = crate::adapter_test_lock();
         let report = run_available_matrix(&AvailableMatrixConfig {
             fixtures: Path::new(env!("CARGO_MANIFEST_DIR")).join(default_fixture_path()),
             controls: Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -550,6 +772,49 @@ mod tests {
         .unwrap();
 
         assert_eq!(report.entries.len(), 345);
+        let unexpected_verdicts: Vec<_> = report
+            .entries
+            .iter()
+            .filter(|entry| {
+                !entry
+                    .allowed_stack_verdicts
+                    .contains(&entry.report.observation.verdict)
+            })
+            .map(|entry| {
+                (
+                    entry.case_id.as_str(),
+                    entry.variant,
+                    entry.report.observation.adapter.as_str(),
+                    entry.operation,
+                    entry.report.observation.verdict,
+                    &entry.allowed_stack_verdicts,
+                )
+            })
+            .collect();
+        assert!(unexpected_verdicts.is_empty(), "{unexpected_verdicts:?}");
+        let process_failures: Vec<_> = report
+            .entries
+            .iter()
+            .filter(|entry| {
+                entry.process_execution.version.state != CheckState::Pass
+                    || entry.process_execution.verification.state != CheckState::Pass
+            })
+            .map(|entry| {
+                (
+                    entry.case_id.as_str(),
+                    entry.variant,
+                    entry.report.observation.adapter.as_str(),
+                    entry.operation,
+                    entry.process_execution.version.state,
+                    entry.report.version.status_code,
+                    entry.report.version.timed_out,
+                    entry.process_execution.verification.state,
+                    entry.report.verification.status_code,
+                    entry.report.verification.timed_out,
+                )
+            })
+            .collect();
+        assert!(process_failures.is_empty(), "{process_failures:?}");
         assert_eq!(
             report
                 .entries
@@ -655,6 +920,55 @@ mod tests {
                     .observation
                     .verdict,
                 verdict
+            );
+        }
+        for (case_id, variant, adapter, verdict) in [
+            (
+                "related",
+                MatrixVariant::Valid,
+                "openssl-current",
+                StackVerdict::Accept,
+            ),
+            (
+                "related",
+                MatrixVariant::InvalidCertificateSignature,
+                "openssl-current",
+                StackVerdict::Reject,
+            ),
+            (
+                "related",
+                MatrixVariant::BrokenBinding,
+                "openssl-current",
+                StackVerdict::Accept,
+            ),
+            (
+                "related",
+                MatrixVariant::MissingHybridEvidence,
+                "openssl-current",
+                StackVerdict::Accept,
+            ),
+            (
+                "catalyst",
+                MatrixVariant::InvalidPostQuantumSignature,
+                "bouncycastle-java-study",
+                StackVerdict::Accept,
+            ),
+        ] {
+            assert_eq!(
+                report
+                    .entries
+                    .iter()
+                    .find(|entry| {
+                        entry.case_id == case_id
+                            && entry.variant == variant
+                            && entry.report.observation.adapter == adapter
+                    })
+                    .unwrap()
+                    .report
+                    .observation
+                    .verdict,
+                verdict,
+                "{case_id} {variant:?} {adapter}"
             );
         }
     }

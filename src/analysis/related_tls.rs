@@ -1,8 +1,10 @@
 use crate::{
-    API_VERSION, CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError,
-    PathPosition, PathScope, Policy, Scheme, StackVerdict, VerificationRequest, VerificationResult,
+    API_VERSION, AlgorithmSecurity, BindingDesign, CheckResult, CheckState, Evidence, EvidenceKind,
+    OracleError, PathPosition, PathScope, Policy, StackVerdict, VerificationRequest,
+    VerificationResult,
     analysis::{
-        behavioral_check,
+        LeafPathProperties, behavioral_check, certificate_der_hash, end_entity_certification_path,
+        issuer_edge_hash, related_conformance_check,
         tls::{
             TlsObservationError, TlsTranscriptConfig, TlsTranscriptEvidence, observe_transcript,
         },
@@ -10,8 +12,9 @@ use crate::{
     evaluate,
     mutation::{MutationError, corrupt_outer_signature, encode_certificate_pem},
     pem::{
-        CrlStatusResult, PemError, PemKind, RelatedBindingResult, check_certificate_validity,
-        check_crl_status, inspect_certificate, read_der, verify_related_binding,
+        CrlStatusResult, PemError, PemKind, RelatedBindingResult, RelatedConformanceResult,
+        check_certificate_validity, check_crl_status, inspect_certificate, read_der,
+        verify_related_binding, verify_related_certificate_conformance,
     },
 };
 use schemars::JsonSchema;
@@ -44,6 +47,8 @@ pub struct RelatedTlsConfig {
 #[serde(deny_unknown_fields)]
 pub struct RelatedTlsReport {
     pub api_version: String,
+    pub separate_post_quantum_tls_context: String,
+    pub conformance: RelatedConformanceResult,
     pub binding: RelatedBindingResult,
     pub invalid_binding: RelatedBindingResult,
     pub classical_crl_status: CrlStatusResult,
@@ -74,15 +79,18 @@ pub enum RelatedTlsError {
 }
 
 pub fn analyze(config: &RelatedTlsConfig) -> Result<RelatedTlsReport, RelatedTlsError> {
-    if inspect_certificate(&config.classical_certificate, INPUT_LIMIT)?.scheme != Scheme::Related {
+    if inspect_certificate(&config.classical_certificate, INPUT_LIMIT)?.binding_design
+        != BindingDesign::RelatedCertificate
+    {
         return Err(RelatedTlsError::WrongScheme);
     }
 
-    let binding = verify_related_binding(
+    let conformance = verify_related_certificate_conformance(
         &config.classical_certificate,
         &config.post_quantum_certificate,
         INPUT_LIMIT,
     )?;
+    let binding = conformance.rfc9763.binding.clone();
     let invalid_binding = verify_related_binding(
         &config.invalid_binding_classical_certificate,
         &config.post_quantum_certificate,
@@ -148,8 +156,10 @@ pub fn analyze(config: &RelatedTlsConfig) -> Result<RelatedTlsReport, RelatedTls
             && invalid_classical_signature_tls.report.observation.verdict == StackVerdict::Reject,
         CheckState::Pass,
     );
+    let conformance_check = related_conformance_check(&conformance);
     let post_quantum_outcome = behavioral_check(
         classical_accepts
+            && conformance_check.state == CheckState::Pass
             && invalid_binding.check.state == CheckState::Fail
             && invalid_binding_classical_tls.report.observation.verdict == StackVerdict::Accept
             && missing_binding_classical_tls.report.observation.verdict == StackVerdict::Accept
@@ -162,19 +172,16 @@ pub fn analyze(config: &RelatedTlsConfig) -> Result<RelatedTlsReport, RelatedTls
     } else {
         CheckState::Fail
     });
-    let post_quantum_path = CheckResult::observed(
-        if separate_post_quantum_tls.report.observation.verdict == StackVerdict::Accept {
-            CheckState::Pass
-        } else {
-            CheckState::Fail
-        },
-    );
     let post_quantum_validity = check_certificate_validity(
         &config.post_quantum_certificate,
         &config.validation_time,
         INPUT_LIMIT,
     )?;
+    let certificate_der_sha256 = certificate_der_hash(&config.classical_certificate, INPUT_LIMIT)?;
+    let issuer_edge_sha256 =
+        issuer_edge_hash(&config.classical_certificate, &config.issuer, INPUT_LIMIT)?;
     let present = CheckResult::observed(CheckState::Pass);
+    let not_applicable = CheckResult::observed(CheckState::NotApplicable);
     let request = VerificationRequest {
         api_version: API_VERSION.to_owned(),
         policy: Policy::P2RequiredHybrid,
@@ -182,16 +189,24 @@ pub fn analyze(config: &RelatedTlsConfig) -> Result<RelatedTlsReport, RelatedTls
         validation_time: config.validation_time.clone(),
         previous_authentication: None,
         stack: classical_tls.report.observation.clone(),
-        certificate_path: vec![CertificateNode {
-            id: "end-entity".to_owned(),
-            position: PathPosition::EndEntity,
-            scheme: Scheme::Related,
-        }],
+        certificate_path: end_entity_certification_path(
+            &config.classical_certificate,
+            &config.issuer,
+            &config.trust_store,
+            LeafPathProperties {
+                subject_public_key_scheme: AlgorithmSecurity::Classical,
+                certificate_signature_scheme: AlgorithmSecurity::Classical,
+                binding_design: BindingDesign::RelatedCertificate,
+            },
+            INPUT_LIMIT,
+        )?,
         evidence: vec![
             Evidence {
                 id: "related-classical-certificate".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::Classical,
                 present,
                 recognized: present,
@@ -204,27 +219,33 @@ pub fn analyze(config: &RelatedTlsConfig) -> Result<RelatedTlsReport, RelatedTls
                     INPUT_LIMIT,
                 )?,
                 revocation: classical_crl_status.revocation,
-                outcome_bearing: classical_outcome,
+                decision_sensitive_for_fixture: classical_outcome,
             },
             Evidence {
                 id: "related-post-quantum-certificate".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::PostQuantum,
                 present,
                 recognized: present,
-                signature: post_quantum_path,
-                binding: binding.check,
-                path: post_quantum_path,
+                signature: not_applicable,
+                binding: conformance_check,
+                path: not_applicable,
                 validity: post_quantum_validity,
                 revocation: post_quantum_crl_status.revocation,
-                outcome_bearing: post_quantum_outcome,
+                decision_sensitive_for_fixture: post_quantum_outcome,
             },
         ],
     };
 
     Ok(RelatedTlsReport {
         api_version: API_VERSION.to_owned(),
+        separate_post_quantum_tls_context:
+            "separate TLS authentication; not selected evidence for the classical TLS result"
+                .to_owned(),
+        conformance,
         binding,
         invalid_binding,
         classical_crl_status,
@@ -265,6 +286,7 @@ mod tests {
 
     #[test]
     fn classical_related_tls_ignores_post_quantum_lifecycle_and_binding() {
+        let _guard = crate::adapter_test_lock();
         let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
         let fixtures = repository.join("tests/fixtures/paper-v1.0.2");
         let controls = repository.join("tests/fixtures/generated-controls");
@@ -288,6 +310,18 @@ mod tests {
         })
         .unwrap();
 
+        assert_eq!(
+            report.conformance.rfc9763.key_usage_subset.state,
+            CheckState::Fail
+        );
+        assert_eq!(
+            report
+                .conformance
+                .hybrid_application_policy
+                .dns_identity_overlap
+                .state,
+            CheckState::Fail
+        );
         assert_eq!(
             report.classical_tls.report.observation.verdict,
             StackVerdict::Accept

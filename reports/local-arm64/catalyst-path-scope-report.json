@@ -80,6 +80,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -91,7 +92,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "SHA256WITHECDSA",
@@ -100,10 +101,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 2747,
+          "elapsed_milliseconds": 522,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -122,7 +124,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 2272,
+          "elapsed_milliseconds": 477,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -197,6 +199,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "evidence-signature",
           "validation_time": {
@@ -208,7 +211,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "ML-DSA",
@@ -217,10 +220,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 2383,
+          "elapsed_milliseconds": 513,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -239,7 +243,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 2373,
+          "elapsed_milliseconds": 478,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -280,7 +284,7 @@
           "--mount",
           "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpClMtdR,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpamkOJ3,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -308,12 +312,13 @@
           },
           {
             "bytes": 5921,
-            "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpClMtdR",
+            "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpamkOJ3",
             "sha256": "53e71d7b6e2fc4be4e188cf92f4537fd9ee8371e48161761eaa5689dcb516a73"
           }
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -325,7 +330,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "SHA256WITHECDSA",
@@ -334,10 +339,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 2254,
+          "elapsed_milliseconds": 581,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -356,7 +362,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 2177,
+          "elapsed_milliseconds": 489,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -436,6 +442,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "evidence-signature",
           "validation_time": {
@@ -447,7 +454,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "ML-DSA",
@@ -456,10 +463,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 2272,
+          "elapsed_milliseconds": 502,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -478,7 +486,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1922,
+          "elapsed_milliseconds": 550,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -581,6 +589,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -592,7 +601,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "SHA256WITHECDSA",
@@ -601,10 +610,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 813,
+          "elapsed_milliseconds": 561,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -623,7 +633,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 856,
+          "elapsed_milliseconds": 525,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -698,6 +708,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "evidence-signature",
           "validation_time": {
@@ -709,7 +720,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "ML-DSA",
@@ -718,10 +729,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 1176,
+          "elapsed_milliseconds": 572,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -740,7 +752,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1518,
+          "elapsed_milliseconds": 502,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -779,7 +791,7 @@
           "--mount",
           "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpqkMefn,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmp7KZO6j,dst=/input/intermediate.pem,readonly",
           "--mount",
           "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-path-leaf.pem,dst=/input/leaf.pem,readonly",
           "--",
@@ -804,7 +816,7 @@
           },
           {
             "bytes": 5848,
-            "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpqkMefn",
+            "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmp7KZO6j",
             "sha256": "d2a3130ff50bcd2926149621fae6442ce335cce8904a19fe9dd91b6af3ea0d8d"
           },
           {
@@ -815,6 +827,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -826,7 +839,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "SHA256WITHECDSA",
@@ -835,10 +848,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 785,
+          "elapsed_milliseconds": 501,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -857,7 +871,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 704,
+          "elapsed_milliseconds": 468,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -937,6 +951,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "evidence-signature",
           "validation_time": {
@@ -948,7 +963,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "ML-DSA",
@@ -957,10 +972,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 2132,
+          "elapsed_milliseconds": 548,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -979,7 +995,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 2447,
+          "elapsed_milliseconds": 490,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1082,6 +1098,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -1093,7 +1110,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "SHA256WITHECDSA",
@@ -1102,10 +1119,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 966,
+          "elapsed_milliseconds": 533,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1124,7 +1142,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 805,
+          "elapsed_milliseconds": 495,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1199,6 +1217,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "evidence-signature",
           "validation_time": {
@@ -1210,7 +1229,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "ML-DSA",
@@ -1219,10 +1238,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 1006,
+          "elapsed_milliseconds": 517,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1241,7 +1261,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 828,
+          "elapsed_milliseconds": 485,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1278,7 +1298,7 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmp68628T,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpliND04,dst=/input/root.pem,readonly",
           "--mount",
           "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
@@ -1300,7 +1320,7 @@
         "inputs": [
           {
             "bytes": 5848,
-            "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmp68628T",
+            "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpliND04",
             "sha256": "b9e206b654b527834b3361ae34e24ae545df69860309bf022f4f0deee85cb4c5"
           },
           {
@@ -1316,6 +1336,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -1327,7 +1348,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "SHA256WITHECDSA",
@@ -1336,10 +1357,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 1056,
+          "elapsed_milliseconds": 540,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1358,7 +1380,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 845,
+          "elapsed_milliseconds": 486,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1438,6 +1460,7 @@
         ],
         "observation": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "evidence-signature",
           "validation_time": {
@@ -1449,7 +1472,7 @@
           "version_track": "current"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": "ML-DSA",
@@ -1458,10 +1481,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 884,
+          "elapsed_milliseconds": 517,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1480,7 +1504,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 797,
+          "elapsed_milliseconds": 485,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1773,6 +1797,7 @@
         "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
         "stack": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -2061,6 +2086,7 @@
         "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
         "stack": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -2354,13 +2380,14 @@
           }
         ],
         "lifecycle_desynchronization": false,
-        "path_scope": "full-path",
+        "path_scope": "full-path-with-trust-anchor-evidence",
         "policy": "p2-required-hybrid",
         "policy_verdict": "reject",
         "previous_authentication": null,
         "reason": "Required classical or post-quantum evidence did not pass.",
         "stack": {
           "adapter": "bouncycastle-java-current",
+          "applied_validation_time": "2026-06-20T00:00:00Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -2374,7 +2401,7 @@
         "stack_verdict": "accept",
         "validation_time": "2026-06-20T00:00:00Z"
       },
-      "scope": "full-path"
+      "scope": "full-path-with-trust-anchor-evidence"
     }
   ],
   "valid_default_path": {
@@ -2433,6 +2460,7 @@
     ],
     "observation": {
       "adapter": "bouncycastle-java-current",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "x509-path",
       "validation_time": {
@@ -2444,7 +2472,7 @@
       "version_track": "current"
     },
     "source_instrumentation": {
-      "confidence": "observed",
+      "confidence": "behaviorally-established",
       "events": [
         {
           "algorithm": "SHA256WITHECDSA",
@@ -2453,10 +2481,11 @@
           "target": "leaf"
         }
       ],
-      "extensions": []
+      "extensions": [],
+      "instrumentation_scope": "adapter"
     },
     "verification": {
-      "elapsed_milliseconds": 1945,
+      "elapsed_milliseconds": 559,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -2475,7 +2504,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 1745,
+      "elapsed_milliseconds": 544,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

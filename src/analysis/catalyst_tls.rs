@@ -1,6 +1,6 @@
 use crate::{
-    API_VERSION, AdapterReport, CertificateNode, CheckResult, CheckState, Confidence, Evidence,
-    EvidenceKind, OracleError, PathPosition, PathScope, Policy, Scheme, StackVerdict,
+    API_VERSION, AdapterReport, AlgorithmSecurity, BindingDesign, CheckResult, CheckState,
+    Confidence, Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, StackVerdict,
     VerificationRequest, VerificationResult,
     adapters::{
         AdapterSupportError,
@@ -10,13 +10,19 @@ use crate::{
         check_from_verdict,
         openssl::OpenSslTlsConfig,
     },
-    analysis::tls::{
-        TlsHandshakeEvidence, TlsObservationError, TlsTranscriptConfig, TlsTranscriptEvidence,
-        observe as observe_tls, observe_transcript,
+    analysis::{
+        LeafPathProperties, certificate_der_hash, end_entity_certification_path, issuer_edge_hash,
+        tls::{
+            TlsHandshakeEvidence, TlsObservationError, TlsTranscriptConfig, TlsTranscriptEvidence,
+            observe as observe_tls, observe_transcript,
+        },
     },
     evaluate,
     mutation::{MutationError, corrupt_outer_signature, encode_certificate_pem},
-    pem::{CrlStatusResult, PemError, PemKind, check_crl_status, inspect_certificate, read_der},
+    pem::{
+        CrlStatusResult, PemError, PemKind, check_certificate_validity, check_crl_status,
+        inspect_certificate, read_der,
+    },
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -81,7 +87,7 @@ pub fn analyze(config: &CatalystTlsConfig) -> Result<CatalystTlsReport, Catalyst
         &config.valid_certificate,
         &config.invalid_post_quantum_certificate,
     ] {
-        if inspect_certificate(path, INPUT_LIMIT)?.scheme != Scheme::Catalyst {
+        if inspect_certificate(path, INPUT_LIMIT)?.binding_design != BindingDesign::Catalyst {
             return Err(CatalystTlsError::WrongScheme);
         }
     }
@@ -124,6 +130,14 @@ pub fn analyze(config: &CatalystTlsConfig) -> Result<CatalystTlsReport, Catalyst
     let observed_pass = CheckResult::observed(CheckState::Pass);
     let classical_path = check_from_verdict(valid_tls.report.observation.verdict);
     let post_quantum_signature = check_from_verdict(valid_post_quantum.observation.verdict);
+    let valid_certificate_validity = check_certificate_validity(
+        &config.valid_certificate,
+        &config.validation_time,
+        INPUT_LIMIT,
+    )?;
+    let certificate_der_sha256 = certificate_der_hash(&config.valid_certificate, INPUT_LIMIT)?;
+    let issuer_edge_sha256 =
+        issuer_edge_hash(&config.valid_certificate, &config.issuer, INPUT_LIMIT)?;
     let request = VerificationRequest {
         api_version: API_VERSION.to_owned(),
         policy: Policy::P2RequiredHybrid,
@@ -131,39 +145,49 @@ pub fn analyze(config: &CatalystTlsConfig) -> Result<CatalystTlsReport, Catalyst
         validation_time: config.validation_time.clone(),
         previous_authentication: None,
         stack: valid_tls.report.observation.clone(),
-        certificate_path: vec![CertificateNode {
-            id: "end-entity".to_owned(),
-            position: PathPosition::EndEntity,
-            scheme: Scheme::Catalyst,
-        }],
+        certificate_path: end_entity_certification_path(
+            &config.valid_certificate,
+            &config.issuer,
+            &config.trust_store,
+            LeafPathProperties {
+                subject_public_key_scheme: AlgorithmSecurity::Classical,
+                certificate_signature_scheme: AlgorithmSecurity::Classical,
+                binding_design: BindingDesign::Catalyst,
+            },
+            INPUT_LIMIT,
+        )?,
         evidence: vec![
             Evidence {
                 id: "classical-base-signature".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::Classical,
                 present: observed_pass,
                 recognized: observed_pass,
                 signature: classical_path,
                 binding: CheckResult::observed(CheckState::NotApplicable),
                 path: classical_path,
-                validity: classical_path,
+                validity: valid_certificate_validity,
                 revocation: crl_status.revocation,
-                outcome_bearing: classical_outcome,
+                decision_sensitive_for_fixture: classical_outcome,
             },
             Evidence {
                 id: "catalyst-alternative-signature".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::PostQuantum,
                 present: observed_pass,
                 recognized: observed_pass,
                 signature: post_quantum_signature,
                 binding: post_quantum_signature,
                 path: classical_path,
-                validity: classical_path,
+                validity: valid_certificate_validity,
                 revocation: crl_status.revocation,
-                outcome_bearing: post_quantum_outcome,
+                decision_sensitive_for_fixture: post_quantum_outcome,
             },
         ],
     };
@@ -256,6 +280,7 @@ mod tests {
 
     #[test]
     fn tls_rejects_hybrid_authentication_when_pq_does_not_change_the_handshake() {
+        let _guard = crate::adapter_test_lock();
         let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
         let published = repository.join("tests/fixtures/paper-v1.0.2");
         let controls = repository.join("tests/fixtures/generated-controls");

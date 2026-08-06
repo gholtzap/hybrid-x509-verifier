@@ -1,7 +1,7 @@
 use crate::{
-    API_VERSION, AdapterReport, AuthenticationLevel, CertificateNode, CheckResult, CheckState,
-    Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, Scheme, StackVerdict,
-    VerificationRequest, VerificationResult,
+    API_VERSION, AdapterReport, AlgorithmSecurity, AuthenticationLevel, BindingDesign,
+    CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError, PathPosition,
+    PathScope, Policy, StackVerdict, VerificationRequest, VerificationResult,
     adapters::{
         AdapterSupportError,
         bouncy_castle::{
@@ -9,7 +9,9 @@ use crate::{
         },
         check_from_verdict,
     },
-    analysis::{ScopedVerificationResult, behavioral_check},
+    analysis::{
+        ScopedVerificationResult, behavioral_check, certificate_der_hash, issuer_edge_hash,
+    },
     evaluate,
     mutation::{MutationError, corrupt_outer_signature, encode_certificate_pem},
     pem::{
@@ -84,7 +86,7 @@ pub fn analyze(
         &config.valid_certificate,
         &config.invalid_post_quantum_certificate,
     ] {
-        if inspect_certificate(path, INPUT_LIMIT)?.scheme != Scheme::Catalyst {
+        if inspect_certificate(path, INPUT_LIMIT)?.binding_design != BindingDesign::Catalyst {
             return Err(CatalystBouncyCastleError::WrongScheme);
         }
     }
@@ -198,21 +200,39 @@ pub fn analyze(
     let observed_pass = CheckResult::observed(CheckState::Pass);
     let classical_path = check_from_verdict(valid_default.observation.verdict);
     let post_quantum_signature = check_from_verdict(valid_post_quantum.observation.verdict);
+    let leaf_hash = certificate_der_hash(&config.valid_certificate, INPUT_LIMIT)?;
+    let leaf_edge_hash = issuer_edge_hash(&config.valid_certificate, &config.issuer, INPUT_LIMIT)?;
+    let intermediate_hash = certificate_der_hash(&config.issuer, INPUT_LIMIT)?;
+    let intermediate_edge_hash =
+        issuer_edge_hash(&config.issuer, &config.trust_store, INPUT_LIMIT)?;
+    let root_hash = certificate_der_hash(&config.trust_store, INPUT_LIMIT)?;
     let certificate_path = vec![
         CertificateNode {
             id: "end-entity".to_owned(),
             position: PathPosition::EndEntity,
-            scheme: Scheme::Catalyst,
+            subject_public_key_scheme: AlgorithmSecurity::Classical,
+            certificate_signature_scheme: AlgorithmSecurity::Classical,
+            binding_design: BindingDesign::Catalyst,
+            der_sha256: Some(leaf_hash.clone()),
+            issuer_edge_sha256: Some(leaf_edge_hash.clone()),
         },
         CertificateNode {
             id: "intermediate".to_owned(),
             position: PathPosition::Intermediate,
-            scheme: Scheme::Catalyst,
+            subject_public_key_scheme: AlgorithmSecurity::Classical,
+            certificate_signature_scheme: AlgorithmSecurity::Classical,
+            binding_design: BindingDesign::Catalyst,
+            der_sha256: Some(intermediate_hash.clone()),
+            issuer_edge_sha256: Some(intermediate_edge_hash.clone()),
         },
         CertificateNode {
             id: "root".to_owned(),
             position: PathPosition::TrustAnchor,
-            scheme: Scheme::Classical,
+            subject_public_key_scheme: AlgorithmSecurity::Classical,
+            certificate_signature_scheme: AlgorithmSecurity::Classical,
+            binding_design: BindingDesign::None,
+            der_sha256: Some(root_hash.clone()),
+            issuer_edge_sha256: None,
         },
     ];
     let missing = CheckResult::observed(CheckState::Fail);
@@ -222,6 +242,8 @@ pub fn analyze(
             id: "classical-base-signature".to_owned(),
             certificate_id: "end-entity".to_owned(),
             position: PathPosition::EndEntity,
+            certificate_der_sha256: Some(leaf_hash.clone()),
+            issuer_edge_sha256: Some(leaf_edge_hash.clone()),
             kind: EvidenceKind::Classical,
             present: observed_pass,
             recognized: observed_pass,
@@ -230,12 +252,14 @@ pub fn analyze(
             path: classical_path,
             validity: leaf_validity,
             revocation: crl_status.revocation,
-            outcome_bearing: classical_outcome,
+            decision_sensitive_for_fixture: classical_outcome,
         },
         Evidence {
             id: "catalyst-alternative-signature".to_owned(),
             certificate_id: "end-entity".to_owned(),
             position: PathPosition::EndEntity,
+            certificate_der_sha256: Some(leaf_hash.clone()),
+            issuer_edge_sha256: Some(leaf_edge_hash.clone()),
             kind: EvidenceKind::PostQuantum,
             present: observed_pass,
             recognized: observed_pass,
@@ -244,12 +268,14 @@ pub fn analyze(
             path: classical_path,
             validity: leaf_validity,
             revocation: crl_status.revocation,
-            outcome_bearing: post_quantum_outcome,
+            decision_sensitive_for_fixture: post_quantum_outcome,
         },
         Evidence {
             id: "intermediate-classical-signature".to_owned(),
             certificate_id: "intermediate".to_owned(),
             position: PathPosition::Intermediate,
+            certificate_der_sha256: Some(intermediate_hash.clone()),
+            issuer_edge_sha256: Some(intermediate_edge_hash.clone()),
             kind: EvidenceKind::Classical,
             present: observed_pass,
             recognized: observed_pass,
@@ -258,12 +284,14 @@ pub fn analyze(
             path: classical_path,
             validity: intermediate_validity,
             revocation: intermediate_crl_status.revocation,
-            outcome_bearing: intermediate_classical_outcome,
+            decision_sensitive_for_fixture: intermediate_classical_outcome,
         },
         Evidence {
             id: "intermediate-alternative-signature".to_owned(),
             certificate_id: "intermediate".to_owned(),
             position: PathPosition::Intermediate,
+            certificate_der_sha256: Some(intermediate_hash.clone()),
+            issuer_edge_sha256: Some(intermediate_edge_hash.clone()),
             kind: EvidenceKind::PostQuantum,
             present: missing,
             recognized: not_checked,
@@ -272,12 +300,14 @@ pub fn analyze(
             path: not_checked,
             validity: intermediate_validity,
             revocation: intermediate_crl_status.revocation,
-            outcome_bearing: not_checked,
+            decision_sensitive_for_fixture: not_checked,
         },
         Evidence {
             id: "root-classical-signature".to_owned(),
             certificate_id: "root".to_owned(),
             position: PathPosition::TrustAnchor,
+            certificate_der_sha256: Some(root_hash.clone()),
+            issuer_edge_sha256: None,
             kind: EvidenceKind::Classical,
             present: observed_pass,
             recognized: observed_pass,
@@ -286,31 +316,27 @@ pub fn analyze(
             path: classical_path,
             validity: root_validity,
             revocation: root_crl_status.revocation,
-            outcome_bearing: root_classical_outcome,
+            decision_sensitive_for_fixture: root_classical_outcome,
         },
     ];
-    let scopes = [
-        PathScope::EndEntity,
-        PathScope::IssuingPath,
-        PathScope::FullPath,
-    ]
-    .into_iter()
-    .map(|scope| {
-        Ok(ScopedVerificationResult {
-            scope,
-            result: evaluate(&VerificationRequest {
-                api_version: API_VERSION.to_owned(),
-                policy: config.policy,
-                path_scope: scope,
-                validation_time: config.validation_time.clone(),
-                previous_authentication: config.previous_authentication,
-                stack: valid_default.observation.clone(),
-                certificate_path: certificate_path.clone(),
-                evidence: evidence.clone(),
-            })?,
+    let scopes = [PathScope::EndEntity, PathScope::CertificationPath]
+        .into_iter()
+        .map(|scope| {
+            Ok(ScopedVerificationResult {
+                scope,
+                result: evaluate(&VerificationRequest {
+                    api_version: API_VERSION.to_owned(),
+                    policy: config.policy,
+                    path_scope: scope,
+                    validation_time: config.validation_time.clone(),
+                    previous_authentication: config.previous_authentication,
+                    stack: valid_default.observation.clone(),
+                    certificate_path: certificate_path.clone(),
+                    evidence: evidence.clone(),
+                })?,
+            })
         })
-    })
-    .collect::<Result<Vec<_>, OracleError>>()?;
+        .collect::<Result<Vec<_>, OracleError>>()?;
 
     Ok(CatalystBouncyCastleReport {
         api_version: API_VERSION.to_owned(),
@@ -373,6 +399,7 @@ mod tests {
 
     #[test]
     fn detects_catalyst_classical_only_fallback() {
+        let _guard = crate::adapter_test_lock();
         let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
         let published = repository.join("tests/fixtures/paper-v1.0.2");
         let controls = repository.join("tests/fixtures/generated-controls");
@@ -427,7 +454,7 @@ mod tests {
         );
         assert_eq!(report.result.policy_verdict, PolicyVerdict::Reject);
         assert!(report.result.classical_only_fallback);
-        assert_eq!(report.scopes.len(), 3);
+        assert_eq!(report.scopes.len(), 2);
         assert!(
             report
                 .scopes
@@ -438,7 +465,7 @@ mod tests {
             report
                 .scopes
                 .iter()
-                .find(|scope| scope.scope == PathScope::IssuingPath)
+                .find(|scope| scope.scope == PathScope::CertificationPath)
                 .unwrap()
                 .result
                 .evaluated_evidence

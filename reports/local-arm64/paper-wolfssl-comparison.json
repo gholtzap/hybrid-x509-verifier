@@ -56,6 +56,7 @@
         ],
         "observation": {
           "adapter": "wolfssl-mode1",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -67,7 +68,7 @@
           "version_track": "current-and-study"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": null,
@@ -82,10 +83,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 459,
+          "elapsed_milliseconds": 372,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -104,7 +106,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 660,
+          "elapsed_milliseconds": 780,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -177,6 +179,7 @@
         ],
         "observation": {
           "adapter": "wolfssl-mode1",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -188,7 +191,7 @@
           "version_track": "current-and-study"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": null,
@@ -203,10 +206,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 407,
+          "elapsed_milliseconds": 353,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -225,7 +229,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 392,
+          "elapsed_milliseconds": 339,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -298,6 +302,7 @@
         ],
         "observation": {
           "adapter": "wolfssl-mode2",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -309,7 +314,7 @@
           "version_track": "current-and-study"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": null,
@@ -324,10 +329,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 425,
+          "elapsed_milliseconds": 331,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -346,7 +352,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 378,
+          "elapsed_milliseconds": 318,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -419,6 +425,7 @@
         ],
         "observation": {
           "adapter": "wolfssl-mode2",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
           "execution_isolation": "container",
           "validation_profile": "x509-path",
           "validation_time": {
@@ -430,7 +437,7 @@
           "version_track": "current-and-study"
         },
         "source_instrumentation": {
-          "confidence": "observed",
+          "confidence": "behaviorally-established",
           "events": [
             {
               "algorithm": null,
@@ -445,10 +452,11 @@
               "target": "leaf"
             }
           ],
-          "extensions": []
+          "extensions": [],
+          "instrumentation_scope": "adapter"
         },
         "verification": {
-          "elapsed_milliseconds": 402,
+          "elapsed_milliseconds": 322,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 88,
@@ -467,7 +475,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 376,
+          "elapsed_milliseconds": 300,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,

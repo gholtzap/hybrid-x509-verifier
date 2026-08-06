@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "hybrid-x509-verifier/v1";
+pub const API_VERSION: &str = "hybrid-x509-evidence/v8";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
@@ -16,8 +16,13 @@ pub enum Policy {
 #[serde(rename_all = "kebab-case")]
 pub enum PathScope {
     EndEntity,
-    IssuingPath,
-    FullPath,
+    #[serde(
+        rename = "certification-path",
+        alias = "issuing-path",
+        alias = "full-path",
+        alias = "full-path-with-trust-anchor-evidence"
+    )]
+    CertificationPath,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -32,45 +37,55 @@ impl PathScope {
     pub fn includes(self, position: PathPosition) -> bool {
         match self {
             Self::EndEntity => position == PathPosition::EndEntity,
-            Self::IssuingPath => position != PathPosition::TrustAnchor,
-            Self::FullPath => true,
+            Self::CertificationPath => position != PathPosition::TrustAnchor,
         }
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
-pub enum Scheme {
+pub enum AlgorithmSecurity {
     Classical,
-    PurePostQuantum,
-    AtomicComposite,
-    Catalyst,
-    Chameleon,
-    Related,
+    PostQuantum,
+    Hybrid,
     Unknown,
 }
 
-impl Scheme {
-    pub fn is_hybrid(self) -> bool {
+impl AlgorithmSecurity {
+    pub fn is_classical(self) -> bool {
+        matches!(self, Self::Classical | Self::Hybrid)
+    }
+
+    pub fn is_post_quantum(self) -> bool {
+        matches!(self, Self::PostQuantum | Self::Hybrid)
+    }
+
+    pub fn is_unknown(self) -> bool {
+        self == Self::Unknown
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum BindingDesign {
+    None,
+    AtomicComposite,
+    Catalyst,
+    Chameleon,
+    RelatedCertificate,
+    Unknown,
+}
+
+impl BindingDesign {
+    pub fn is_hybrid_certificate_signature_design(self) -> bool {
         matches!(
             self,
-            Self::AtomicComposite | Self::Catalyst | Self::Chameleon | Self::Related
+            Self::AtomicComposite | Self::Catalyst | Self::Chameleon
         )
     }
 
-    pub fn requires_classical(self) -> bool {
-        matches!(
-            self,
-            Self::Classical
-                | Self::AtomicComposite
-                | Self::Catalyst
-                | Self::Chameleon
-                | Self::Related
-        )
-    }
-
-    pub fn requires_post_quantum(self) -> bool {
-        self == Self::PurePostQuantum || self.is_hybrid()
+    pub fn is_unknown(self) -> bool {
+        self == Self::Unknown
     }
 }
 
@@ -79,10 +94,39 @@ impl Scheme {
 pub struct CertificateNode {
     pub id: String,
     pub position: PathPosition,
-    pub scheme: Scheme,
+    pub subject_public_key_scheme: AlgorithmSecurity,
+    pub certificate_signature_scheme: AlgorithmSecurity,
+    pub binding_design: BindingDesign,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub der_sha256: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub issuer_edge_sha256: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+impl CertificateNode {
+    pub fn has_unknown_crypto_property(&self) -> bool {
+        self.subject_public_key_scheme.is_unknown()
+            || self.certificate_signature_scheme.is_unknown()
+            || self.binding_design.is_unknown()
+    }
+
+    pub fn requires_classical_certificate_signature_evidence(&self) -> bool {
+        self.certificate_signature_scheme.is_classical()
+            || self.binding_design.is_hybrid_certificate_signature_design()
+    }
+
+    pub fn requires_post_quantum_certificate_signature_evidence(&self) -> bool {
+        self.certificate_signature_scheme.is_post_quantum()
+            || self.binding_design.is_hybrid_certificate_signature_design()
+    }
+
+    pub fn has_hybrid_certificate_signature_design(&self) -> bool {
+        self.binding_design.is_hybrid_certificate_signature_design()
+            || self.certificate_signature_scheme == AlgorithmSecurity::Hybrid
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
 pub enum EvidenceKind {
     Classical,
@@ -130,6 +174,10 @@ pub struct Evidence {
     pub id: String,
     pub certificate_id: String,
     pub position: PathPosition,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub certificate_der_sha256: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub issuer_edge_sha256: Option<String>,
     pub kind: EvidenceKind,
     pub present: CheckResult,
     pub recognized: CheckResult,
@@ -138,7 +186,7 @@ pub struct Evidence {
     pub path: CheckResult,
     pub validity: CheckResult,
     pub revocation: CheckResult,
-    pub outcome_bearing: CheckResult,
+    pub decision_sensitive_for_fixture: CheckResult,
 }
 
 impl Evidence {
@@ -151,7 +199,10 @@ impl Evidence {
             ("path", self.path),
             ("validity", self.validity),
             ("revocation", self.revocation),
-            ("outcome-bearing", self.outcome_bearing),
+            (
+                "decision-sensitive-for-fixture",
+                self.decision_sensitive_for_fixture,
+            ),
         ]
     }
 }
@@ -189,6 +240,14 @@ pub enum VersionTrack {
     UserSupplied,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum PathObservationSource {
+    PresentedInput,
+    AdapterSelected,
+    NotReported,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct StackObservation {
@@ -198,6 +257,10 @@ pub struct StackObservation {
     pub version_track: VersionTrack,
     pub validation_profile: ValidationProfile,
     pub execution_isolation: ExecutionIsolation,
+    pub selected_path_der_sha256: Vec<String>,
+    pub selected_path_source: PathObservationSource,
+    pub trust_anchor_der_sha256: String,
+    pub applied_validation_time: String,
     pub validation_time: CheckResult,
 }
 
@@ -246,8 +309,16 @@ pub struct InputArtifact {
 #[serde(deny_unknown_fields)]
 pub struct SourceInstrumentation {
     pub confidence: Confidence,
+    pub instrumentation_scope: InstrumentationScope,
     pub events: Vec<SourceTraceEvent>,
     pub extensions: Vec<ObservedExtension>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum InstrumentationScope {
+    Adapter,
+    LibrarySource,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -289,8 +360,8 @@ pub struct VerificationRequest {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
 pub enum PolicyVerdict {
-    AcceptClassical,
-    AcceptHybrid,
+    ClassicalClaimSetSatisfied,
+    HybridClaimSetSatisfied,
     Reject,
     Indeterminate,
     Unsupported,

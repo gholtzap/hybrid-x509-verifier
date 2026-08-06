@@ -77,6 +77,7 @@
     ],
     "observation": {
       "adapter": "openssl-current-tls",
+      "applied_validation_time": "2026-06-20T00:00:00Z",
       "execution_isolation": "container",
       "validation_profile": "web-pki-server",
       "validation_time": {
@@ -89,26 +90,26 @@
     },
     "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 1001,
+      "elapsed_milliseconds": 621,
       "status_code": 1,
       "stderr": {
         "captured_bytes": 162,
-        "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKZXJyb3Igc2V0dGluZyBjZXJ0aWZpY2F0ZQpDMDJGNTA5QkZGRkYwMDAwOmVycm9yOjBBMDAwMThFOlNTTCByb3V0aW5lczpTU0xfQ1RYX3VzZV9jZXJ0aWZpY2F0ZTpjYSBtZCB0b28gd2Vhazpzc2wvc3NsX3JzYS5jOjI1MjoK",
+        "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKZXJyb3Igc2V0dGluZyBjZXJ0aWZpY2F0ZQpDMDZGMUJBOEZGRkYwMDAwOmVycm9yOjBBMDAwMThFOlNTTCByb3V0aW5lczpTU0xfQ1RYX3VzZV9jZXJ0aWZpY2F0ZTpjYSBtZCB0b28gd2Vhazpzc2wvc3NsX3JzYS5jOjI1MjoK",
         "encoding": "base64",
-        "sha256": "2cf36b568934b0de89f8681652cda91aac23d500fd9bb2158cee3e07d07786a6",
+        "sha256": "5a0d8b33a57d47aa5756ebb2123b61e8a9330ecf9d9412b2ffdb317813d5a3f6",
         "truncated": false
       },
       "stdout": {
         "captured_bytes": 240,
-        "data": "QzBERjc5OEVGRkZGMDAwMDplcnJvcjo4MDAwMDA2RjpzeXN0ZW0gbGlicmFyeTpCSU9fY29ubmVjdDpDb25uZWN0aW9uIHJlZnVzZWQ6Y3J5cHRvL2Jpby9iaW9fc29jazIuYzoxODM6Y2FsbGluZyBjb25uZWN0KCkKQzBERjc5OEVGRkZGMDAwMDplcnJvcjoxMDAwMDA2NzpCSU8gcm91dGluZXM6QklPX2Nvbm5lY3Q6Y29ubmVjdCBlcnJvcjpjcnlwdG8vYmlvL2Jpb19zb2NrMi5jOjE4NToKY29ubmVjdDplcnJubz0xMTEK",
+        "data": "QzAxRjQ5QjdGRkZGMDAwMDplcnJvcjo4MDAwMDA2RjpzeXN0ZW0gbGlicmFyeTpCSU9fY29ubmVjdDpDb25uZWN0aW9uIHJlZnVzZWQ6Y3J5cHRvL2Jpby9iaW9fc29jazIuYzoxODM6Y2FsbGluZyBjb25uZWN0KCkKQzAxRjQ5QjdGRkZGMDAwMDplcnJvcjoxMDAwMDA2NzpCSU8gcm91dGluZXM6QklPX2Nvbm5lY3Q6Y29ubmVjdCBlcnJvcjpjcnlwdG8vYmlvL2Jpb19zb2NrMi5jOjE4NToKY29ubmVjdDplcnJubz0xMTEK",
         "encoding": "base64",
-        "sha256": "2212ea186a51991b0f3874ef892bae41484dbbe1566962a4d7b89a236a53d74b",
+        "sha256": "b701b7ffb7fbdc834a6518ae2401e0119fb68734440511fbe786bda2cf4212e2",
         "truncated": false
       },
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 1338,
+      "elapsed_milliseconds": 558,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

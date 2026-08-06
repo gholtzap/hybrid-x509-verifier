@@ -1,16 +1,16 @@
 [package]
-name = "hybrid-x509-verifier"
+name = "hybrid-x509-evidence"
 version = "0.1.0"
 edition = "2024"
 license = "Apache-2.0"
-description = "Policy verifier for classical and post-quantum X.509 authentication evidence"
+description = "Policy evaluator for classical and post-quantum X.509 authentication evidence"
 
 [lib]
-name = "hybrid_x509_verifier"
+name = "hybrid_x509_evidence"
 path = "src/lib.rs"
 
 [[bin]]
-name = "hybrid-x509-verify"
+name = "hybrid-x509-evaluate"
 path = "src/main.rs"
 
 [dependencies]

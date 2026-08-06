@@ -1,6 +1,6 @@
 use super::{
-    AdapterExecution, AdapterSupportError, classify_json_verdict, container::isolated_arguments,
-    record_inputs, resolve_executable,
+    AdapterExecution, AdapterSupportError, cached_version_output, classify_json_verdict,
+    container::isolated_arguments, record_inputs, resolve_executable, selected_path_hashes,
 };
 use crate::{
     CheckResult, CheckState, ExecutionIsolation, StackObservation, ValidationProfile, VersionTrack,
@@ -55,6 +55,11 @@ pub fn verify(config: &WolfSslConfig) -> Result<AdapterExecution, WolfSslError> 
     let mut input_paths = vec![config.trust_store.as_path(), config.leaf.as_path()];
     input_paths.extend(config.intermediate.as_deref());
     let inputs = record_inputs(&input_paths)?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        config.intermediate.as_deref(),
+        &config.trust_store,
+    )?;
     let validation_time = chrono::DateTime::parse_from_rfc3339(&config.validation_time)
         .map_err(|_| WolfSslError::InvalidValidationTime(config.validation_time.clone()))?
         .with_timezone(&chrono::Utc)
@@ -79,7 +84,7 @@ pub fn verify(config: &WolfSslConfig) -> Result<AdapterExecution, WolfSslError> 
             OsString::from("--version"),
         ],
     )?;
-    let version_output = run_program(&executable, &version_arguments, limits)?;
+    let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(WolfSslError::VersionFailed);
     }
@@ -113,6 +118,10 @@ pub fn verify(config: &WolfSslConfig) -> Result<AdapterExecution, WolfSslError> 
             version_track: VersionTrack::CurrentAndStudy,
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: ExecutionIsolation::Container,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,
@@ -131,6 +140,7 @@ mod tests {
 
     #[test]
     fn reproduces_the_published_wolfssl_roundtrip() {
+        let _guard = crate::adapter_test_lock();
         let fixtures =
             Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2/wolfgen");
         for (mode, leaf, expected) in [

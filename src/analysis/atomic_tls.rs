@@ -1,8 +1,10 @@
 use crate::{
-    API_VERSION, CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError,
-    PathPosition, PathScope, Policy, Scheme, StackVerdict, VerificationRequest, VerificationResult,
+    API_VERSION, AlgorithmSecurity, BindingDesign, CheckResult, CheckState, Evidence, EvidenceKind,
+    OracleError, PathPosition, PathScope, Policy, StackVerdict, VerificationRequest,
+    VerificationResult,
     analysis::{
-        behavioral_check,
+        LeafPathProperties, behavioral_check, certificate_der_hash, end_entity_certification_path,
+        issuer_edge_hash,
         tls::{
             TlsObservationError, TlsTranscriptConfig, TlsTranscriptEvidence, observe_transcript,
         },
@@ -63,7 +65,9 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
         &config.valid_certificate,
         &config.invalid_post_quantum_certificate,
     ] {
-        if inspect_certificate(certificate, INPUT_LIMIT)?.scheme != Scheme::AtomicComposite {
+        if inspect_certificate(certificate, INPUT_LIMIT)?.binding_design
+            != BindingDesign::AtomicComposite
+        {
             return Err(AtomicTlsError::WrongScheme);
         }
     }
@@ -102,6 +106,9 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
         &config.validation_time,
         INPUT_LIMIT,
     )?;
+    let certificate_der_sha256 = certificate_der_hash(&config.valid_certificate, INPUT_LIMIT)?;
+    let issuer_edge_sha256 =
+        issuer_edge_hash(&config.valid_certificate, &config.issuer, INPUT_LIMIT)?;
     let present = CheckResult::observed(CheckState::Pass);
     let revocation = CheckResult::observed(CheckState::NotChecked);
     let request = VerificationRequest {
@@ -111,16 +118,24 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
         validation_time: config.validation_time.clone(),
         previous_authentication: None,
         stack: valid_tls.report.observation.clone(),
-        certificate_path: vec![CertificateNode {
-            id: "end-entity".to_owned(),
-            position: PathPosition::EndEntity,
-            scheme: Scheme::AtomicComposite,
-        }],
+        certificate_path: end_entity_certification_path(
+            &config.valid_certificate,
+            &config.issuer,
+            &config.trust_store,
+            LeafPathProperties {
+                subject_public_key_scheme: AlgorithmSecurity::Classical,
+                certificate_signature_scheme: AlgorithmSecurity::Hybrid,
+                binding_design: BindingDesign::AtomicComposite,
+            },
+            INPUT_LIMIT,
+        )?,
         evidence: vec![
             Evidence {
                 id: "composite-ecdsa-component".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::Classical,
                 present,
                 recognized: present,
@@ -129,12 +144,14 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
                 path,
                 validity,
                 revocation,
-                outcome_bearing: classical_outcome,
+                decision_sensitive_for_fixture: classical_outcome,
             },
             Evidence {
                 id: "composite-mldsa-component".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::PostQuantum,
                 present,
                 recognized: present,
@@ -143,7 +160,7 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
                 path,
                 validity,
                 revocation,
-                outcome_bearing: post_quantum_outcome,
+                decision_sensitive_for_fixture: post_quantum_outcome,
             },
         ],
     };
@@ -182,6 +199,7 @@ mod tests {
 
     #[test]
     fn both_atomic_signature_components_change_tls_acceptance() {
+        let _guard = crate::adapter_test_lock();
         let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
         let fixtures = repository.join("tests/fixtures/paper-v1.0.2");
         let controls = repository.join("tests/fixtures/generated-controls");

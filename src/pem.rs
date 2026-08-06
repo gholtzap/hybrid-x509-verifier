@@ -1,5 +1,5 @@
 use crate::{
-    CheckResult, CheckState, Confidence, Scheme,
+    AlgorithmSecurity, BindingDesign, CheckResult, CheckState, Confidence,
     input::{BoundedInputError, read_bounded_file},
 };
 use chrono::DateTime;
@@ -8,7 +8,10 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256, Sha384, Sha512};
 use std::{io, path::Path};
 use thiserror::Error;
-use x509_parser::{der_parser::der::parse_der_sequence, pem::parse_x509_pem, prelude::FromDer};
+use x509_parser::{
+    der_parser::der::parse_der_sequence, extensions::GeneralName, pem::parse_x509_pem,
+    prelude::FromDer,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PemKind {
@@ -53,6 +56,8 @@ pub enum PemError {
     UnsupportedDigestAlgorithm(String),
     #[error("invalid RFC 3339 validation time: {0}")]
     InvalidValidationTime(String),
+    #[error("{path} contains invalid or duplicate certificate extensions")]
+    InvalidCertificateExtensions { path: String },
     #[error("{path} contains invalid or duplicate CRL extensions")]
     InvalidCrlExtensions { path: String },
     #[error("{path} uses unsupported CRL semantics in extension {oid}")]
@@ -66,7 +71,9 @@ pub enum PemError {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct CertificateProfile {
-    pub scheme: Scheme,
+    pub subject_public_key_scheme: AlgorithmSecurity,
+    pub certificate_signature_scheme: AlgorithmSecurity,
+    pub binding_design: BindingDesign,
     pub signature_algorithm_oid: String,
     pub subject_public_key_algorithm_oid: String,
     pub extension_oids: Vec<String>,
@@ -79,6 +86,31 @@ pub struct RelatedBindingResult {
     pub digest_algorithm_oid: String,
     pub embedded_digest: String,
     pub calculated_digest: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct Rfc9763ProfileChecks {
+    pub binding: RelatedBindingResult,
+    pub extension_in_end_entity: CheckResult,
+    pub related_certificate_is_end_entity: CheckResult,
+    pub key_usage_subset: CheckResult,
+    pub extended_key_usage_subset: CheckResult,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct HybridApplicationPolicyChecks {
+    pub reference_subject_public_key_is_classical: CheckResult,
+    pub related_subject_public_key_is_post_quantum: CheckResult,
+    pub dns_identity_overlap: CheckResult,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct RelatedConformanceResult {
+    pub rfc9763: Rfc9763ProfileChecks,
+    pub hybrid_application_policy: HybridApplicationPolicyChecks,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -155,14 +187,10 @@ pub fn inspect_certificate(path: &Path, limit: usize) -> Result<CertificateProfi
         .iter()
         .map(|extension| extension.oid.to_id_string())
         .collect();
-    let scheme = recognize_scheme(
-        &signature_algorithm_oid,
-        &subject_public_key_algorithm_oid,
-        &extension_oids,
-    );
-
     Ok(CertificateProfile {
-        scheme,
+        subject_public_key_scheme: algorithm_security(&subject_public_key_algorithm_oid),
+        certificate_signature_scheme: algorithm_security(&signature_algorithm_oid),
+        binding_design: binding_design(&signature_algorithm_oid, &extension_oids),
         signature_algorithm_oid,
         subject_public_key_algorithm_oid,
         extension_oids,
@@ -245,6 +273,207 @@ pub fn verify_related_binding(
     })
 }
 
+pub fn verify_related_certificate_conformance(
+    certificate_with_extension: &Path,
+    related_certificate: &Path,
+    limit: usize,
+) -> Result<RelatedConformanceResult, PemError> {
+    let binding = verify_related_binding(certificate_with_extension, related_certificate, limit)?;
+    let reference_der = read_der(certificate_with_extension, PemKind::Certificate, limit)?;
+    let related_der = read_der(related_certificate, PemKind::Certificate, limit)?;
+    let (_, reference) = x509_parser::certificate::X509Certificate::from_der(&reference_der)
+        .map_err(|_| PemError::MalformedDer {
+            path: certificate_with_extension.display().to_string(),
+        })?;
+    let (_, related) =
+        x509_parser::certificate::X509Certificate::from_der(&related_der).map_err(|_| {
+            PemError::MalformedDer {
+                path: related_certificate.display().to_string(),
+            }
+        })?;
+    let reference_profile = inspect_certificate(certificate_with_extension, limit)?;
+    let related_profile = inspect_certificate(related_certificate, limit)?;
+
+    Ok(RelatedConformanceResult {
+        rfc9763: Rfc9763ProfileChecks {
+            binding,
+            extension_in_end_entity: observed_bool(is_end_entity(
+                &reference,
+                certificate_with_extension,
+            )?),
+            related_certificate_is_end_entity: observed_bool(is_end_entity(
+                &related,
+                related_certificate,
+            )?),
+            key_usage_subset: observed_bool(key_usage_is_subset(
+                &reference,
+                certificate_with_extension,
+                &related,
+                related_certificate,
+            )?),
+            extended_key_usage_subset: observed_bool(extended_key_usage_is_subset(
+                &reference,
+                certificate_with_extension,
+                &related,
+                related_certificate,
+            )?),
+        },
+        hybrid_application_policy: hybrid_application_policy_checks(
+            reference_profile.subject_public_key_scheme,
+            related_profile.subject_public_key_scheme,
+            dns_names_overlap(
+                &reference,
+                certificate_with_extension,
+                &related,
+                related_certificate,
+            )?,
+        ),
+    })
+}
+
+fn hybrid_application_policy_checks(
+    reference_subject_public_key_scheme: AlgorithmSecurity,
+    related_subject_public_key_scheme: AlgorithmSecurity,
+    dns_identity_overlap: bool,
+) -> HybridApplicationPolicyChecks {
+    HybridApplicationPolicyChecks {
+        reference_subject_public_key_is_classical: observed_bool(
+            reference_subject_public_key_scheme == AlgorithmSecurity::Classical,
+        ),
+        related_subject_public_key_is_post_quantum: observed_bool(
+            related_subject_public_key_scheme == AlgorithmSecurity::PostQuantum,
+        ),
+        dns_identity_overlap: observed_bool(dns_identity_overlap),
+    }
+}
+
+fn observed_bool(value: bool) -> CheckResult {
+    CheckResult::observed(if value {
+        CheckState::Pass
+    } else {
+        CheckState::Fail
+    })
+}
+
+fn is_end_entity(
+    certificate: &x509_parser::certificate::X509Certificate<'_>,
+    path: &Path,
+) -> Result<bool, PemError> {
+    Ok(!certificate
+        .basic_constraints()
+        .map_err(|_| PemError::InvalidCertificateExtensions {
+            path: path.display().to_string(),
+        })?
+        .is_some_and(|extension| extension.value.ca))
+}
+
+fn key_usage_is_subset(
+    reference: &x509_parser::certificate::X509Certificate<'_>,
+    reference_path: &Path,
+    related: &x509_parser::certificate::X509Certificate<'_>,
+    related_path: &Path,
+) -> Result<bool, PemError> {
+    let reference = reference
+        .key_usage()
+        .map_err(|_| PemError::InvalidCertificateExtensions {
+            path: reference_path.display().to_string(),
+        })?;
+    let Some(reference) = reference else {
+        return Ok(true);
+    };
+    let related = related
+        .key_usage()
+        .map_err(|_| PemError::InvalidCertificateExtensions {
+            path: related_path.display().to_string(),
+        })?;
+    let Some(related) = related else {
+        return Ok(false);
+    };
+    Ok(reference.value.flags & !related.value.flags == 0)
+}
+
+fn extended_key_usage_is_subset(
+    reference: &x509_parser::certificate::X509Certificate<'_>,
+    reference_path: &Path,
+    related: &x509_parser::certificate::X509Certificate<'_>,
+    related_path: &Path,
+) -> Result<bool, PemError> {
+    let reference =
+        reference
+            .extended_key_usage()
+            .map_err(|_| PemError::InvalidCertificateExtensions {
+                path: reference_path.display().to_string(),
+            })?;
+    let Some(reference) = reference else {
+        return Ok(true);
+    };
+    let related =
+        related
+            .extended_key_usage()
+            .map_err(|_| PemError::InvalidCertificateExtensions {
+                path: related_path.display().to_string(),
+            })?;
+    let Some(related) = related else {
+        return Ok(false);
+    };
+    if related.value.any {
+        return Ok(true);
+    }
+    Ok((!reference.value.any || related.value.any)
+        && (!reference.value.server_auth || related.value.server_auth)
+        && (!reference.value.client_auth || related.value.client_auth)
+        && (!reference.value.code_signing || related.value.code_signing)
+        && (!reference.value.email_protection || related.value.email_protection)
+        && (!reference.value.time_stamping || related.value.time_stamping)
+        && (!reference.value.ocsp_signing || related.value.ocsp_signing)
+        && reference.value.other.iter().all(|oid| {
+            let id = oid.to_id_string();
+            related
+                .value
+                .other
+                .iter()
+                .any(|candidate| candidate.to_id_string() == id)
+        }))
+}
+
+fn dns_names_overlap(
+    reference: &x509_parser::certificate::X509Certificate<'_>,
+    reference_path: &Path,
+    related: &x509_parser::certificate::X509Certificate<'_>,
+    related_path: &Path,
+) -> Result<bool, PemError> {
+    let reference = dns_names(reference, reference_path)?;
+    let related = dns_names(related, related_path)?;
+    Ok(!reference.is_empty()
+        && !related.is_empty()
+        && reference
+            .iter()
+            .any(|name| related.iter().any(|candidate| candidate == name)))
+}
+
+fn dns_names(
+    certificate: &x509_parser::certificate::X509Certificate<'_>,
+    path: &Path,
+) -> Result<Vec<String>, PemError> {
+    let Some(names) = certificate.subject_alternative_name().map_err(|_| {
+        PemError::InvalidCertificateExtensions {
+            path: path.display().to_string(),
+        }
+    })?
+    else {
+        return Ok(Vec::new());
+    };
+    Ok(names
+        .value
+        .general_names
+        .iter()
+        .filter_map(|name| match name {
+            GeneralName::DNSName(name) => Some(name.to_string()),
+            _ => None,
+        })
+        .collect())
+}
+
 pub fn check_crl_status(
     certificate_path: &Path,
     issuer_path: &Path,
@@ -313,7 +542,7 @@ pub fn check_crl_status(
     let fresh = crl.last_update().timestamp() <= timestamp
         && crl
             .next_update()
-            .is_some_and(|next_update| timestamp <= next_update.timestamp());
+            .is_some_and(|next_update| timestamp < next_update.timestamp());
     let revoked = crl.iter_revoked_certificates().any(|entry| {
         entry.revocation_date.timestamp() <= timestamp
             && entry
@@ -454,27 +683,62 @@ fn hex_lower(bytes: &[u8]) -> String {
     hex
 }
 
-fn recognize_scheme(signature_oid: &str, subject_key_oid: &str, extensions: &[String]) -> Scheme {
+fn binding_design(signature_oid: &str, extensions: &[String]) -> BindingDesign {
     if extensions.iter().any(|oid| oid == "2.5.29.74") {
-        Scheme::Catalyst
+        BindingDesign::Catalyst
     } else if extensions
         .iter()
         .any(|oid| oid == "2.16.840.1.114027.80.6.1")
     {
-        Scheme::Chameleon
+        BindingDesign::Chameleon
     } else if extensions.iter().any(|oid| oid == "1.3.6.1.5.5.7.1.36") {
-        Scheme::Related
-    } else if signature_oid.starts_with("1.3.6.1.5.5.7.6.")
-        || subject_key_oid.starts_with("1.3.6.1.5.5.7.6.")
-    {
-        Scheme::AtomicComposite
-    } else if signature_oid.starts_with("2.16.840.1.101.3.4.3.")
-        || subject_key_oid.starts_with("2.16.840.1.101.3.4.3.")
-    {
-        Scheme::PurePostQuantum
+        BindingDesign::RelatedCertificate
+    } else if is_composite_mldsa_oid(signature_oid) {
+        BindingDesign::AtomicComposite
     } else {
-        Scheme::Classical
+        BindingDesign::None
     }
+}
+
+fn algorithm_security(oid: &str) -> AlgorithmSecurity {
+    if is_ml_dsa_oid(oid) {
+        AlgorithmSecurity::PostQuantum
+    } else if is_composite_mldsa_oid(oid) {
+        AlgorithmSecurity::Hybrid
+    } else {
+        AlgorithmSecurity::Classical
+    }
+}
+
+fn is_ml_dsa_oid(oid: &str) -> bool {
+    matches!(
+        oid,
+        "2.16.840.1.101.3.4.3.17" | "2.16.840.1.101.3.4.3.18" | "2.16.840.1.101.3.4.3.19"
+    )
+}
+
+fn is_composite_mldsa_oid(oid: &str) -> bool {
+    matches!(
+        oid,
+        "1.3.6.1.5.5.7.6.37"
+            | "1.3.6.1.5.5.7.6.38"
+            | "1.3.6.1.5.5.7.6.39"
+            | "1.3.6.1.5.5.7.6.40"
+            | "1.3.6.1.5.5.7.6.41"
+            | "1.3.6.1.5.5.7.6.42"
+            | "1.3.6.1.5.5.7.6.43"
+            | "1.3.6.1.5.5.7.6.44"
+            | "1.3.6.1.5.5.7.6.45"
+            | "1.3.6.1.5.5.7.6.46"
+            | "1.3.6.1.5.5.7.6.47"
+            | "1.3.6.1.5.5.7.6.48"
+            | "1.3.6.1.5.5.7.6.49"
+            | "1.3.6.1.5.5.7.6.50"
+            | "1.3.6.1.5.5.7.6.51"
+            | "1.3.6.1.5.5.7.6.52"
+            | "1.3.6.1.5.5.7.6.53"
+            | "1.3.6.1.5.5.7.6.54"
+    )
 }
 
 #[cfg(test)]
@@ -495,20 +759,80 @@ mod tests {
     }
 
     #[test]
-    fn recognizes_each_published_certificate_design() {
+    fn classifies_published_certificate_properties() {
         let fixtures = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2");
-        for (name, expected) in [
-            ("root.pem", Scheme::Classical),
-            ("related-certA.pem", Scheme::Related),
-            ("catalyst-leaf.pem", Scheme::Catalyst),
-            ("chameleon-base.pem", Scheme::Chameleon),
-            ("composite-leaf.pem", Scheme::AtomicComposite),
-            ("pure-leaf.pem", Scheme::PurePostQuantum),
-            ("pure-mldsa-signed-leaf.pem", Scheme::PurePostQuantum),
+        for (name, subject, signature, binding) in [
+            (
+                "root.pem",
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::Classical,
+                BindingDesign::None,
+            ),
+            (
+                "related-certA.pem",
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::Classical,
+                BindingDesign::RelatedCertificate,
+            ),
+            (
+                "catalyst-leaf.pem",
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::Classical,
+                BindingDesign::Catalyst,
+            ),
+            (
+                "chameleon-base.pem",
+                AlgorithmSecurity::PostQuantum,
+                AlgorithmSecurity::Classical,
+                BindingDesign::Chameleon,
+            ),
+            (
+                "composite-leaf.pem",
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::Hybrid,
+                BindingDesign::AtomicComposite,
+            ),
+            (
+                "pure-leaf.pem",
+                AlgorithmSecurity::PostQuantum,
+                AlgorithmSecurity::Classical,
+                BindingDesign::None,
+            ),
+            (
+                "pure-mldsa-signed-leaf.pem",
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::PostQuantum,
+                BindingDesign::None,
+            ),
         ] {
             let profile = inspect_certificate(&fixtures.join(name), 64 * 1024).unwrap();
-            assert_eq!(profile.scheme, expected, "{name}");
+            assert_eq!(profile.subject_public_key_scheme, subject, "{name} subject");
+            assert_eq!(
+                profile.certificate_signature_scheme, signature,
+                "{name} signature"
+            );
+            assert_eq!(profile.binding_design, binding, "{name} binding");
         }
+    }
+
+    #[test]
+    fn dsa_with_sha256_is_not_post_quantum() {
+        assert_eq!(
+            algorithm_security("2.16.840.1.101.3.4.3.2"),
+            AlgorithmSecurity::Classical
+        );
+    }
+
+    #[test]
+    fn non_composite_pkix_algorithm_child_is_not_hybrid() {
+        assert_eq!(
+            algorithm_security("1.3.6.1.5.5.7.6.1"),
+            AlgorithmSecurity::Classical
+        );
+        assert_eq!(
+            binding_design("1.3.6.1.5.5.7.6.1", &[]),
+            BindingDesign::None
+        );
     }
 
     #[test]
@@ -523,6 +847,115 @@ mod tests {
 
         assert_eq!(result.check, CheckResult::observed(CheckState::Pass));
         assert_eq!(result.digest_algorithm_oid, "2.16.840.1.101.3.4.2.1");
+    }
+
+    #[test]
+    fn related_conformance_rejects_the_published_key_usage_and_dns_mismatch() {
+        let fixtures = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2");
+        let result = verify_related_certificate_conformance(
+            &fixtures.join("related-certA.pem"),
+            &fixtures.join("related-leafB.pem"),
+            64 * 1024,
+        )
+        .unwrap();
+
+        assert_eq!(
+            result.rfc9763.binding.check,
+            CheckResult::observed(CheckState::Pass)
+        );
+        assert_eq!(
+            result
+                .hybrid_application_policy
+                .related_subject_public_key_is_post_quantum,
+            CheckResult::observed(CheckState::Pass)
+        );
+        assert_eq!(
+            result.rfc9763.extension_in_end_entity,
+            CheckResult::observed(CheckState::Pass)
+        );
+        assert_eq!(
+            result.rfc9763.related_certificate_is_end_entity,
+            CheckResult::observed(CheckState::Pass)
+        );
+        assert_eq!(
+            result.rfc9763.key_usage_subset,
+            CheckResult::observed(CheckState::Fail)
+        );
+        assert_eq!(
+            result.rfc9763.extended_key_usage_subset,
+            CheckResult::observed(CheckState::Pass)
+        );
+        assert_eq!(
+            result.hybrid_application_policy.dns_identity_overlap,
+            CheckResult::observed(CheckState::Fail)
+        );
+    }
+
+    #[test]
+    fn related_conformance_rejects_classical_related_certificate_claims() {
+        let fixtures = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2");
+        let result = verify_related_certificate_conformance(
+            &fixtures.join("related-certA.pem"),
+            &fixtures.join("related-certA.pem"),
+            64 * 1024,
+        )
+        .unwrap();
+
+        assert_eq!(
+            result
+                .hybrid_application_policy
+                .related_subject_public_key_is_post_quantum,
+            CheckResult::observed(CheckState::Fail)
+        );
+    }
+
+    #[test]
+    fn hybrid_related_policy_rejects_pq_to_pq_pairs() {
+        let result = hybrid_application_policy_checks(
+            AlgorithmSecurity::PostQuantum,
+            AlgorithmSecurity::PostQuantum,
+            true,
+        );
+
+        assert_eq!(
+            result.reference_subject_public_key_is_classical,
+            CheckResult::observed(CheckState::Fail)
+        );
+        assert_eq!(
+            result.related_subject_public_key_is_post_quantum,
+            CheckResult::observed(CheckState::Pass)
+        );
+    }
+
+    #[test]
+    fn hybrid_related_policy_rejects_missing_reference_identity() {
+        let result = hybrid_application_policy_checks(
+            AlgorithmSecurity::Classical,
+            AlgorithmSecurity::PostQuantum,
+            false,
+        );
+
+        assert_eq!(
+            result.dns_identity_overlap,
+            CheckResult::observed(CheckState::Fail)
+        );
+    }
+
+    #[test]
+    fn related_conformance_rejects_related_extensions_in_ca_certificates() {
+        let controls =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/generated-controls");
+        let result = verify_related_certificate_conformance(
+            &controls.join("related-path-root-a.pem"),
+            &controls.join("related-path-root-b.pem"),
+            64 * 1024,
+        )
+        .unwrap();
+
+        assert_eq!(
+            result.rfc9763.extension_in_end_entity,
+            CheckResult::observed(CheckState::Fail)
+        );
     }
 
     #[test]
@@ -596,6 +1029,25 @@ mod tests {
     }
 
     #[test]
+    fn crl_is_stale_at_exact_next_update() {
+        let fixtures = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2");
+        let result = check_crl_status(
+            &fixtures.join("related-leafB.pem"),
+            &fixtures.join("ica.pem"),
+            &fixtures.join("related-crl.pem"),
+            "2027-01-01T00:00:00Z",
+            64 * 1024,
+        )
+        .unwrap();
+
+        assert_eq!(result.freshness, CheckResult::observed(CheckState::Fail));
+        assert_eq!(
+            result.revocation,
+            CheckResult::observed(CheckState::Indeterminate)
+        );
+    }
+
+    #[test]
     fn malformed_and_unavailable_crls_are_errors() {
         let fixtures = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2");
         let malformed = tempfile::NamedTempFile::new().unwrap();
@@ -647,8 +1099,8 @@ mod tests {
         assert_eq!(
             inspect_certificate(&controls.join("related-certA-missing.pem"), 64 * 1024)
                 .unwrap()
-                .scheme,
-            Scheme::Classical
+                .binding_design,
+            BindingDesign::None
         );
         assert!(matches!(
             verify_related_binding(

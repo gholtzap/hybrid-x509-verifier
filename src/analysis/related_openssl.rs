@@ -1,14 +1,19 @@
 use crate::{
-    API_VERSION, AdapterReport, AuthenticationLevel, CertificateNode, CheckResult, CheckState,
-    Confidence, Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, Scheme,
+    API_VERSION, AdapterReport, AlgorithmSecurity, AuthenticationLevel, BindingDesign, CheckResult,
+    CheckState, Confidence, Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy,
     StackVerdict, VerificationRequest, VerificationResult,
     adapters::openssl::{OpenSslContainerConfig, OpenSslError, verify_container as verify_openssl},
     adapters::{AdapterSupportError, check_from_verdict},
+    analysis::{
+        LeafPathProperties, certificate_der_hash, end_entity_certification_path, issuer_edge_hash,
+        related_conformance_check,
+    },
     evaluate,
     mutation::{MutationError, corrupt_outer_signature, encode_certificate_pem},
     pem::{
-        CrlStatusResult, PemError, PemKind, RelatedBindingResult, check_crl_status,
-        inspect_certificate, read_der, verify_related_binding,
+        CrlStatusResult, PemError, PemKind, RelatedBindingResult, RelatedConformanceResult,
+        check_crl_status, inspect_certificate, read_der, verify_related_binding,
+        verify_related_certificate_conformance,
     },
 };
 use schemars::JsonSchema;
@@ -40,6 +45,7 @@ pub struct RelatedOpenSslConfig {
 #[serde(deny_unknown_fields)]
 pub struct RelatedOpenSslReport {
     pub api_version: String,
+    pub conformance: RelatedConformanceResult,
     pub binding: RelatedBindingResult,
     pub invalid_binding: RelatedBindingResult,
     pub classical_crl_status: CrlStatusResult,
@@ -72,15 +78,18 @@ pub enum RelatedOpenSslError {
 }
 
 pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, RelatedOpenSslError> {
-    if inspect_certificate(&config.classical_certificate, INPUT_LIMIT)?.scheme != Scheme::Related {
+    if inspect_certificate(&config.classical_certificate, INPUT_LIMIT)?.binding_design
+        != BindingDesign::RelatedCertificate
+    {
         return Err(RelatedOpenSslError::WrongScheme);
     }
 
-    let binding = verify_related_binding(
+    let conformance = verify_related_certificate_conformance(
         &config.classical_certificate,
         &config.post_quantum_certificate,
         INPUT_LIMIT,
     )?;
+    let binding = conformance.rfc9763.binding.clone();
     let invalid_binding = verify_related_binding(
         &config.classical_certificate,
         &config.invalid_binding_certificate,
@@ -153,8 +162,9 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
             confidence: Confidence::Unknown,
         }
     };
+    let conformance_check = related_conformance_check(&conformance);
     let post_quantum_outcome = if classical.observation.verdict == StackVerdict::Accept
-        && binding.check.state == CheckState::Pass
+        && conformance_check.state == CheckState::Pass
         && invalid_binding.check.state == CheckState::Fail
         && post_quantum_invalid_binding_path.observation.verdict == StackVerdict::Accept
         && post_quantum_expired.observation.verdict == StackVerdict::Reject
@@ -173,6 +183,9 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
     let observed_pass = CheckResult::observed(CheckState::Pass);
     let classical_path_pass = check_from_verdict(classical.observation.verdict);
     let pq_path_pass = check_from_verdict(post_quantum_validity.observation.verdict);
+    let certificate_der_sha256 = certificate_der_hash(&config.classical_certificate, INPUT_LIMIT)?;
+    let issuer_edge_sha256 =
+        issuer_edge_hash(&config.classical_certificate, &config.issuer, INPUT_LIMIT)?;
     let request = VerificationRequest {
         api_version: API_VERSION.to_owned(),
         policy: config.policy,
@@ -180,16 +193,24 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
         validation_time: config.validation_time.clone(),
         previous_authentication: config.previous_authentication,
         stack: classical.observation.clone(),
-        certificate_path: vec![CertificateNode {
-            id: "end-entity".to_owned(),
-            position: PathPosition::EndEntity,
-            scheme: Scheme::Related,
-        }],
+        certificate_path: end_entity_certification_path(
+            &config.classical_certificate,
+            &config.issuer,
+            &config.trust_store,
+            LeafPathProperties {
+                subject_public_key_scheme: AlgorithmSecurity::Classical,
+                certificate_signature_scheme: AlgorithmSecurity::Classical,
+                binding_design: BindingDesign::RelatedCertificate,
+            },
+            INPUT_LIMIT,
+        )?,
         evidence: vec![
             Evidence {
                 id: "classical-certificate-path".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::Classical,
                 present: observed_pass,
                 recognized: observed_pass,
@@ -198,27 +219,30 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
                 path: classical_path_pass,
                 validity: classical_path_pass,
                 revocation: classical_crl_status.revocation,
-                outcome_bearing: classical_outcome,
+                decision_sensitive_for_fixture: classical_outcome,
             },
             Evidence {
                 id: "related-post-quantum-certificate".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
+                certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
                 kind: EvidenceKind::PostQuantum,
                 present: observed_pass,
                 recognized: observed_pass,
                 signature: pq_path_pass,
-                binding: binding.check,
+                binding: conformance_check,
                 path: pq_path_pass,
                 validity: pq_path_pass,
                 revocation: post_quantum_crl_status.revocation,
-                outcome_bearing: post_quantum_outcome,
+                decision_sensitive_for_fixture: post_quantum_outcome,
             },
         ],
     };
 
     Ok(RelatedOpenSslReport {
         api_version: API_VERSION.to_owned(),
+        conformance,
         binding,
         invalid_binding,
         classical_crl_status,
@@ -258,6 +282,7 @@ mod tests {
 
     #[test]
     fn detects_the_published_related_revocation_desynchronization() {
+        let _guard = crate::adapter_test_lock();
         let fixtures = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/paper-v1.0.2");
         let controls =
             Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/generated-controls");
@@ -280,6 +305,18 @@ mod tests {
         .unwrap();
 
         assert_eq!(report.binding.check.state, CheckState::Pass);
+        assert_eq!(
+            report.conformance.rfc9763.key_usage_subset.state,
+            CheckState::Fail
+        );
+        assert_eq!(
+            report
+                .conformance
+                .hybrid_application_policy
+                .dns_identity_overlap
+                .state,
+            CheckState::Fail
+        );
         assert_eq!(report.invalid_binding.check.state, CheckState::Fail);
         assert_eq!(
             report

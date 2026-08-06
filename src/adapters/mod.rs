@@ -1,15 +1,19 @@
 use crate::input::{BoundedInputError, read_bounded_file};
 use crate::{
-    API_VERSION, AdapterReport, Confidence, InputArtifact, ObservedExtension, ProcessRecord,
-    SourceInstrumentation, SourceTraceEvent, StackObservation, process::ProcessOutput,
+    API_VERSION, AdapterReport, Confidence, InputArtifact, InstrumentationScope, ObservedExtension,
+    ProcessRecord, SourceInstrumentation, SourceTraceEvent, StackObservation,
+    pem::{PemError, PemKind, read_der},
+    process::ProcessOutput,
 };
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use std::{
+    collections::HashMap,
     ffi::OsString,
     fmt::Write as _,
     io,
     path::{Path, PathBuf},
+    sync::{Mutex, OnceLock},
 };
 use thiserror::Error;
 
@@ -62,6 +66,8 @@ pub enum AdapterSupportError {
     #[error(transparent)]
     Input(#[from] BoundedInputError),
     #[error(transparent)]
+    Pem(#[from] PemError),
+    #[error(transparent)]
     Io(#[from] io::Error),
 }
 
@@ -80,6 +86,58 @@ pub(crate) fn record_inputs(paths: &[&Path]) -> Result<Vec<InputArtifact>, Adapt
             })
         })
         .collect()
+}
+
+pub(crate) fn certificate_sha256(path: &Path) -> Result<String, AdapterSupportError> {
+    let bytes = read_der(path, PemKind::Certificate, MAX_INPUT_BYTES as usize)?;
+    Ok(hex_lower(&Sha256::digest(&bytes)))
+}
+
+pub(crate) fn selected_path_hashes(
+    leaf: &Path,
+    intermediate: Option<&Path>,
+    trust_anchor: &Path,
+) -> Result<(Vec<String>, String), AdapterSupportError> {
+    let leaf = certificate_sha256(leaf)?;
+    let intermediate = intermediate.map(certificate_sha256).transpose()?;
+    let trust_anchor = certificate_sha256(trust_anchor)?;
+    let mut selected_path = vec![leaf];
+    selected_path.extend(intermediate);
+    selected_path.push(trust_anchor.clone());
+    Ok((selected_path, trust_anchor))
+}
+
+pub(crate) fn cached_version_output(
+    executable: &Path,
+    arguments: &[OsString],
+    limits: crate::process::ProcessLimits,
+) -> io::Result<ProcessOutput> {
+    static CACHE: OnceLock<Mutex<HashMap<String, ProcessOutput>>> = OnceLock::new();
+    let key = version_cache_key(executable, arguments);
+    let cache = CACHE.get_or_init(|| Mutex::new(HashMap::new()));
+    if let Some(output) = cache
+        .lock()
+        .map_err(|_| io::Error::other("adapter version cache is poisoned"))?
+        .get(&key)
+        .cloned()
+    {
+        return Ok(output);
+    }
+    let output = crate::process::run_program(executable, arguments, limits)?;
+    cache
+        .lock()
+        .map_err(|_| io::Error::other("adapter version cache is poisoned"))?
+        .insert(key, output.clone());
+    Ok(output)
+}
+
+fn version_cache_key(executable: &Path, arguments: &[OsString]) -> String {
+    let mut key = executable.display().to_string();
+    for argument in arguments {
+        key.push('\0');
+        key.push_str(&argument.to_string_lossy());
+    }
+    key
 }
 
 fn hex_lower(bytes: &[u8]) -> String {
@@ -128,6 +186,7 @@ fn source_instrumentation(output: &ProcessOutput) -> Option<SourceInstrumentatio
     let parsed = serde_json::from_slice::<InstrumentedOutput>(&output.stdout.bytes).ok()?;
     Some(SourceInstrumentation {
         confidence: Confidence::Observed,
+        instrumentation_scope: InstrumentationScope::Adapter,
         events: parsed.trace,
         extensions: parsed.extensions,
     })
@@ -163,6 +222,41 @@ pub(crate) fn check_from_verdict(verdict: crate::StackVerdict) -> crate::CheckRe
                 confidence: crate::Confidence::Observed,
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::process::ProcessLimits;
+    use std::{ffi::OsString, time::Duration};
+
+    #[test]
+    fn version_output_is_cached_by_command() {
+        let directory = tempfile::tempdir().unwrap();
+        let count = directory.path().join("count");
+        let script = directory.path().join("version.sh");
+        std::fs::write(
+            &script,
+            format!(
+                "count=$(cat '{}' 2>/dev/null || echo 0)\ncount=$((count + 1))\nprintf '%s' \"$count\" > '{}'\nprintf 'cached-version'\n",
+                count.display(),
+                count.display()
+            ),
+        )
+        .unwrap();
+        let arguments = [OsString::from(script.as_os_str())];
+        let limits = ProcessLimits {
+            timeout: Duration::from_secs(1),
+            max_output_bytes: 1024,
+        };
+
+        let first = cached_version_output(Path::new("/bin/sh"), &arguments, limits).unwrap();
+        let second = cached_version_output(Path::new("/bin/sh"), &arguments, limits).unwrap();
+
+        assert_eq!(first.stdout.bytes, b"cached-version");
+        assert_eq!(second.stdout.bytes, b"cached-version");
+        assert_eq!(std::fs::read_to_string(count).unwrap(), "1");
     }
 }
 

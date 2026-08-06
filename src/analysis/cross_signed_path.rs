@@ -1,7 +1,7 @@
 use crate::{
-    API_VERSION, AdapterReport, AuthenticationLevel, CertificateNode, CheckResult, CheckState,
-    Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, Scheme, StackVerdict,
-    VerificationRequest,
+    API_VERSION, AdapterReport, AlgorithmSecurity, AuthenticationLevel, BindingDesign,
+    CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError, PathPosition,
+    PathScope, Policy, StackVerdict, VerificationRequest,
     adapters::{
         AdapterExecution, AdapterSupportError,
         bouncy_castle::{
@@ -12,7 +12,7 @@ use crate::{
     analysis::{
         ScopedVerificationResult, atomic_path_scope,
         atomic_path_scope::{AtomicPathScopeConfig, AtomicPathScopeReport},
-        behavioral_check,
+        behavioral_check, issuer_edge_hash,
     },
     evaluate,
     pem::{PemError, PemKind, check_certificate_validity, read_der},
@@ -343,15 +343,7 @@ fn evaluate_atomic_route(
     evaluate_scopes(
         config,
         builder,
-        vec![
-            node("leaf", PathPosition::EndEntity, Scheme::AtomicComposite),
-            node(
-                "intermediate",
-                PathPosition::Intermediate,
-                Scheme::AtomicComposite,
-            ),
-            node("root", PathPosition::TrustAnchor, Scheme::AtomicComposite),
-        ],
+        atomic.scopes[0].result.certificate_path.clone(),
         evidence,
     )
 }
@@ -377,9 +369,25 @@ fn evaluate_classical_route(
         .filter(|item| item.position == PathPosition::EndEntity)
         .cloned()
         .collect::<Vec<_>>();
+    let path = |name: &str| config.controls.join(name);
+    let leaf_hash = certificate_hash(&path("cross-leaf.pem"))?;
+    let leaf_edge_hash = issuer_edge_hash(
+        &path("cross-leaf.pem"),
+        &path("cross-ica-classical.pem"),
+        INPUT_LIMIT,
+    )?;
+    let intermediate_hash = certificate_hash(&path("cross-ica-classical.pem"))?;
+    let intermediate_edge_hash = issuer_edge_hash(
+        &path("cross-ica-classical.pem"),
+        &path("cross-root-classical.pem"),
+        INPUT_LIMIT,
+    )?;
+    let root_hash = certificate_hash(&path("cross-root-classical.pem"))?;
     for item in &mut evidence {
         item.path = check_from_verdict(builder.observation.verdict);
         item.revocation = check_from_verdict(ica_crl.observation.verdict);
+        item.certificate_der_sha256 = Some(leaf_hash.clone());
+        item.issuer_edge_sha256 = Some(leaf_edge_hash.clone());
     }
     let pass = CheckResult::observed(CheckState::Pass);
     let not_applicable = CheckResult::observed(CheckState::NotApplicable);
@@ -399,6 +407,8 @@ fn evaluate_classical_route(
         id: "intermediate-ecdsa-signature".to_owned(),
         certificate_id: "intermediate".to_owned(),
         position: PathPosition::Intermediate,
+        certificate_der_sha256: Some(intermediate_hash.clone()),
+        issuer_edge_sha256: Some(intermediate_edge_hash.clone()),
         kind: EvidenceKind::Classical,
         present: pass,
         recognized: pass,
@@ -411,12 +421,14 @@ fn evaluate_classical_route(
             INPUT_LIMIT,
         )?,
         revocation: check_from_verdict(root_crl.observation.verdict),
-        outcome_bearing: intermediate_outcome,
+        decision_sensitive_for_fixture: intermediate_outcome,
     });
     evidence.push(Evidence {
         id: "root-ecdsa-signature".to_owned(),
         certificate_id: "root".to_owned(),
         position: PathPosition::TrustAnchor,
+        certificate_der_sha256: Some(root_hash.clone()),
+        issuer_edge_sha256: None,
         kind: EvidenceKind::Classical,
         present: pass,
         recognized: pass,
@@ -429,19 +441,39 @@ fn evaluate_classical_route(
             INPUT_LIMIT,
         )?,
         revocation: check_from_verdict(root_crl.observation.verdict),
-        outcome_bearing: root_outcome,
+        decision_sensitive_for_fixture: root_outcome,
     });
     Ok(evaluate_scopes(
         config,
         builder,
         vec![
-            node("leaf", PathPosition::EndEntity, Scheme::AtomicComposite),
+            node(
+                "leaf",
+                PathPosition::EndEntity,
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::Hybrid,
+                BindingDesign::AtomicComposite,
+                Some(leaf_hash),
+                Some(leaf_edge_hash),
+            ),
             node(
                 "intermediate",
                 PathPosition::Intermediate,
-                Scheme::Classical,
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::Classical,
+                BindingDesign::None,
+                Some(intermediate_hash),
+                Some(intermediate_edge_hash),
             ),
-            node("root", PathPosition::TrustAnchor, Scheme::Classical),
+            node(
+                "root",
+                PathPosition::TrustAnchor,
+                AlgorithmSecurity::Classical,
+                AlgorithmSecurity::Classical,
+                BindingDesign::None,
+                Some(root_hash),
+                None,
+            ),
         ],
         evidence,
     )?)
@@ -453,35 +485,43 @@ fn evaluate_scopes(
     certificate_path: Vec<CertificateNode>,
     evidence: Vec<Evidence>,
 ) -> Result<Vec<ScopedVerificationResult>, OracleError> {
-    [
-        PathScope::EndEntity,
-        PathScope::IssuingPath,
-        PathScope::FullPath,
-    ]
-    .into_iter()
-    .map(|scope| {
-        Ok(ScopedVerificationResult {
-            scope,
-            result: evaluate(&VerificationRequest {
-                api_version: API_VERSION.to_owned(),
-                policy: config.policy,
-                path_scope: scope,
-                validation_time: config.validation_time.clone(),
-                previous_authentication: config.previous_authentication,
-                stack: builder.observation.clone(),
-                certificate_path: certificate_path.clone(),
-                evidence: evidence.clone(),
-            })?,
+    [PathScope::EndEntity, PathScope::CertificationPath]
+        .into_iter()
+        .map(|scope| {
+            Ok(ScopedVerificationResult {
+                scope,
+                result: evaluate(&VerificationRequest {
+                    api_version: API_VERSION.to_owned(),
+                    policy: config.policy,
+                    path_scope: scope,
+                    validation_time: config.validation_time.clone(),
+                    previous_authentication: config.previous_authentication,
+                    stack: builder.observation.clone(),
+                    certificate_path: certificate_path.clone(),
+                    evidence: evidence.clone(),
+                })?,
+            })
         })
-    })
-    .collect()
+        .collect()
 }
 
-fn node(id: &str, position: PathPosition, scheme: Scheme) -> CertificateNode {
+fn node(
+    id: &str,
+    position: PathPosition,
+    subject_public_key_scheme: AlgorithmSecurity,
+    certificate_signature_scheme: AlgorithmSecurity,
+    binding_design: BindingDesign,
+    der_sha256: Option<String>,
+    issuer_edge_sha256: Option<String>,
+) -> CertificateNode {
     CertificateNode {
         id: id.to_owned(),
         position,
-        scheme,
+        subject_public_key_scheme,
+        certificate_signature_scheme,
+        binding_design,
+        der_sha256,
+        issuer_edge_sha256,
     }
 }
 
@@ -583,6 +623,7 @@ mod tests {
 
     #[test]
     fn builder_records_atomic_selection_and_detects_classical_fallback() {
+        let _guard = crate::adapter_test_lock();
         let report = analyze(&CrossSignedPathConfig {
             controls: Path::new(env!("CARGO_MANIFEST_DIR"))
                 .join("tests/fixtures/generated-controls"),
@@ -599,7 +640,7 @@ mod tests {
         assert_eq!(report.selected_path.route, SelectedRoute::Atomic);
         assert_eq!(
             report.selected_scopes[1].result.policy_verdict,
-            PolicyVerdict::AcceptHybrid
+            PolicyVerdict::HybridClaimSetSatisfied
         );
         assert_eq!(
             report.classical_fallback_scopes[1].result.policy_verdict,

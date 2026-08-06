@@ -1,7 +1,7 @@
 use crate::{
-    API_VERSION, AdapterReport, AuthenticationLevel, CertificateNode, CheckResult, CheckState,
-    Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, Scheme, StackVerdict,
-    VerificationRequest,
+    API_VERSION, AdapterReport, AlgorithmSecurity, AuthenticationLevel, BindingDesign,
+    CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError, PathPosition,
+    PathScope, Policy, StackVerdict, VerificationRequest,
     adapters::{
         AdapterExecution, AdapterSupportError,
         bouncy_castle::{
@@ -9,7 +9,9 @@ use crate::{
         },
         check_from_verdict,
     },
-    analysis::{ScopedVerificationResult, behavioral_check},
+    analysis::{
+        ScopedVerificationResult, behavioral_check, certificate_der_hash, issuer_edge_hash,
+    },
     evaluate,
     pem::{PemError, check_certificate_validity, inspect_certificate},
 };
@@ -64,8 +66,8 @@ pub struct ChameleonPathPositionReport {
     pub invalid_delta_signature: AdapterReport,
     pub invalid_base_default_path: AdapterReport,
     pub invalid_delta_default_path: AdapterReport,
-    pub classical_outcome_bearing: CheckResult,
-    pub post_quantum_outcome_bearing: CheckResult,
+    pub classical_decision_sensitive_for_fixture: CheckResult,
+    pub post_quantum_decision_sensitive_for_fixture: CheckResult,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -94,6 +96,8 @@ pub enum ChameleonPathScopeError {
 
 struct PositionAnalysis {
     position: PathPosition,
+    certificate_der_sha256: String,
+    issuer_edge_sha256: Option<String>,
     base_validity: CheckResult,
     delta_validity: CheckResult,
     base_crl: AdapterExecution,
@@ -122,7 +126,8 @@ pub fn analyze(
         &config.invalid_base_intermediate,
         &config.invalid_base_leaf,
     ] {
-        if inspect_certificate(certificate, INPUT_LIMIT)?.scheme != Scheme::Chameleon {
+        if inspect_certificate(certificate, INPUT_LIMIT)?.binding_design != BindingDesign::Chameleon
+        {
             return Err(ChameleonPathScopeError::WrongScheme);
         }
     }
@@ -131,7 +136,7 @@ pub fn analyze(
         &config.intermediate_delta,
         &config.leaf_delta,
     ] {
-        if inspect_certificate(certificate, INPUT_LIMIT)?.scheme != Scheme::Classical {
+        if inspect_certificate(certificate, INPUT_LIMIT)?.binding_design != BindingDesign::None {
             return Err(ChameleonPathScopeError::WrongScheme);
         }
     }
@@ -165,18 +170,18 @@ pub fn analyze(
             base_path.observation.verdict,
         )?,
     ];
-    let certificate_path = [
-        ("leaf", PathPosition::EndEntity),
-        ("intermediate", PathPosition::Intermediate),
-        ("root", PathPosition::TrustAnchor),
-    ]
-    .into_iter()
-    .map(|(id, position)| CertificateNode {
-        id: id.to_owned(),
-        position,
-        scheme: Scheme::Chameleon,
-    })
-    .collect::<Vec<_>>();
+    let certificate_path = analyses
+        .iter()
+        .map(|analysis| CertificateNode {
+            id: position_id(analysis.position).to_owned(),
+            position: analysis.position,
+            subject_public_key_scheme: AlgorithmSecurity::Classical,
+            certificate_signature_scheme: AlgorithmSecurity::Classical,
+            binding_design: BindingDesign::Chameleon,
+            der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
+        })
+        .collect::<Vec<_>>();
     let evidence = analyses
         .iter()
         .flat_map(|analysis| {
@@ -187,28 +192,24 @@ pub fn analyze(
             )
         })
         .collect::<Vec<_>>();
-    let scopes = [
-        PathScope::EndEntity,
-        PathScope::IssuingPath,
-        PathScope::FullPath,
-    ]
-    .into_iter()
-    .map(|scope| {
-        Ok(ScopedVerificationResult {
-            scope,
-            result: evaluate(&VerificationRequest {
-                api_version: API_VERSION.to_owned(),
-                policy: config.policy,
-                path_scope: scope,
-                validation_time: config.validation_time.clone(),
-                previous_authentication: config.previous_authentication,
-                stack: base_path.observation.clone(),
-                certificate_path: certificate_path.clone(),
-                evidence: evidence.clone(),
-            })?,
+    let scopes = [PathScope::EndEntity, PathScope::CertificationPath]
+        .into_iter()
+        .map(|scope| {
+            Ok(ScopedVerificationResult {
+                scope,
+                result: evaluate(&VerificationRequest {
+                    api_version: API_VERSION.to_owned(),
+                    policy: config.policy,
+                    path_scope: scope,
+                    validation_time: config.validation_time.clone(),
+                    previous_authentication: config.previous_authentication,
+                    stack: base_path.observation.clone(),
+                    certificate_path: certificate_path.clone(),
+                    evidence: evidence.clone(),
+                })?,
+            })
         })
-    })
-    .collect::<Result<Vec<_>, OracleError>>()?;
+        .collect::<Result<Vec<_>, OracleError>>()?;
     let positions = analyses
         .into_iter()
         .map(|analysis| {
@@ -224,8 +225,8 @@ pub fn analyze(
                 invalid_delta_signature: analysis.invalid_delta_signature.report()?,
                 invalid_base_default_path: analysis.invalid_base_path.report()?,
                 invalid_delta_default_path: analysis.invalid_delta_path.report()?,
-                classical_outcome_bearing: analysis.classical_outcome,
-                post_quantum_outcome_bearing: analysis.post_quantum_outcome,
+                classical_decision_sensitive_for_fixture: analysis.classical_outcome,
+                post_quantum_decision_sensitive_for_fixture: analysis.post_quantum_outcome,
             })
         })
         .collect::<Result<Vec<_>, AdapterSupportError>>()?;
@@ -255,6 +256,10 @@ fn analyze_position(
 
     Ok(PositionAnalysis {
         position,
+        certificate_der_sha256: certificate_der_hash(inputs.base, INPUT_LIMIT)?,
+        issuer_edge_sha256: (position != PathPosition::TrustAnchor)
+            .then(|| issuer_edge_hash(inputs.base, inputs.base_issuer, INPUT_LIMIT))
+            .transpose()?,
         base_validity: check_certificate_validity(
             inputs.base,
             &config.validation_time,
@@ -355,17 +360,15 @@ fn position_evidence(
     base_path: StackVerdict,
     delta_path: StackVerdict,
 ) -> [Evidence; 2] {
-    let id = match analysis.position {
-        PathPosition::EndEntity => "leaf",
-        PathPosition::Intermediate => "intermediate",
-        PathPosition::TrustAnchor => "root",
-    };
+    let id = position_id(analysis.position);
     let pass = CheckResult::observed(CheckState::Pass);
     [
         Evidence {
             id: format!("{id}-delta-certificate"),
             certificate_id: id.to_owned(),
             position: analysis.position,
+            certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
             kind: EvidenceKind::Classical,
             present: pass,
             recognized: pass,
@@ -374,12 +377,14 @@ fn position_evidence(
             path: check_from_verdict(delta_path),
             validity: analysis.delta_validity,
             revocation: check_from_verdict(analysis.delta_crl.observation.verdict),
-            outcome_bearing: analysis.classical_outcome,
+            decision_sensitive_for_fixture: analysis.classical_outcome,
         },
         Evidence {
             id: format!("{id}-base-certificate"),
             certificate_id: id.to_owned(),
             position: analysis.position,
+            certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
             kind: EvidenceKind::PostQuantum,
             present: pass,
             recognized: pass,
@@ -388,9 +393,17 @@ fn position_evidence(
             path: check_from_verdict(base_path),
             validity: analysis.base_validity,
             revocation: check_from_verdict(analysis.base_crl.observation.verdict),
-            outcome_bearing: analysis.post_quantum_outcome,
+            decision_sensitive_for_fixture: analysis.post_quantum_outcome,
         },
     ]
+}
+
+fn position_id(position: PathPosition) -> &'static str {
+    match position {
+        PathPosition::EndEntity => "leaf",
+        PathPosition::Intermediate => "intermediate",
+        PathPosition::TrustAnchor => "root",
+    }
 }
 
 fn base_path_with_replacement(
@@ -510,6 +523,7 @@ mod tests {
 
     #[test]
     fn base_path_ignores_delta_evidence_at_every_position() {
+        let _guard = crate::adapter_test_lock();
         let controls =
             Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/generated-controls");
         let report = analyze(&ChameleonPathScopeConfig {
@@ -550,7 +564,7 @@ mod tests {
         assert!(report.positions.iter().all(|position| {
             position.invalid_delta_signature.observation.verdict == StackVerdict::Reject
                 && position.invalid_delta_default_path.observation.verdict == StackVerdict::Accept
-                && position.classical_outcome_bearing.state == CheckState::Fail
+                && position.classical_decision_sensitive_for_fixture.state == CheckState::Fail
         }));
         assert!(
             report

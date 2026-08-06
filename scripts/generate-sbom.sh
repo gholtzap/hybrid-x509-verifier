@@ -30,7 +30,7 @@ generate_all() {
     scan dir:/source \
     --exclude './target/**' \
     --exclude './.git/**' \
-    --source-name hybrid-x509-verifier \
+    --source-name hybrid-x509-evidence \
     --source-version 0.1.0 \
     --output "cyclonedx-json=/output/$(basename "$raw")" \
     --quiet

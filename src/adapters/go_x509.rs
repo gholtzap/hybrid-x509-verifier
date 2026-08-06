@@ -1,6 +1,6 @@
 use super::{
-    AdapterExecution, AdapterSupportError, classify_json_verdict, container::isolated_arguments,
-    record_inputs, resolve_executable,
+    AdapterExecution, AdapterSupportError, cached_version_output, classify_json_verdict,
+    container::isolated_arguments, record_inputs, resolve_executable, selected_path_hashes,
 };
 use crate::{
     CheckResult, CheckState, ExecutionIsolation, StackObservation, ValidationProfile, VersionTrack,
@@ -58,11 +58,17 @@ pub fn verify(config: &GoX509Config) -> Result<AdapterExecution, GoX509Error> {
         config.intermediate.as_path(),
         config.leaf.as_path(),
     ])?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        Some(&config.intermediate),
+        &config.trust_store,
+    )?;
     let limits = ProcessLimits {
         timeout: config.timeout,
         max_output_bytes: config.max_output_bytes,
     };
-    let version_output = run_program(&executable, &[OsString::from("--version")], limits)?;
+    let version_output =
+        cached_version_output(&executable, &[OsString::from("--version")], limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(GoX509Error::VersionFailed);
     }
@@ -92,6 +98,10 @@ pub fn verify(config: &GoX509Config) -> Result<AdapterExecution, GoX509Error> {
             version_track: VersionTrack::UserSupplied,
             validation_profile: ValidationProfile::WebPkiServer,
             execution_isolation: ExecutionIsolation::ProcessOnly,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,
@@ -109,6 +119,11 @@ pub fn verify_container(config: &GoX509ContainerConfig) -> Result<AdapterExecuti
         config.intermediate.as_path(),
         config.leaf.as_path(),
     ])?;
+    let (selected_path_der_sha256, trust_anchor_der_sha256) = selected_path_hashes(
+        &config.leaf,
+        Some(&config.intermediate),
+        &config.trust_store,
+    )?;
     let limits = ProcessLimits {
         timeout: config.timeout,
         max_output_bytes: config.max_output_bytes,
@@ -120,7 +135,7 @@ pub fn verify_container(config: &GoX509ContainerConfig) -> Result<AdapterExecuti
     ];
     let version_arguments =
         isolated_arguments(&config.image, &mounts, &[OsString::from("--version")])?;
-    let version_output = run_program(&executable, &version_arguments, limits)?;
+    let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(GoX509Error::VersionFailed);
     }
@@ -161,6 +176,10 @@ pub fn verify_container(config: &GoX509ContainerConfig) -> Result<AdapterExecuti
             },
             validation_profile: ValidationProfile::WebPkiServer,
             execution_isolation: ExecutionIsolation::Container,
+            selected_path_der_sha256,
+            selected_path_source: crate::PathObservationSource::PresentedInput,
+            trust_anchor_der_sha256,
+            applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
         inputs,
@@ -202,6 +221,7 @@ mod tests {
 
     #[test]
     fn accepts_the_valid_classical_path_of_a_related_certificate() {
+        let _guard = crate::adapter_test_lock();
         let result = verify(&GoX509Config {
             executable: adapter().clone(),
             trust_store: fixture("root.pem"),
@@ -219,6 +239,10 @@ mod tests {
         let report = result.report().unwrap();
         let instrumentation = report.source_instrumentation.unwrap();
         assert_eq!(instrumentation.confidence, crate::Confidence::Observed);
+        assert_eq!(
+            instrumentation.instrumentation_scope,
+            crate::InstrumentationScope::Adapter
+        );
         assert_eq!(instrumentation.events[0].operation, "check-signature-from");
         assert_eq!(instrumentation.events[0].outcome, "pass");
         assert!(

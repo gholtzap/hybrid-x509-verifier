@@ -18,13 +18,13 @@ pub struct ProcessLimits {
     pub max_output_bytes: usize,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CapturedStream {
     pub bytes: Vec<u8>,
     pub truncated: bool,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProcessOutput {
     pub status_code: Option<i32>,
     pub timed_out: bool,

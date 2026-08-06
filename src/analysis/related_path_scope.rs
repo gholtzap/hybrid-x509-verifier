@@ -1,7 +1,7 @@
 use crate::{
-    API_VERSION, AdapterReport, AuthenticationLevel, CertificateNode, CheckResult, CheckState,
-    Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy, Scheme, StackVerdict,
-    VerificationRequest,
+    API_VERSION, AdapterReport, AlgorithmSecurity, AuthenticationLevel, BindingDesign,
+    CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError, PathPosition,
+    PathScope, Policy, StackVerdict, VerificationRequest,
     adapters::{
         AdapterExecution, AdapterSupportError,
         bouncy_castle::{
@@ -9,11 +9,14 @@ use crate::{
         },
         check_from_verdict,
     },
-    analysis::{ScopedVerificationResult, behavioral_check},
+    analysis::{
+        ScopedVerificationResult, behavioral_check, certificate_der_hash, issuer_edge_hash,
+        related_conformance_check,
+    },
     evaluate,
     pem::{
-        PemError, RelatedBindingResult, check_certificate_validity, inspect_certificate,
-        verify_related_binding,
+        PemError, RelatedBindingResult, RelatedConformanceResult, check_certificate_validity,
+        inspect_certificate, verify_related_binding, verify_related_certificate_conformance,
     },
 };
 use schemars::JsonSchema;
@@ -60,6 +63,7 @@ pub struct RelatedPathScopeConfig {
 #[serde(deny_unknown_fields)]
 pub struct RelatedPathPositionReport {
     pub position: PathPosition,
+    pub conformance: RelatedConformanceResult,
     pub binding: RelatedBindingResult,
     pub invalid_binding: RelatedBindingResult,
     pub classical_validity: CheckResult,
@@ -73,8 +77,8 @@ pub struct RelatedPathPositionReport {
     pub invalid_classical_default_path: AdapterReport,
     pub invalid_binding_default_path: AdapterReport,
     pub invalid_post_quantum_path: AdapterReport,
-    pub classical_outcome_bearing: CheckResult,
-    pub post_quantum_outcome_bearing: CheckResult,
+    pub classical_decision_sensitive_for_fixture: CheckResult,
+    pub post_quantum_decision_sensitive_for_fixture: CheckResult,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -103,6 +107,9 @@ pub enum RelatedPathScopeError {
 
 struct PositionAnalysis {
     position: PathPosition,
+    certificate_der_sha256: String,
+    issuer_edge_sha256: Option<String>,
+    conformance: RelatedConformanceResult,
     binding: RelatedBindingResult,
     invalid_binding: RelatedBindingResult,
     classical_validity: CheckResult,
@@ -134,7 +141,9 @@ pub fn analyze(
         &config.invalid_classical_intermediate,
         &config.invalid_classical_leaf,
     ] {
-        if inspect_certificate(certificate, INPUT_LIMIT)?.scheme != Scheme::Related {
+        if inspect_certificate(certificate, INPUT_LIMIT)?.binding_design
+            != BindingDesign::RelatedCertificate
+        {
             return Err(RelatedPathScopeError::WrongScheme);
         }
     }
@@ -146,7 +155,9 @@ pub fn analyze(
         &config.invalid_post_quantum_intermediate,
         &config.invalid_post_quantum_leaf,
     ] {
-        if inspect_certificate(certificate, INPUT_LIMIT)?.scheme != Scheme::PurePostQuantum {
+        if inspect_certificate(certificate, INPUT_LIMIT)?.subject_public_key_scheme
+            != AlgorithmSecurity::PostQuantum
+        {
             return Err(RelatedPathScopeError::WrongScheme);
         }
     }
@@ -180,18 +191,18 @@ pub fn analyze(
             classical_path.observation.verdict,
         )?,
     ];
-    let certificate_path = [
-        ("leaf", PathPosition::EndEntity),
-        ("intermediate", PathPosition::Intermediate),
-        ("root", PathPosition::TrustAnchor),
-    ]
-    .into_iter()
-    .map(|(id, position)| CertificateNode {
-        id: id.to_owned(),
-        position,
-        scheme: Scheme::Related,
-    })
-    .collect::<Vec<_>>();
+    let certificate_path = analyses
+        .iter()
+        .map(|analysis| CertificateNode {
+            id: position_id(analysis.position).to_owned(),
+            position: analysis.position,
+            subject_public_key_scheme: AlgorithmSecurity::Classical,
+            certificate_signature_scheme: AlgorithmSecurity::Classical,
+            binding_design: BindingDesign::RelatedCertificate,
+            der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
+        })
+        .collect::<Vec<_>>();
     let evidence = analyses
         .iter()
         .flat_map(|analysis| {
@@ -202,33 +213,30 @@ pub fn analyze(
             )
         })
         .collect::<Vec<_>>();
-    let scopes = [
-        PathScope::EndEntity,
-        PathScope::IssuingPath,
-        PathScope::FullPath,
-    ]
-    .into_iter()
-    .map(|scope| {
-        Ok(ScopedVerificationResult {
-            scope,
-            result: evaluate(&VerificationRequest {
-                api_version: API_VERSION.to_owned(),
-                policy: config.policy,
-                path_scope: scope,
-                validation_time: config.validation_time.clone(),
-                previous_authentication: config.previous_authentication,
-                stack: classical_path.observation.clone(),
-                certificate_path: certificate_path.clone(),
-                evidence: evidence.clone(),
-            })?,
+    let scopes = [PathScope::EndEntity, PathScope::CertificationPath]
+        .into_iter()
+        .map(|scope| {
+            Ok(ScopedVerificationResult {
+                scope,
+                result: evaluate(&VerificationRequest {
+                    api_version: API_VERSION.to_owned(),
+                    policy: config.policy,
+                    path_scope: scope,
+                    validation_time: config.validation_time.clone(),
+                    previous_authentication: config.previous_authentication,
+                    stack: classical_path.observation.clone(),
+                    certificate_path: certificate_path.clone(),
+                    evidence: evidence.clone(),
+                })?,
+            })
         })
-    })
-    .collect::<Result<Vec<_>, OracleError>>()?;
+        .collect::<Result<Vec<_>, OracleError>>()?;
     let positions = analyses
         .into_iter()
         .map(|analysis| {
             Ok(RelatedPathPositionReport {
                 position: analysis.position,
+                conformance: analysis.conformance,
                 binding: analysis.binding,
                 invalid_binding: analysis.invalid_binding,
                 classical_validity: analysis.classical_validity,
@@ -242,8 +250,8 @@ pub fn analyze(
                 invalid_classical_default_path: analysis.invalid_classical_path.report()?,
                 invalid_binding_default_path: analysis.invalid_binding_path.report()?,
                 invalid_post_quantum_path: analysis.invalid_post_quantum_path.report()?,
-                classical_outcome_bearing: analysis.classical_outcome,
-                post_quantum_outcome_bearing: analysis.post_quantum_outcome,
+                classical_decision_sensitive_for_fixture: analysis.classical_outcome,
+                post_quantum_decision_sensitive_for_fixture: analysis.post_quantum_outcome,
             })
         })
         .collect::<Result<Vec<_>, AdapterSupportError>>()?;
@@ -263,7 +271,9 @@ fn analyze_position(
     classical_valid: StackVerdict,
 ) -> Result<PositionAnalysis, RelatedPathScopeError> {
     let inputs = position_inputs(config, position);
-    let binding = verify_related_binding(inputs.classical, inputs.post_quantum, INPUT_LIMIT)?;
+    let conformance =
+        verify_related_certificate_conformance(inputs.classical, inputs.post_quantum, INPUT_LIMIT)?;
+    let binding = conformance.rfc9763.binding.clone();
     let invalid_binding =
         verify_related_binding(inputs.invalid_binding, inputs.post_quantum, INPUT_LIMIT)?;
     let classical_signature = run_direct(config, inputs.classical_issuer, inputs.classical)?;
@@ -288,7 +298,8 @@ fn analyze_position(
         classical_signature.observation.verdict == StackVerdict::Accept
             && invalid_classical_signature.observation.verdict == StackVerdict::Reject,
     );
-    let post_quantum_controls = binding.check.state == CheckState::Pass
+    let conformance_check = related_conformance_check(&conformance);
+    let post_quantum_controls = conformance_check.state == CheckState::Pass
         && invalid_binding.check.state == CheckState::Fail
         && invalid_binding_path.observation.verdict == StackVerdict::Accept
         && post_quantum_signature.observation.verdict == StackVerdict::Accept
@@ -296,6 +307,11 @@ fn analyze_position(
 
     Ok(PositionAnalysis {
         position,
+        certificate_der_sha256: certificate_der_hash(inputs.classical, INPUT_LIMIT)?,
+        issuer_edge_sha256: (position != PathPosition::TrustAnchor)
+            .then(|| issuer_edge_hash(inputs.classical, inputs.classical_issuer, INPUT_LIMIT))
+            .transpose()?,
+        conformance,
         binding,
         invalid_binding,
         classical_validity: check_certificate_validity(
@@ -403,17 +419,15 @@ fn position_evidence(
     classical_path: StackVerdict,
     post_quantum_path: StackVerdict,
 ) -> [Evidence; 2] {
-    let id = match analysis.position {
-        PathPosition::EndEntity => "leaf",
-        PathPosition::Intermediate => "intermediate",
-        PathPosition::TrustAnchor => "root",
-    };
+    let id = position_id(analysis.position);
     let pass = CheckResult::observed(CheckState::Pass);
     [
         Evidence {
             id: format!("{id}-classical-certificate"),
             certificate_id: id.to_owned(),
             position: analysis.position,
+            certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
             kind: EvidenceKind::Classical,
             present: pass,
             recognized: pass,
@@ -422,23 +436,33 @@ fn position_evidence(
             path: check_from_verdict(classical_path),
             validity: analysis.classical_validity,
             revocation: check_from_verdict(analysis.classical_crl.observation.verdict),
-            outcome_bearing: analysis.classical_outcome,
+            decision_sensitive_for_fixture: analysis.classical_outcome,
         },
         Evidence {
             id: format!("{id}-post-quantum-certificate"),
             certificate_id: id.to_owned(),
             position: analysis.position,
+            certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
             kind: EvidenceKind::PostQuantum,
             present: pass,
             recognized: pass,
             signature: check_from_verdict(analysis.post_quantum_signature.observation.verdict),
-            binding: analysis.binding.check,
+            binding: related_conformance_check(&analysis.conformance),
             path: check_from_verdict(post_quantum_path),
             validity: analysis.post_quantum_validity,
             revocation: check_from_verdict(analysis.post_quantum_crl.observation.verdict),
-            outcome_bearing: analysis.post_quantum_outcome,
+            decision_sensitive_for_fixture: analysis.post_quantum_outcome,
         },
     ]
+}
+
+fn position_id(position: PathPosition) -> &'static str {
+    match position {
+        PathPosition::EndEntity => "leaf",
+        PathPosition::Intermediate => "intermediate",
+        PathPosition::TrustAnchor => "root",
+    }
 }
 
 fn classical_path_with_replacement(
@@ -584,6 +608,7 @@ mod tests {
 
     #[test]
     fn separate_related_paths_do_not_make_pq_evidence_decisive() {
+        let _guard = crate::adapter_test_lock();
         let controls =
             Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/generated-controls");
         let report = analyze(&RelatedPathScopeConfig {
@@ -628,7 +653,9 @@ mod tests {
         assert!(report.positions.iter().all(|position| {
             position.binding.check.state == CheckState::Pass
                 && position.invalid_binding.check.state == CheckState::Fail
-                && position.post_quantum_outcome_bearing.state == CheckState::Fail
+                && related_conformance_check(&position.conformance).state == CheckState::Fail
+                && position.post_quantum_decision_sensitive_for_fixture.state
+                    == CheckState::Indeterminate
         }));
         assert!(
             report
@@ -637,10 +664,10 @@ mod tests {
                 .all(|scope| scope.result.policy_verdict == PolicyVerdict::Reject)
         );
         assert!(
-            report.scopes[..2]
+            report
+                .scopes
                 .iter()
                 .all(|scope| scope.result.classical_only_fallback)
         );
-        assert!(!report.scopes[2].result.classical_only_fallback);
     }
 }
