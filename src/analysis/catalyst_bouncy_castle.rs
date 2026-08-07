@@ -10,7 +10,8 @@ use crate::{
         check_from_verdict,
     },
     analysis::{
-        ScopedVerificationResult, behavioral_check, certificate_der_hash, issuer_edge_hash,
+        ScopedVerificationResult, behavioral_check, certificate_der_hash, certificate_trust_anchor,
+        issuer_edge_hash,
     },
     evaluate,
     mutation::{MutationError, corrupt_outer_signature, encode_certificate_pem},
@@ -206,7 +207,7 @@ pub fn analyze(
     let intermediate_edge_hash =
         issuer_edge_hash(&config.issuer, &config.trust_store, INPUT_LIMIT)?;
     let root_hash = certificate_der_hash(&config.trust_store, INPUT_LIMIT)?;
-    let certificate_path = vec![
+    let mut certificate_path = vec![
         CertificateNode {
             id: "end-entity".to_owned(),
             position: PathPosition::EndEntity,
@@ -237,13 +238,16 @@ pub fn analyze(
     ];
     let missing = CheckResult::observed(CheckState::Fail);
     let not_checked = CheckResult::observed(CheckState::NotChecked);
-    let evidence = vec![
+    certificate_path.retain(|certificate| certificate.position != PathPosition::TrustAnchor);
+    let mut evidence = vec![
         Evidence {
             id: "classical-base-signature".to_owned(),
             certificate_id: "end-entity".to_owned(),
             position: PathPosition::EndEntity,
             certificate_der_sha256: Some(leaf_hash.clone()),
+            evidence_artifact_der_sha256: Some(leaf_hash.clone()),
             issuer_edge_sha256: Some(leaf_edge_hash.clone()),
+            authentication_operation_id: None,
             kind: EvidenceKind::Classical,
             present: observed_pass,
             recognized: observed_pass,
@@ -252,6 +256,8 @@ pub fn analyze(
             path: classical_path,
             validity: leaf_validity,
             revocation: crl_status.revocation,
+            revocation_method: crate::RevocationMethod::Crl,
+            applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
             decision_sensitive_for_fixture: classical_outcome,
         },
         Evidence {
@@ -259,7 +265,9 @@ pub fn analyze(
             certificate_id: "end-entity".to_owned(),
             position: PathPosition::EndEntity,
             certificate_der_sha256: Some(leaf_hash.clone()),
+            evidence_artifact_der_sha256: Some(leaf_hash.clone()),
             issuer_edge_sha256: Some(leaf_edge_hash.clone()),
+            authentication_operation_id: None,
             kind: EvidenceKind::PostQuantum,
             present: observed_pass,
             recognized: observed_pass,
@@ -268,6 +276,8 @@ pub fn analyze(
             path: classical_path,
             validity: leaf_validity,
             revocation: crl_status.revocation,
+            revocation_method: crate::RevocationMethod::Crl,
+            applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
             decision_sensitive_for_fixture: post_quantum_outcome,
         },
         Evidence {
@@ -275,7 +285,9 @@ pub fn analyze(
             certificate_id: "intermediate".to_owned(),
             position: PathPosition::Intermediate,
             certificate_der_sha256: Some(intermediate_hash.clone()),
+            evidence_artifact_der_sha256: Some(intermediate_hash.clone()),
             issuer_edge_sha256: Some(intermediate_edge_hash.clone()),
+            authentication_operation_id: None,
             kind: EvidenceKind::Classical,
             present: observed_pass,
             recognized: observed_pass,
@@ -284,6 +296,8 @@ pub fn analyze(
             path: classical_path,
             validity: intermediate_validity,
             revocation: intermediate_crl_status.revocation,
+            revocation_method: crate::RevocationMethod::Crl,
+            applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
             decision_sensitive_for_fixture: intermediate_classical_outcome,
         },
         Evidence {
@@ -291,7 +305,9 @@ pub fn analyze(
             certificate_id: "intermediate".to_owned(),
             position: PathPosition::Intermediate,
             certificate_der_sha256: Some(intermediate_hash.clone()),
+            evidence_artifact_der_sha256: Some(intermediate_hash.clone()),
             issuer_edge_sha256: Some(intermediate_edge_hash.clone()),
+            authentication_operation_id: None,
             kind: EvidenceKind::PostQuantum,
             present: missing,
             recognized: not_checked,
@@ -300,6 +316,8 @@ pub fn analyze(
             path: not_checked,
             validity: intermediate_validity,
             revocation: intermediate_crl_status.revocation,
+            revocation_method: crate::RevocationMethod::Crl,
+            applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
             decision_sensitive_for_fixture: not_checked,
         },
         Evidence {
@@ -307,7 +325,9 @@ pub fn analyze(
             certificate_id: "root".to_owned(),
             position: PathPosition::TrustAnchor,
             certificate_der_sha256: Some(root_hash.clone()),
+            evidence_artifact_der_sha256: Some(root_hash.clone()),
             issuer_edge_sha256: None,
+            authentication_operation_id: None,
             kind: EvidenceKind::Classical,
             present: observed_pass,
             recognized: observed_pass,
@@ -316,9 +336,13 @@ pub fn analyze(
             path: classical_path,
             validity: root_validity,
             revocation: root_crl_status.revocation,
+            revocation_method: crate::RevocationMethod::Crl,
+            applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
             decision_sensitive_for_fixture: root_classical_outcome,
         },
     ];
+    evidence.retain(|item| item.position != PathPosition::TrustAnchor);
+    let expected_trust_anchor = certificate_trust_anchor(&config.trust_store, INPUT_LIMIT)?;
     let scopes = [PathScope::EndEntity, PathScope::CertificationPath]
         .into_iter()
         .map(|scope| {
@@ -330,8 +354,11 @@ pub fn analyze(
                     path_scope: scope,
                     validation_time: config.validation_time.clone(),
                     previous_authentication: config.previous_authentication,
+                    revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
                     stack: valid_default.observation.clone(),
+                    expected_trust_anchor: expected_trust_anchor.clone(),
                     certificate_path: certificate_path.clone(),
+                    paired_authentications: Vec::new(),
                     evidence: evidence.clone(),
                 })?,
             })
@@ -445,7 +472,7 @@ mod tests {
         assert_eq!(
             report
                 .valid_post_quantum_direct_control
-                .source_instrumentation
+                .adapter_trace
                 .as_ref()
                 .unwrap()
                 .events[0]

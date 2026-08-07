@@ -1,6 +1,6 @@
 use crate::{
     AlgorithmSecurity, BindingDesign, CertificateNode, CheckResult, CheckState, Confidence,
-    PathPosition, PathScope, VerificationResult,
+    PathPosition, PathScope, TrustAnchor, VerificationResult,
     pem::{PemError, PemKind, RelatedConformanceResult, read_der},
 };
 use schemars::JsonSchema;
@@ -31,6 +31,12 @@ pub(crate) fn behavioral_check(established: bool, state: CheckState) -> CheckRes
 
 pub(crate) fn certificate_der_hash(path: &Path, limit: usize) -> Result<String, PemError> {
     Ok(sha256_hex(&read_der(path, PemKind::Certificate, limit)?))
+}
+
+pub(crate) fn certificate_trust_anchor(path: &Path, limit: usize) -> Result<TrustAnchor, PemError> {
+    Ok(TrustAnchor::CertificateDerSha256 {
+        der_sha256: certificate_der_hash(path, limit)?,
+    })
 }
 
 pub(crate) fn issuer_edge_hash(
@@ -102,15 +108,6 @@ pub(crate) fn end_entity_certification_path(
             binding_design: BindingDesign::None,
             der_sha256: Some(certificate_der_hash(issuer, limit)?),
             issuer_edge_sha256: Some(issuer_edge_hash(issuer, trust_anchor, limit)?),
-        },
-        CertificateNode {
-            id: "trust-anchor".to_owned(),
-            position: PathPosition::TrustAnchor,
-            subject_public_key_scheme: AlgorithmSecurity::Classical,
-            certificate_signature_scheme: AlgorithmSecurity::Classical,
-            binding_design: BindingDesign::None,
-            der_sha256: Some(certificate_der_hash(trust_anchor, limit)?),
-            issuer_edge_sha256: None,
         },
     ])
 }

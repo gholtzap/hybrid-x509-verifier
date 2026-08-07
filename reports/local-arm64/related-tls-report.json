@@ -1,5 +1,5 @@
 {
-  "api_version": "hybrid-x509-verifier/v1",
+  "api_version": "hybrid-x509-evidence/v9",
   "binding": {
     "calculated_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
     "check": {
@@ -41,7 +41,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -106,8 +137,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -116,39 +156,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 731,
+        "elapsed_milliseconds": 959,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -167,7 +176,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 612,
+        "elapsed_milliseconds": 980,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -192,6 +201,49 @@
       "state": "pass"
     }
   },
+  "conformance": {
+    "hybrid_application_policy": {
+      "dns_identity_overlap": {
+        "confidence": "observed",
+        "state": "fail"
+      },
+      "reference_subject_public_key_is_classical": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "related_subject_public_key_is_post_quantum": {
+        "confidence": "observed",
+        "state": "pass"
+      }
+    },
+    "rfc9763": {
+      "binding": {
+        "calculated_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "check": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8"
+      },
+      "extended_key_usage_subset": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "extension_in_end_entity": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "key_usage_subset": {
+        "confidence": "observed",
+        "state": "fail"
+      },
+      "related_certificate_is_end_entity": {
+        "confidence": "observed",
+        "state": "pass"
+      }
+    }
+  },
   "expired_post_quantum_tls": {
     "altered_transcript_rejected": {
       "confidence": "unknown",
@@ -206,7 +258,20 @@
       "state": "indeterminate"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-handshake",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -271,8 +336,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "346320e5c3c15c0070dfbbefa82a5a065bc5cfc766ec3914913aff6f95df5cc0",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -281,21 +355,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-handshake",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 594,
+        "elapsed_milliseconds": 815,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -314,7 +375,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 488,
+        "elapsed_milliseconds": 980,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -362,7 +423,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -427,8 +519,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "e2a9b264ea0fb62fa0f621dcfb03eafefbbd7d791dd24d34478393930686c3fa",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -437,39 +538,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 660,
+        "elapsed_milliseconds": 841,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -488,7 +558,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 519,
+        "elapsed_milliseconds": 980,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -527,7 +597,20 @@
       "state": "indeterminate"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-handshake",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -548,7 +631,7 @@
         "--mount",
         "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpSzH9pU,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpNk1Eyz,dst=/input/leaf.pem,readonly",
         "--mount",
         "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-certA-key.pem,dst=/input/key.pem,readonly",
         "--",
@@ -580,7 +663,7 @@
         },
         {
           "bytes": 1298,
-          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpSzH9pU",
+          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpNk1Eyz",
           "sha256": "a238b58cc7286ee212956a0ae827677e2ed8233d8eb2657e7b6d394bc9b1f1f4"
         },
         {
@@ -592,8 +675,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "e9c6bf0d40f2213ccb51e40b48abc216a9dcdddbf55331f0bb96d6082d7dd532",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -602,21 +694,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-handshake",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 650,
+        "elapsed_milliseconds": 1034,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -635,7 +714,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 564,
+        "elapsed_milliseconds": 980,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -674,7 +753,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "rsa_pss_rsae_sha256",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -739,8 +849,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "bb282b1092672d0df617e2c6c5302a5b469887df1547317947c4cf33153cbd87",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -749,39 +868,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "rsa_pss_rsae_sha256",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 678,
+        "elapsed_milliseconds": 807,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -800,7 +888,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 483,
+        "elapsed_milliseconds": 980,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -844,28 +932,50 @@
     }
   },
   "result": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "api_version": "hybrid-x509-evidence/v9",
     "certificate_path": [
       {
+        "binding_design": "related-certificate",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
         "id": "end-entity",
+        "issuer_edge_sha256": "cbc0e4748c3a1dfa769008388e73e5f54664b38b1faf771884a0ec24685a845b",
         "position": "end-entity",
-        "scheme": "related"
+        "subject_public_key_scheme": "classical"
+      },
+      {
+        "binding_design": "none",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87",
+        "id": "issuer",
+        "issuer_edge_sha256": "928681191c9381f82188398d403516bee261fd05e42e700df6fc7fd7430294e5",
+        "position": "intermediate",
+        "subject_public_key_scheme": "classical"
       }
     ],
     "classical_only_fallback": true,
     "evaluated_evidence": [
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
+        "authentication_operation_id": "end-entity-related-authentication",
         "binding": {
           "confidence": "observed",
           "state": "not-applicable"
         },
+        "certificate_der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
         "certificate_id": "end-entity",
-        "id": "related-classical-certificate",
-        "kind": "classical",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "behaviorally-established",
           "state": "pass"
         },
+        "evidence_artifact_der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+        "id": "related-classical-certificate",
+        "issuer_edge_sha256": "cbc0e4748c3a1dfa769008388e73e5f54664b38b1faf771884a0ec24685a845b",
+        "kind": "classical",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -883,6 +993,7 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -893,17 +1004,26 @@
         }
       },
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
+        "authentication_operation_id": "end-entity-related-authentication",
         "binding": {
           "confidence": "observed",
-          "state": "pass"
-        },
-        "certificate_id": "end-entity",
-        "id": "related-post-quantum-certificate",
-        "kind": "post-quantum",
-        "outcome_bearing": {
-          "confidence": "behaviorally-established",
           "state": "fail"
         },
+        "certificate_der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+        "certificate_id": "end-entity",
+        "decision_sensitive_for_fixture": {
+          "confidence": "unknown",
+          "state": "indeterminate"
+        },
+        "evidence_artifact_der_sha256": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "id": "related-post-quantum-certificate",
+        "issuer_edge_sha256": "cbc0e4748c3a1dfa769008388e73e5f54664b38b1faf771884a0ec24685a845b",
+        "kind": "post-quantum",
         "path": {
           "confidence": "observed",
           "state": "not-applicable"
@@ -921,6 +1041,7 @@
           "confidence": "observed",
           "state": "fail"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "not-applicable"
@@ -931,7 +1052,17 @@
         }
       }
     ],
+    "expected_trust_anchor": {
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "kind": "certificate-der-sha256"
+    },
     "failed_checks": [
+      {
+        "check": "binding",
+        "confidence": "observed",
+        "evidence_id": "related-post-quantum-certificate",
+        "state": "fail"
+      },
       {
         "check": "revocation",
         "confidence": "observed",
@@ -939,23 +1070,54 @@
         "state": "fail"
       },
       {
-        "check": "outcome-bearing",
-        "confidence": "behaviorally-established",
+        "check": "decision-sensitive-for-fixture",
+        "confidence": "unknown",
         "evidence_id": "related-post-quantum-certificate",
+        "state": "indeterminate"
+      },
+      {
+        "check": "same-authentication-operation",
+        "confidence": "observed",
+        "evidence_id": "end-entity-related-authentication",
         "state": "fail"
       }
     ],
     "lifecycle_desynchronization": true,
+    "paired_authentications": [
+      {
+        "classical_certificate_id": "end-entity",
+        "operation_id": "end-entity-related-authentication",
+        "post_quantum_certificate_der_sha256": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "same_authentication_operation": {
+          "confidence": "observed",
+          "state": "fail"
+        }
+      }
+    ],
     "path_scope": "end-entity",
     "policy": "p2-required-hybrid",
     "policy_verdict": "reject",
     "previous_authentication": null,
-    "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+    "reason": "The stack accepted through classical evidence without valid, decision-sensitive-for-fixture post-quantum evidence.",
+    "revocation_policy": {
+      "clock_skew_seconds": null,
+      "max_age_seconds": null,
+      "mode": "hard-fail"
+    },
     "stack": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
-      "validation_profile": "evidence-signature",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
+      "validation_profile": "web-pki-server",
       "validation_time": {
         "confidence": "observed",
         "state": "pass"
@@ -981,7 +1143,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -1046,8 +1239,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -1056,39 +1258,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 637,
+        "elapsed_milliseconds": 808,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -1107,7 +1278,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 537,
+        "elapsed_milliseconds": 980,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,

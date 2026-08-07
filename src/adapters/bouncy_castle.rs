@@ -76,8 +76,7 @@ pub fn verify(config: &BouncyCastleConfig) -> Result<AdapterExecution, BouncyCas
         timeout: config.timeout,
         max_output_bytes: config.max_output_bytes,
     };
-    let version_arguments =
-        isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
+    let version_arguments = isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(BouncyCastleError::VersionFailed {
@@ -126,20 +125,24 @@ pub fn verify(config: &BouncyCastleConfig) -> Result<AdapterExecution, BouncyCas
             let output: PathBuilderOutput =
                 serde_json::from_slice(&verification_output.stdout.bytes)
                     .map_err(io::Error::other)?;
-            let trust_anchor =
-                output.selected_path_sha256.last().cloned().ok_or_else(|| {
-                    io::Error::other("path-builder did not report a selected path")
-                })?;
+            let mut certification_path = output.selected_path_sha256;
+            let trust_anchor = certification_path
+                .pop()
+                .ok_or_else(|| io::Error::other("path-builder did not report a selected path"))?;
             (
-                output.selected_path_sha256,
+                certification_path,
                 PathObservationSource::AdapterSelected,
-                trust_anchor,
+                crate::TrustAnchor::CertificateDerSha256 {
+                    der_sha256: trust_anchor,
+                },
             )
         } else if config.mode == BouncyCastleMode::PathBuilder {
             (
                 Vec::new(),
                 PathObservationSource::NotReported,
-                String::new(),
+                crate::TrustAnchor::LocalIdentifier {
+                    identifier: "not-reported".to_owned(),
+                },
             )
         } else {
             let (path, anchor) = selected_path_hashes(
@@ -160,16 +163,17 @@ pub fn verify(config: &BouncyCastleConfig) -> Result<AdapterExecution, BouncyCas
                 BouncyCastleMode::Path | BouncyCastleMode::PathBuilder => {
                     ValidationProfile::X509Path
                 }
-                BouncyCastleMode::AlternativeSignature
-                | BouncyCastleMode::DeltaSignature
-                | BouncyCastleMode::TlsTranscript => ValidationProfile::EvidenceSignature,
+                BouncyCastleMode::AlternativeSignature | BouncyCastleMode::DeltaSignature => {
+                    ValidationProfile::EvidenceSignature
+                }
+                BouncyCastleMode::TlsTranscript => ValidationProfile::WebPkiServer,
                 BouncyCastleMode::CrlStatus => ValidationProfile::X509Path,
                 BouncyCastleMode::CertificateSignature => ValidationProfile::EvidenceSignature,
             },
             execution_isolation: ExecutionIsolation::Container,
-            selected_path_der_sha256,
+            certification_path_der_sha256: selected_path_der_sha256,
             selected_path_source,
-            trust_anchor_der_sha256,
+            trust_anchor: trust_anchor_der_sha256,
             applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(match config.mode {
                 BouncyCastleMode::Path | BouncyCastleMode::PathBuilder => CheckState::Pass,
@@ -264,13 +268,7 @@ mod tests {
         assert_eq!(invalid_delta.observation.verdict, StackVerdict::Reject);
         assert_eq!(published_delta.observation.verdict, StackVerdict::Reject);
         assert_eq!(
-            valid_delta
-                .report()
-                .unwrap()
-                .source_instrumentation
-                .unwrap()
-                .events[0]
-                .operation,
+            valid_delta.report().unwrap().adapter_trace.unwrap().events[0].operation,
             "check-delta-certificate-signature"
         );
     }

@@ -1,7 +1,7 @@
 use crate::input::{BoundedInputError, read_bounded_file};
 use crate::{
     API_VERSION, AdapterReport, Confidence, InputArtifact, InstrumentationScope, ObservedExtension,
-    ProcessRecord, SourceInstrumentation, SourceTraceEvent, StackObservation,
+    ProcessRecord, SourceInstrumentation, SourceTraceEvent, StackObservation, TrustAnchor,
     pem::{PemError, PemKind, read_der},
     process::ProcessOutput,
 };
@@ -52,7 +52,7 @@ impl AdapterExecution {
                 .collect::<Result<_, _>>()?,
             version: ProcessRecord::from(&self.version_output),
             verification: ProcessRecord::from(&self.verification_output),
-            source_instrumentation: source_instrumentation(&self.verification_output),
+            adapter_trace: adapter_trace(&self.verification_output),
         })
     }
 }
@@ -97,14 +97,18 @@ pub(crate) fn selected_path_hashes(
     leaf: &Path,
     intermediate: Option<&Path>,
     trust_anchor: &Path,
-) -> Result<(Vec<String>, String), AdapterSupportError> {
+) -> Result<(Vec<String>, TrustAnchor), AdapterSupportError> {
     let leaf = certificate_sha256(leaf)?;
     let intermediate = intermediate.map(certificate_sha256).transpose()?;
     let trust_anchor = certificate_sha256(trust_anchor)?;
-    let mut selected_path = vec![leaf];
-    selected_path.extend(intermediate);
-    selected_path.push(trust_anchor.clone());
-    Ok((selected_path, trust_anchor))
+    let mut certification_path = vec![leaf];
+    certification_path.extend(intermediate);
+    Ok((
+        certification_path,
+        TrustAnchor::CertificateDerSha256 {
+            der_sha256: trust_anchor,
+        },
+    ))
 }
 
 pub(crate) fn cached_version_output(
@@ -181,7 +185,7 @@ struct InstrumentedOutput {
     extensions: Vec<ObservedExtension>,
 }
 
-fn source_instrumentation(output: &ProcessOutput) -> Option<SourceInstrumentation> {
+fn adapter_trace(output: &ProcessOutput) -> Option<SourceInstrumentation> {
     if output.timed_out
         || output.stdout.truncated
         || output.stderr.truncated

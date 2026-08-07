@@ -1,5 +1,5 @@
 {
-  "api_version": "hybrid-x509-verifier/v1",
+  "api_version": "hybrid-x509-evidence/v9",
   "binding": {
     "calculated_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
     "check": {
@@ -10,7 +10,8 @@
     "embedded_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8"
   },
   "classical_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": null,
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -73,7 +74,16 @@
     "observation": {
       "adapter": "openssl-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -83,9 +93,8 @@
       "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
       "version_track": "current"
     },
-    "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 417,
+      "elapsed_milliseconds": 500,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -104,7 +113,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 704,
+      "elapsed_milliseconds": 780,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -142,7 +151,8 @@
     }
   },
   "classical_invalid_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": null,
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -163,7 +173,7 @@
       "--mount",
       "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpuF8iwN,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmphSzvJf,dst=/input/leaf.pem,readonly",
       "--mount",
       "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
       "--",
@@ -193,7 +203,7 @@
       },
       {
         "bytes": 1298,
-        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpuF8iwN",
+        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmphSzvJf",
         "sha256": "a238b58cc7286ee212956a0ae827677e2ed8233d8eb2657e7b6d394bc9b1f1f4"
       },
       {
@@ -205,7 +215,16 @@
     "observation": {
       "adapter": "openssl-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "e9c6bf0d40f2213ccb51e40b48abc216a9dcdddbf55331f0bb96d6082d7dd532",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -215,15 +234,14 @@
       "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
       "version_track": "current"
     },
-    "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 330,
+      "elapsed_milliseconds": 414,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 420,
-        "data": "Q049cmVsYXRlZCBDZXJ0IEEgKFJTQS0zMDcyKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgNyBhdCAwIGRlcHRoIGxvb2t1cDogY2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKZXJyb3IgL2lucHV0L2xlYWYucGVtOiB2ZXJpZmljYXRpb24gZmFpbGVkCkMwNUZCRDk2RkZGRjAwMDA6ZXJyb3I6MDMwMDAwRUE6ZGlnaXRhbCBlbnZlbG9wZSByb3V0aW5lczpFVlBfRGlnZXN0VmVyaWZ5RmluYWw6cHJvdmlkZXIgc2lnbmF0dXJlIGZhaWx1cmU6Y3J5cHRvL2V2cC9tX3NpZ3Zlci5jOjUzMzpFQ0RTQSBkaWdlc3RfdmVyaWZ5X2ZpbmFsOgpDMDVGQkQ5NkZGRkYwMDAwOmVycm9yOjA2ODgwMDA2OmFzbjEgZW5jb2Rpbmcgcm91dGluZXM6QVNOMV9pdGVtX3ZlcmlmeV9jdHg6RVZQIGxpYjpjcnlwdG8vYXNuMS9hX3ZlcmlmeS5jOjIyMDoK",
+        "data": "Q049cmVsYXRlZCBDZXJ0IEEgKFJTQS0zMDcyKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgNyBhdCAwIGRlcHRoIGxvb2t1cDogY2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKZXJyb3IgL2lucHV0L2xlYWYucGVtOiB2ZXJpZmljYXRpb24gZmFpbGVkCkMwM0YwQjg0RkZGRjAwMDA6ZXJyb3I6MDMwMDAwRUE6ZGlnaXRhbCBlbnZlbG9wZSByb3V0aW5lczpFVlBfRGlnZXN0VmVyaWZ5RmluYWw6cHJvdmlkZXIgc2lnbmF0dXJlIGZhaWx1cmU6Y3J5cHRvL2V2cC9tX3NpZ3Zlci5jOjUzMzpFQ0RTQSBkaWdlc3RfdmVyaWZ5X2ZpbmFsOgpDMDNGMEI4NEZGRkYwMDAwOmVycm9yOjA2ODgwMDA2OmFzbjEgZW5jb2Rpbmcgcm91dGluZXM6QVNOMV9pdGVtX3ZlcmlmeV9jdHg6RVZQIGxpYjpjcnlwdG8vYXNuMS9hX3ZlcmlmeS5jOjIyMDoK",
         "encoding": "base64",
-        "sha256": "64dc4bfa7dc7824ff35995e546d0c3ec961e1006f6ee566d91669bea1832557e",
+        "sha256": "9cd8c62c03b07cd86b3bc0e8af01b2f2042090ce22ed9bc8881ba77997700172",
         "truncated": false
       },
       "stdout": {
@@ -236,7 +254,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 363,
+      "elapsed_milliseconds": 780,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -253,6 +271,49 @@
         "truncated": false
       },
       "timed_out": false
+    }
+  },
+  "conformance": {
+    "hybrid_application_policy": {
+      "dns_identity_overlap": {
+        "confidence": "observed",
+        "state": "fail"
+      },
+      "reference_subject_public_key_is_classical": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "related_subject_public_key_is_post_quantum": {
+        "confidence": "observed",
+        "state": "pass"
+      }
+    },
+    "rfc9763": {
+      "binding": {
+        "calculated_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "check": {
+          "confidence": "observed",
+          "state": "pass"
+        },
+        "digest_algorithm_oid": "2.16.840.1.101.3.4.2.1",
+        "embedded_digest": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8"
+      },
+      "extended_key_usage_subset": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "extension_in_end_entity": {
+        "confidence": "observed",
+        "state": "pass"
+      },
+      "key_usage_subset": {
+        "confidence": "observed",
+        "state": "fail"
+      },
+      "related_certificate_is_end_entity": {
+        "confidence": "observed",
+        "state": "pass"
+      }
     }
   },
   "invalid_binding": {
@@ -283,7 +344,8 @@
     }
   },
   "post_quantum_expired_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": null,
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -336,7 +398,16 @@
     "observation": {
       "adapter": "openssl-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "346320e5c3c15c0070dfbbefa82a5a065bc5cfc766ec3914913aff6f95df5cc0",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -346,9 +417,8 @@
       "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
       "version_track": "current"
     },
-    "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 306,
+      "elapsed_milliseconds": 399,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 149,
@@ -367,7 +437,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 344,
+      "elapsed_milliseconds": 780,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -387,7 +457,8 @@
     }
   },
   "post_quantum_invalid_binding_path_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": null,
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -440,7 +511,16 @@
     "observation": {
       "adapter": "openssl-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "36b328a224eba83d062178126af2afe3e52919d37ed3db3822fe2220e5c74eff",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -450,9 +530,8 @@
       "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
       "version_track": "current"
     },
-    "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 311,
+      "elapsed_milliseconds": 390,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -471,7 +550,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 333,
+      "elapsed_milliseconds": 780,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -491,7 +570,8 @@
     }
   },
   "post_quantum_revocation_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": null,
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -554,7 +634,16 @@
     "observation": {
       "adapter": "openssl-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -564,9 +653,8 @@
       "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
       "version_track": "current"
     },
-    "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 341,
+      "elapsed_milliseconds": 401,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 137,
@@ -585,7 +673,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 327,
+      "elapsed_milliseconds": 780,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -605,7 +693,8 @@
     }
   },
   "post_quantum_validity_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": null,
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -658,7 +747,16 @@
     "observation": {
       "adapter": "openssl-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -668,9 +766,8 @@
       "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
       "version_track": "current"
     },
-    "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 310,
+      "elapsed_milliseconds": 404,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -689,7 +786,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 336,
+      "elapsed_milliseconds": 780,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -709,28 +806,50 @@
     }
   },
   "result": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "api_version": "hybrid-x509-evidence/v9",
     "certificate_path": [
       {
+        "binding_design": "related-certificate",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
         "id": "end-entity",
+        "issuer_edge_sha256": "cbc0e4748c3a1dfa769008388e73e5f54664b38b1faf771884a0ec24685a845b",
         "position": "end-entity",
-        "scheme": "related"
+        "subject_public_key_scheme": "classical"
+      },
+      {
+        "binding_design": "none",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87",
+        "id": "issuer",
+        "issuer_edge_sha256": "928681191c9381f82188398d403516bee261fd05e42e700df6fc7fd7430294e5",
+        "position": "intermediate",
+        "subject_public_key_scheme": "classical"
       }
     ],
     "classical_only_fallback": true,
     "evaluated_evidence": [
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
+        "authentication_operation_id": "end-entity-related-authentication",
         "binding": {
           "confidence": "observed",
           "state": "not-applicable"
         },
+        "certificate_der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
         "certificate_id": "end-entity",
-        "id": "classical-certificate-path",
-        "kind": "classical",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "behaviorally-established",
           "state": "pass"
         },
+        "evidence_artifact_der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+        "id": "classical-certificate-path",
+        "issuer_edge_sha256": "cbc0e4748c3a1dfa769008388e73e5f54664b38b1faf771884a0ec24685a845b",
+        "kind": "classical",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -748,6 +867,7 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -758,17 +878,26 @@
         }
       },
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
+        "authentication_operation_id": "end-entity-related-authentication",
         "binding": {
           "confidence": "observed",
-          "state": "pass"
-        },
-        "certificate_id": "end-entity",
-        "id": "related-post-quantum-certificate",
-        "kind": "post-quantum",
-        "outcome_bearing": {
-          "confidence": "behaviorally-established",
           "state": "fail"
         },
+        "certificate_der_sha256": "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+        "certificate_id": "end-entity",
+        "decision_sensitive_for_fixture": {
+          "confidence": "unknown",
+          "state": "indeterminate"
+        },
+        "evidence_artifact_der_sha256": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "id": "related-post-quantum-certificate",
+        "issuer_edge_sha256": "cbc0e4748c3a1dfa769008388e73e5f54664b38b1faf771884a0ec24685a845b",
+        "kind": "post-quantum",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -786,6 +915,7 @@
           "confidence": "observed",
           "state": "fail"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -796,7 +926,17 @@
         }
       }
     ],
+    "expected_trust_anchor": {
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "kind": "certificate-der-sha256"
+    },
     "failed_checks": [
+      {
+        "check": "binding",
+        "confidence": "observed",
+        "evidence_id": "related-post-quantum-certificate",
+        "state": "fail"
+      },
       {
         "check": "revocation",
         "confidence": "observed",
@@ -804,22 +944,53 @@
         "state": "fail"
       },
       {
-        "check": "outcome-bearing",
-        "confidence": "behaviorally-established",
+        "check": "decision-sensitive-for-fixture",
+        "confidence": "unknown",
         "evidence_id": "related-post-quantum-certificate",
+        "state": "indeterminate"
+      },
+      {
+        "check": "same-authentication-operation",
+        "confidence": "observed",
+        "evidence_id": "end-entity-related-authentication",
         "state": "fail"
       }
     ],
     "lifecycle_desynchronization": true,
+    "paired_authentications": [
+      {
+        "classical_certificate_id": "end-entity",
+        "operation_id": "end-entity-related-authentication",
+        "post_quantum_certificate_der_sha256": "116b13eb510f23046de01ba30c4d4611489fd1025eeeed7e6d67a27d831fe9b8",
+        "same_authentication_operation": {
+          "confidence": "observed",
+          "state": "fail"
+        }
+      }
+    ],
     "path_scope": "end-entity",
     "policy": "p2-required-hybrid",
     "policy_verdict": "reject",
     "previous_authentication": null,
-    "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+    "reason": "The stack accepted through classical evidence without valid, decision-sensitive-for-fixture post-quantum evidence.",
+    "revocation_policy": {
+      "clock_skew_seconds": null,
+      "max_age_seconds": null,
+      "mode": "hard-fail"
+    },
     "stack": {
       "adapter": "openssl-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "f2f0472bb7332a9e39f0f6441d42659af23925c3ddced6026862672119dd1f78",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",

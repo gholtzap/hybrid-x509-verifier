@@ -105,9 +105,9 @@ pub fn verify(config: &GnuTlsConfig) -> Result<AdapterExecution, GnuTlsError> {
             version_track: VersionTrack::UserSupplied,
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: ExecutionIsolation::ProcessOnly,
-            selected_path_der_sha256,
+            certification_path_der_sha256: selected_path_der_sha256,
             selected_path_source: crate::PathObservationSource::PresentedInput,
-            trust_anchor_der_sha256,
+            trust_anchor: trust_anchor_der_sha256,
             applied_validation_time: String::new(),
             validation_time: CheckResult {
                 state: CheckState::NotChecked,
@@ -160,8 +160,7 @@ fn verify_container_as(
         (config.intermediate.as_path(), "/input/intermediate.pem"),
         (config.leaf.as_path(), "/input/leaf.pem"),
     ];
-    let version_arguments =
-        isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
+    let version_arguments = isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(GnuTlsError::VersionFailed);
@@ -192,9 +191,9 @@ fn verify_container_as(
             version_track,
             validation_profile: ValidationProfile::X509Path,
             execution_isolation: ExecutionIsolation::Container,
-            selected_path_der_sha256,
+            certification_path_der_sha256: selected_path_der_sha256,
             selected_path_source: crate::PathObservationSource::PresentedInput,
-            trust_anchor_der_sha256,
+            trust_anchor: trust_anchor_der_sha256,
             applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },

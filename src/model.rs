@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "hybrid-x509-evidence/v8";
+pub const API_VERSION: &str = "hybrid-x509-evidence/v9";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
@@ -118,6 +118,7 @@ impl CertificateNode {
     pub fn requires_post_quantum_certificate_signature_evidence(&self) -> bool {
         self.certificate_signature_scheme.is_post_quantum()
             || self.binding_design.is_hybrid_certificate_signature_design()
+            || self.binding_design == BindingDesign::RelatedCertificate
     }
 
     pub fn has_hybrid_certificate_signature_design(&self) -> bool {
@@ -177,7 +178,11 @@ pub struct Evidence {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub certificate_der_sha256: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub evidence_artifact_der_sha256: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub issuer_edge_sha256: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub authentication_operation_id: Option<String>,
     pub kind: EvidenceKind,
     pub present: CheckResult,
     pub recognized: CheckResult,
@@ -186,6 +191,8 @@ pub struct Evidence {
     pub path: CheckResult,
     pub validity: CheckResult,
     pub revocation: CheckResult,
+    pub revocation_method: RevocationMethod,
+    pub applied_revocation_policy: RevocationPolicy,
     pub decision_sensitive_for_fixture: CheckResult,
 }
 
@@ -249,6 +256,48 @@ pub enum PathObservationSource {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "kind", rename_all = "kebab-case", deny_unknown_fields)]
+pub enum TrustAnchor {
+    CertificateDerSha256 { der_sha256: String },
+    NameAndSpkiSha256 { name: String, spki_sha256: String },
+    LocalIdentifier { identifier: String },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum RevocationMethod {
+    Ocsp,
+    Crl,
+    None,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum RevocationPolicyMode {
+    HardFail,
+    SoftFail,
+    NotRequired,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct RevocationPolicy {
+    pub mode: RevocationPolicyMode,
+    pub max_age_seconds: Option<u64>,
+    pub clock_skew_seconds: Option<u64>,
+}
+
+impl RevocationPolicy {
+    pub const fn crl_hard_fail() -> Self {
+        Self {
+            mode: RevocationPolicyMode::HardFail,
+            max_age_seconds: None,
+            clock_skew_seconds: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct StackObservation {
     pub adapter: String,
@@ -257,9 +306,9 @@ pub struct StackObservation {
     pub version_track: VersionTrack,
     pub validation_profile: ValidationProfile,
     pub execution_isolation: ExecutionIsolation,
-    pub selected_path_der_sha256: Vec<String>,
+    pub certification_path_der_sha256: Vec<String>,
     pub selected_path_source: PathObservationSource,
-    pub trust_anchor_der_sha256: String,
+    pub trust_anchor: TrustAnchor,
     pub applied_validation_time: String,
     pub validation_time: CheckResult,
 }
@@ -294,7 +343,7 @@ pub struct AdapterReport {
     pub arguments: Vec<String>,
     pub version: ProcessRecord,
     pub verification: ProcessRecord,
-    pub source_instrumentation: Option<SourceInstrumentation>,
+    pub adapter_trace: Option<SourceInstrumentation>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -352,9 +401,21 @@ pub struct VerificationRequest {
     pub path_scope: PathScope,
     pub validation_time: String,
     pub previous_authentication: Option<AuthenticationLevel>,
+    pub revocation_policy: RevocationPolicy,
     pub stack: StackObservation,
+    pub expected_trust_anchor: TrustAnchor,
     pub certificate_path: Vec<CertificateNode>,
+    pub paired_authentications: Vec<PairedAuthentication>,
     pub evidence: Vec<Evidence>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct PairedAuthentication {
+    pub operation_id: String,
+    pub classical_certificate_id: String,
+    pub post_quantum_certificate_der_sha256: String,
+    pub same_authentication_operation: CheckResult,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -384,8 +445,11 @@ pub struct VerificationResult {
     pub path_scope: PathScope,
     pub validation_time: String,
     pub previous_authentication: Option<AuthenticationLevel>,
+    pub revocation_policy: RevocationPolicy,
     pub stack: StackObservation,
+    pub expected_trust_anchor: TrustAnchor,
     pub certificate_path: Vec<CertificateNode>,
+    pub paired_authentications: Vec<PairedAuthentication>,
     pub stack_verdict: StackVerdict,
     pub policy_verdict: PolicyVerdict,
     pub classical_only_fallback: bool,

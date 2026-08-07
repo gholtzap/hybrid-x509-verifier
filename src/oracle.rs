@@ -1,7 +1,8 @@
 use crate::model::{
     API_VERSION, AlgorithmSecurity, BindingDesign, CheckState, Evidence, EvidenceKind, FailedCheck,
-    PathObservationSource, PathPosition, Policy, PolicyVerdict, StackVerdict, ValidationProfile,
-    VerificationRequest, VerificationResult,
+    PathObservationSource, PathPosition, Policy, PolicyVerdict, RevocationMethod,
+    RevocationPolicyMode, StackVerdict, TrustAnchor, ValidationProfile, VerificationRequest,
+    VerificationResult,
 };
 use thiserror::Error;
 
@@ -20,9 +21,9 @@ pub enum OracleError {
     DuplicateCertificateId(String),
     #[error("the certificate path must contain exactly one end-entity certificate")]
     InvalidEndEntityCount,
-    #[error("the certificate path must contain exactly one trust anchor")]
-    InvalidTrustAnchorCount,
-    #[error("the certificate path must be ordered as end-entity, intermediates, trust anchor")]
+    #[error("the certificate path must not contain a trust anchor")]
+    TrustAnchorInCertificatePath,
+    #[error("the certificate path must be ordered as end-entity followed by intermediates")]
     InvalidCertificatePathOrder,
     #[error("the stack selected path does not match the request certificate path")]
     SelectedPathMismatch,
@@ -63,6 +64,18 @@ pub enum OracleError {
         evidence_id: String,
         certificate_id: String,
     },
+    #[error("evidence {evidence_id} is not bound to the checked artifact")]
+    EvidenceArtifactDerHashMismatch { evidence_id: String },
+    #[error("paired authentication operation identifiers must be unique: {0}")]
+    DuplicatePairedAuthentication(String),
+    #[error("paired authentication {operation_id} refers to an invalid classical certificate")]
+    InvalidPairedAuthentication { operation_id: String },
+    #[error("evidence {evidence_id} has an invalid paired authentication operation")]
+    InvalidEvidenceAuthenticationOperation { evidence_id: String },
+    #[error("evidence {evidence_id} used a different revocation policy than the request")]
+    RevocationPolicyMismatch { evidence_id: String },
+    #[error("evidence {evidence_id} reports revocation success without a revocation method")]
+    InvalidRevocationEvidence { evidence_id: String },
 }
 
 pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, OracleError> {
@@ -114,8 +127,12 @@ pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, Ora
         .copied()
         .filter(|certificate| certificate.requires_post_quantum_certificate_signature_evidence())
         .collect();
-    let classical_state = evidence_state(&classical_required, &classical);
-    let pq_state = evidence_state(&pq_required, &post_quantum);
+    let classical_state = evidence_state(
+        &classical_required,
+        &classical,
+        request.revocation_policy.mode,
+    );
+    let pq_state = evidence_state(&pq_required, &post_quantum, request.revocation_policy.mode);
     let classical_ok = classical_state == AggregateState::Pass;
     let pq_ok = pq_state == AggregateState::Pass;
     let validated_path_state = validated_path_state(request);
@@ -130,45 +147,48 @@ pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, Ora
     let profile_state = authentication_profile_state(request.stack.validation_profile);
     let stack_accepted = stack_state == AggregateState::Pass;
     let profile_accepted = profile_state == AggregateState::Pass;
-    let all_hybrid = certificates
-        .iter()
-        .all(|certificate| certificate.has_hybrid_certificate_signature_design());
-    let fallback =
-        stack_accepted && !classical_required.is_empty() && classical_ok && (!pq_ok || !all_hybrid);
-    let lifecycle_desynchronization = fallback
-        && post_quantum.iter().any(|item| {
-            item.validity.state == CheckState::Fail || item.revocation.state == CheckState::Fail
+    let hybrid_design_state = hybrid_authentication_design_state(&certificates, request);
+    let all_hybrid = hybrid_design_state == AggregateState::Pass;
+    let classical_authentication_succeeded =
+        stack_accepted && profile_accepted && has_classical_requirement && classical_ok;
+    let hybrid_claim_evaluated = !pq_required.is_empty()
+        || certificates.iter().any(|certificate| {
+            certificate.has_hybrid_certificate_signature_design()
+                || certificate.binding_design == BindingDesign::RelatedCertificate
         });
 
     let (verdict, reason) = match request.policy {
-        Policy::P0Classical => match classical_state {
-            AggregateState::Pass
-                if stack_accepted && profile_accepted && has_classical_requirement =>
+        Policy::P0Classical => {
+            if !has_classical_requirement
+                || classical_state == AggregateState::Fail
+                || stack_state == AggregateState::Fail
             {
+                (
+                    PolicyVerdict::Reject,
+                    "The classical evidence or validation stack did not pass.",
+                )
+            } else if classical_ok && stack_accepted && profile_accepted {
                 (
                     PolicyVerdict::ClassicalClaimSetSatisfied,
                     "The classical evidence passed under policy P0.",
                 )
-            }
-            AggregateState::Indeterminate => (
-                PolicyVerdict::Indeterminate,
-                "The classical evidence is incomplete or indeterminate.",
-            ),
-            AggregateState::Pass
-                if has_classical_requirement && stack_state == AggregateState::Indeterminate =>
-            {
+            } else {
                 (
                     PolicyVerdict::Indeterminate,
-                    "The validation stack result or validation time is indeterminate.",
+                    "The classical evidence is incomplete or indeterminate.",
                 )
             }
-            _ => (
-                PolicyVerdict::Reject,
-                "The classical evidence did not pass.",
-            ),
-        },
+        }
         Policy::P1OptionalHybrid => {
-            if stack_accepted
+            if !has_classical_requirement
+                || classical_state == AggregateState::Fail
+                || stack_state == AggregateState::Fail
+            {
+                (
+                    PolicyVerdict::Reject,
+                    "The classical evidence or validation stack did not pass.",
+                )
+            } else if stack_accepted
                 && profile_accepted
                 && all_hybrid
                 && classical_ok
@@ -179,43 +199,15 @@ pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, Ora
                     PolicyVerdict::HybridClaimSetSatisfied,
                     "The classical and post-quantum evidence passed under policy P1.",
                 )
-            } else if stack_accepted
-                && profile_accepted
-                && all_hybrid
-                && classical_ok
-                && pq_ok
-                && validated_path_state == AggregateState::Indeterminate
-            {
-                (
-                    PolicyVerdict::Indeterminate,
-                    "The selected certificate path or trust anchor is not fully bound.",
-                )
-            } else if stack_accepted
-                && profile_accepted
-                && has_classical_requirement
-                && classical_ok
-            {
+            } else if stack_accepted && profile_accepted && classical_ok {
                 (
                     PolicyVerdict::ClassicalClaimSetSatisfied,
                     "Only the classical evidence passed under policy P1.",
                 )
-            } else if !has_classical_requirement || classical_state == AggregateState::Fail {
-                (
-                    PolicyVerdict::Reject,
-                    "The classical evidence did not pass.",
-                )
-            } else if classical_state == AggregateState::Indeterminate
-                || stack_state == AggregateState::Indeterminate
-                || profile_state == AggregateState::Indeterminate
-            {
+            } else {
                 (
                     PolicyVerdict::Indeterminate,
                     "The classical evidence is incomplete or indeterminate.",
-                )
-            } else {
-                (
-                    PolicyVerdict::Reject,
-                    "The classical evidence did not pass.",
                 )
             }
         }
@@ -231,12 +223,12 @@ pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, Ora
                     PolicyVerdict::HybridClaimSetSatisfied,
                     "All required classical and post-quantum evidence passed.",
                 )
-            } else if fallback && pq_state == AggregateState::Fail {
+            } else if classical_authentication_succeeded && pq_state == AggregateState::Fail {
                 (
                     PolicyVerdict::Reject,
                     "The stack accepted through classical evidence without valid, decision-sensitive-for-fixture post-quantum evidence.",
                 )
-            } else if !all_hybrid
+            } else if hybrid_design_state == AggregateState::Fail
                 || classical_state == AggregateState::Fail
                 || pq_state == AggregateState::Fail
                 || stack_state == AggregateState::Fail
@@ -250,6 +242,7 @@ pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, Ora
                 || stack_state == AggregateState::Indeterminate
                 || profile_state == AggregateState::Indeterminate
                 || validated_path_state == AggregateState::Indeterminate
+                || hybrid_design_state == AggregateState::Indeterminate
             {
                 (
                     PolicyVerdict::Indeterminate,
@@ -264,6 +257,21 @@ pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, Ora
             "Policy P3 requires an authenticated continuity record; a caller-supplied previous level is not sufficient.",
         ),
     };
+
+    let fallback = match request.policy {
+        Policy::P0Classical | Policy::P3Continuity => false,
+        Policy::P1OptionalHybrid => {
+            verdict == PolicyVerdict::ClassicalClaimSetSatisfied && hybrid_claim_evaluated
+        }
+        Policy::P2RequiredHybrid => {
+            classical_authentication_succeeded
+                && (pq_state != AggregateState::Pass || hybrid_design_state != AggregateState::Pass)
+        }
+    };
+    let lifecycle_desynchronization = fallback
+        && post_quantum.iter().any(|item| {
+            item.validity.state == CheckState::Fail || item.revocation.state == CheckState::Fail
+        });
 
     let mut failed_checks: Vec<_> = in_scope
         .into_iter()
@@ -299,6 +307,21 @@ pub fn evaluate(request: &VerificationRequest) -> Result<VerificationResult, Ora
         &post_quantum,
         EvidenceKind::PostQuantum,
     );
+    for pair in &request.paired_authentications {
+        if certificates
+            .iter()
+            .any(|certificate| certificate.id == pair.classical_certificate_id)
+            && required_check_state(pair.same_authentication_operation, false)
+                != AggregateState::Pass
+        {
+            failed_checks.push(FailedCheck {
+                evidence_id: pair.operation_id.clone(),
+                check: "same-authentication-operation".to_owned(),
+                state: pair.same_authentication_operation.state,
+                confidence: pair.same_authentication_operation.confidence,
+            });
+        }
+    }
 
     Ok(result(
         request,
@@ -324,6 +347,7 @@ fn validate_request(request: &VerificationRequest) -> Result<(), OracleError> {
 
     let mut ids = std::collections::HashSet::new();
     let mut evidence_kinds = std::collections::HashSet::new();
+    let mut authentication_operations = std::collections::HashMap::new();
     for item in &request.evidence {
         if !ids.insert(&item.id) {
             return Err(OracleError::DuplicateEvidenceId(item.id.clone()));
@@ -338,7 +362,6 @@ fn validate_request(request: &VerificationRequest) -> Result<(), OracleError> {
 
     let mut certificates_by_id = std::collections::HashMap::new();
     let mut end_entity_count = 0;
-    let mut trust_anchor_count = 0;
     for certificate in &request.certificate_path {
         validate_sha256_hex("certificate.der_sha256", &certificate.der_sha256)?;
         validate_sha256_hex(
@@ -350,7 +373,7 @@ fn validate_request(request: &VerificationRequest) -> Result<(), OracleError> {
             end_entity_count += 1;
         }
         if certificate.position == crate::model::PathPosition::TrustAnchor {
-            trust_anchor_count += 1;
+            return Err(OracleError::TrustAnchorInCertificatePath);
         }
         if certificates_by_id
             .insert(&certificate.id, certificate)
@@ -362,11 +385,35 @@ fn validate_request(request: &VerificationRequest) -> Result<(), OracleError> {
     if end_entity_count != 1 {
         return Err(OracleError::InvalidEndEntityCount);
     }
-    if trust_anchor_count != 1 {
-        return Err(OracleError::InvalidTrustAnchorCount);
-    }
     validate_certificate_path_order(request)?;
     validate_stack_selected_path(request)?;
+
+    let mut paired_authentications = std::collections::HashMap::new();
+    for pair in &request.paired_authentications {
+        validate_required_sha256_hex(
+            "paired_authentication.post_quantum_certificate_der_sha256",
+            &pair.post_quantum_certificate_der_sha256,
+        )?;
+        if pair.operation_id.is_empty()
+            || paired_authentications
+                .insert(pair.operation_id.as_str(), pair)
+                .is_some()
+        {
+            return Err(OracleError::DuplicatePairedAuthentication(
+                pair.operation_id.clone(),
+            ));
+        }
+        if certificates_by_id
+            .get(&pair.classical_certificate_id)
+            .is_none_or(|certificate| {
+                certificate.binding_design != BindingDesign::RelatedCertificate
+            })
+        {
+            return Err(OracleError::InvalidPairedAuthentication {
+                operation_id: pair.operation_id.clone(),
+            });
+        }
+    }
 
     for item in &request.evidence {
         validate_sha256_hex(
@@ -374,6 +421,10 @@ fn validate_request(request: &VerificationRequest) -> Result<(), OracleError> {
             &item.certificate_der_sha256,
         )?;
         validate_sha256_hex("evidence.issuer_edge_sha256", &item.issuer_edge_sha256)?;
+        validate_sha256_hex(
+            "evidence.evidence_artifact_der_sha256",
+            &item.evidence_artifact_der_sha256,
+        )?;
         let Some(certificate) = certificates_by_id.get(&item.certificate_id) else {
             return Err(OracleError::UnknownCertificate {
                 evidence_id: item.id.clone(),
@@ -386,16 +437,82 @@ fn validate_request(request: &VerificationRequest) -> Result<(), OracleError> {
                 certificate_id: item.certificate_id.clone(),
             });
         }
-        if mismatched_optional_hash(&certificate.der_sha256, &item.certificate_der_sha256) {
+        if mismatched_optional_hash(
+            certificate.der_sha256.as_ref(),
+            &item.certificate_der_sha256,
+        ) {
             return Err(OracleError::CertificateDerHashMismatch {
                 evidence_id: item.id.clone(),
                 certificate_id: item.certificate_id.clone(),
             });
         }
-        if mismatched_optional_hash(&certificate.issuer_edge_sha256, &item.issuer_edge_sha256) {
+        if mismatched_optional_hash(
+            certificate.issuer_edge_sha256.as_ref(),
+            &item.issuer_edge_sha256,
+        ) {
             return Err(OracleError::IssuerEdgeHashMismatch {
                 evidence_id: item.id.clone(),
                 certificate_id: item.certificate_id.clone(),
+            });
+        }
+        let expected_artifact = if certificate.binding_design == BindingDesign::RelatedCertificate {
+            let Some(operation_id) = item.authentication_operation_id.as_deref() else {
+                return Err(OracleError::InvalidEvidenceAuthenticationOperation {
+                    evidence_id: item.id.clone(),
+                });
+            };
+            let Some(pair) = paired_authentications.get(operation_id) else {
+                return Err(OracleError::InvalidEvidenceAuthenticationOperation {
+                    evidence_id: item.id.clone(),
+                });
+            };
+            if pair.classical_certificate_id != item.certificate_id {
+                return Err(OracleError::InvalidEvidenceAuthenticationOperation {
+                    evidence_id: item.id.clone(),
+                });
+            }
+            if authentication_operations
+                .insert(item.certificate_id.as_str(), operation_id)
+                .is_some_and(|previous| previous != operation_id)
+            {
+                return Err(OracleError::InvalidEvidenceAuthenticationOperation {
+                    evidence_id: item.id.clone(),
+                });
+            }
+            match item.kind {
+                EvidenceKind::Classical => certificate.der_sha256.as_ref(),
+                EvidenceKind::PostQuantum => Some(&pair.post_quantum_certificate_der_sha256),
+            }
+        } else {
+            if item.authentication_operation_id.is_some() {
+                return Err(OracleError::InvalidEvidenceAuthenticationOperation {
+                    evidence_id: item.id.clone(),
+                });
+            }
+            certificate.der_sha256.as_ref()
+        };
+        if mismatched_optional_hash(expected_artifact, &item.evidence_artifact_der_sha256) {
+            return Err(OracleError::EvidenceArtifactDerHashMismatch {
+                evidence_id: item.id.clone(),
+            });
+        }
+        if item.applied_revocation_policy != request.revocation_policy {
+            return Err(OracleError::RevocationPolicyMismatch {
+                evidence_id: item.id.clone(),
+            });
+        }
+        if item.revocation.state == CheckState::Pass
+            && item.revocation_method == RevocationMethod::None
+        {
+            return Err(OracleError::InvalidRevocationEvidence {
+                evidence_id: item.id.clone(),
+            });
+        }
+        if request.revocation_policy.mode == RevocationPolicyMode::NotRequired
+            && item.revocation.state != CheckState::NotApplicable
+        {
+            return Err(OracleError::RevocationPolicyMismatch {
+                evidence_id: item.id.clone(),
             });
         }
     }
@@ -432,7 +549,7 @@ fn validate_certificate_properties(
     }
 }
 
-fn mismatched_optional_hash(left: &Option<String>, right: &Option<String>) -> bool {
+fn mismatched_optional_hash(left: Option<&String>, right: &Option<String>) -> bool {
     matches!((left, right), (Some(left), Some(right)) if left != right)
 }
 
@@ -440,13 +557,10 @@ fn validate_certificate_path_order(request: &VerificationRequest) -> Result<(), 
     let Some(first) = request.certificate_path.first() else {
         return Err(OracleError::InvalidEndEntityCount);
     };
-    let Some(last) = request.certificate_path.last() else {
-        return Err(OracleError::InvalidTrustAnchorCount);
-    };
-    if first.position != PathPosition::EndEntity || last.position != PathPosition::TrustAnchor {
+    if first.position != PathPosition::EndEntity {
         return Err(OracleError::InvalidCertificatePathOrder);
     }
-    if request.certificate_path[1..request.certificate_path.len() - 1]
+    if request.certificate_path[1..]
         .iter()
         .any(|certificate| certificate.position != PathPosition::Intermediate)
     {
@@ -456,27 +570,50 @@ fn validate_certificate_path_order(request: &VerificationRequest) -> Result<(), 
 }
 
 fn validate_stack_selected_path(request: &VerificationRequest) -> Result<(), OracleError> {
-    for hash in &request.stack.selected_path_der_sha256 {
-        validate_required_sha256_hex("stack.selected_path_der_sha256", hash)?;
+    for hash in &request.stack.certification_path_der_sha256 {
+        validate_required_sha256_hex("stack.certification_path_der_sha256", hash)?;
     }
-    validate_required_sha256_hex(
-        "stack.trust_anchor_der_sha256",
-        &request.stack.trust_anchor_der_sha256,
-    )?;
     let path_hashes = request
         .certificate_path
         .iter()
         .map(|certificate| certificate.der_sha256.as_deref())
         .collect::<Option<Vec<_>>>()
         .ok_or(OracleError::SelectedPathMismatch)?;
-    if path_hashes != request.stack.selected_path_der_sha256 {
+    if path_hashes != request.stack.certification_path_der_sha256 {
         return Err(OracleError::SelectedPathMismatch);
     }
-    if path_hashes
-        .last()
-        .is_none_or(|anchor| *anchor != request.stack.trust_anchor_der_sha256)
-    {
+    validate_trust_anchor(
+        &request.expected_trust_anchor,
+        "expected_trust_anchor.spki_sha256",
+    )?;
+    validate_trust_anchor(
+        &request.stack.trust_anchor,
+        "stack.trust_anchor.spki_sha256",
+    )?;
+    if request.expected_trust_anchor != request.stack.trust_anchor {
         return Err(OracleError::TrustAnchorMismatch);
+    }
+    Ok(())
+}
+
+fn validate_trust_anchor(
+    trust_anchor: &TrustAnchor,
+    spki_field: &'static str,
+) -> Result<(), OracleError> {
+    match trust_anchor {
+        TrustAnchor::CertificateDerSha256 { der_sha256 } => {
+            validate_required_sha256_hex("trust_anchor.der_sha256", der_sha256)?;
+        }
+        TrustAnchor::NameAndSpkiSha256 { name, spki_sha256 } => {
+            validate_required_sha256_hex(spki_field, spki_sha256)?;
+            if name.is_empty() {
+                return Err(OracleError::TrustAnchorMismatch);
+            }
+        }
+        TrustAnchor::LocalIdentifier { identifier } if identifier.is_empty() => {
+            return Err(OracleError::TrustAnchorMismatch);
+        }
+        TrustAnchor::LocalIdentifier { .. } => {}
     }
     Ok(())
 }
@@ -507,9 +644,49 @@ enum AggregateState {
     Indeterminate,
 }
 
+fn hybrid_authentication_design_state(
+    certificates: &[&crate::model::CertificateNode],
+    request: &VerificationRequest,
+) -> AggregateState {
+    let mut indeterminate = false;
+    for certificate in certificates {
+        if certificate.has_hybrid_certificate_signature_design() {
+            continue;
+        }
+        if certificate.binding_design != BindingDesign::RelatedCertificate {
+            return AggregateState::Fail;
+        }
+        let pair = request
+            .evidence
+            .iter()
+            .find(|evidence| evidence.certificate_id == certificate.id)
+            .and_then(|evidence| evidence.authentication_operation_id.as_deref())
+            .and_then(|operation_id| {
+                request
+                    .paired_authentications
+                    .iter()
+                    .find(|pair| pair.operation_id == operation_id)
+            });
+        let Some(pair) = pair else {
+            return AggregateState::Fail;
+        };
+        match required_check_state(pair.same_authentication_operation, false) {
+            AggregateState::Pass => {}
+            AggregateState::Fail => return AggregateState::Fail,
+            AggregateState::Indeterminate => indeterminate = true,
+        }
+    }
+    if indeterminate {
+        AggregateState::Indeterminate
+    } else {
+        AggregateState::Pass
+    }
+}
+
 fn evidence_state(
     required_certificates: &[&crate::model::CertificateNode],
     items: &[&Evidence],
+    revocation_policy_mode: RevocationPolicyMode,
 ) -> AggregateState {
     if required_certificates.is_empty() {
         return AggregateState::Pass;
@@ -531,7 +708,10 @@ fn evidence_state(
                 AggregateState::Indeterminate => indeterminate = true,
             }
             for (name, check) in item.checks() {
-                match required_check_state(check, name == "binding") {
+                let allow_not_applicable = name == "binding"
+                    || (name == "revocation"
+                        && revocation_policy_mode == RevocationPolicyMode::NotRequired);
+                match required_check_state(check, allow_not_applicable) {
                     AggregateState::Pass => {}
                     AggregateState::Fail => return AggregateState::Fail,
                     AggregateState::Indeterminate => indeterminate = true,
@@ -550,7 +730,10 @@ fn evidence_binding_state(
     certificate: &crate::model::CertificateNode,
     item: &Evidence,
 ) -> AggregateState {
-    if certificate.der_sha256.is_none() || item.certificate_der_sha256.is_none() {
+    if certificate.der_sha256.is_none()
+        || item.certificate_der_sha256.is_none()
+        || item.evidence_artifact_der_sha256.is_none()
+    {
         return AggregateState::Indeterminate;
     }
     if certificate.position == PathPosition::TrustAnchor {
@@ -599,7 +782,6 @@ fn validated_path_state(request: &VerificationRequest) -> AggregateState {
         return AggregateState::Indeterminate;
     }
     let mut has_end_entity = false;
-    let mut has_trust_anchor = false;
     for certificate in &request.certificate_path {
         match certificate.position {
             PathPosition::EndEntity => {
@@ -613,15 +795,10 @@ fn validated_path_state(request: &VerificationRequest) -> AggregateState {
                     return AggregateState::Indeterminate;
                 }
             }
-            PathPosition::TrustAnchor => {
-                has_trust_anchor = true;
-                if certificate.der_sha256.is_none() {
-                    return AggregateState::Indeterminate;
-                }
-            }
+            PathPosition::TrustAnchor => return AggregateState::Indeterminate,
         }
     }
-    if has_end_entity && has_trust_anchor {
+    if has_end_entity {
         AggregateState::Pass
     } else {
         AggregateState::Indeterminate
@@ -663,8 +840,11 @@ fn result(
         path_scope: request.path_scope,
         validation_time: request.validation_time.clone(),
         previous_authentication: request.previous_authentication,
+        revocation_policy: request.revocation_policy,
         stack: request.stack.clone(),
+        expected_trust_anchor: request.expected_trust_anchor.clone(),
         certificate_path: request.certificate_path.clone(),
+        paired_authentications: request.paired_authentications.clone(),
         stack_verdict: request.stack.verdict,
         policy_verdict,
         classical_only_fallback,

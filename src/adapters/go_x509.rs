@@ -98,9 +98,9 @@ pub fn verify(config: &GoX509Config) -> Result<AdapterExecution, GoX509Error> {
             version_track: VersionTrack::UserSupplied,
             validation_profile: ValidationProfile::WebPkiServer,
             execution_isolation: ExecutionIsolation::ProcessOnly,
-            selected_path_der_sha256,
+            certification_path_der_sha256: selected_path_der_sha256,
             selected_path_source: crate::PathObservationSource::PresentedInput,
-            trust_anchor_der_sha256,
+            trust_anchor: trust_anchor_der_sha256,
             applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
@@ -133,8 +133,7 @@ pub fn verify_container(config: &GoX509ContainerConfig) -> Result<AdapterExecuti
         (config.intermediate.as_path(), "/input/intermediate.pem"),
         (config.leaf.as_path(), "/input/leaf.pem"),
     ];
-    let version_arguments =
-        isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
+    let version_arguments = isolated_arguments(&config.image, &[], &[OsString::from("--version")])?;
     let version_output = cached_version_output(&executable, &version_arguments, limits)?;
     if version_output.timed_out || version_output.status_code != Some(0) {
         return Err(GoX509Error::VersionFailed);
@@ -176,9 +175,9 @@ pub fn verify_container(config: &GoX509ContainerConfig) -> Result<AdapterExecuti
             },
             validation_profile: ValidationProfile::WebPkiServer,
             execution_isolation: ExecutionIsolation::Container,
-            selected_path_der_sha256,
+            certification_path_der_sha256: selected_path_der_sha256,
             selected_path_source: crate::PathObservationSource::PresentedInput,
-            trust_anchor_der_sha256,
+            trust_anchor: trust_anchor_der_sha256,
             applied_validation_time: config.validation_time.clone(),
             validation_time: CheckResult::observed(CheckState::Pass),
         },
@@ -237,7 +236,7 @@ mod tests {
         assert_eq!(result.observation.verdict, StackVerdict::Accept);
         assert!(result.observation.version.starts_with("go1.26."));
         let report = result.report().unwrap();
-        let instrumentation = report.source_instrumentation.unwrap();
+        let instrumentation = report.adapter_trace.unwrap();
         assert_eq!(instrumentation.confidence, crate::Confidence::Observed);
         assert_eq!(
             instrumentation.instrumentation_scope,

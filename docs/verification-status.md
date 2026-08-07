@@ -2,9 +2,10 @@
 
 ## Publication status
 
-Do not publish this repository as a Hybrid X.509 authentication verifier in its current form. The
-main command evaluates trusted, caller-supplied evidence claims. It does not independently derive
-most certificate, path, revocation, or TLS facts from the original inputs.
+Publish this repository only as a pre-alpha fixture research harness with known semantic limits.
+Do not publish it as a Hybrid X.509 authentication verifier. The main command evaluates trusted,
+caller-supplied evidence claims. It does not independently derive most certificate, path,
+revocation, or TLS facts from the original inputs.
 
 The local results below are fixture-specific observations for the named source tree, commands,
 adapters, and versions. They are not general proofs of X.509, TLS, hybrid-draft, or library
@@ -12,13 +13,15 @@ behavior.
 
 ## Locally observed in the current repository
 
-- The policy oracle cannot return hybrid acceptance under P2 unless all in-scope
-  certificates use a hybrid scheme, all required classical and post-quantum checks pass, and the
-  request declares a bound selected path with a trust anchor.
+- The policy oracle cannot return hybrid acceptance under P2 unless all in-scope certificates use
+  a hybrid certificate-signature design or an explicit same-operation Related certificate pair,
+  all required classical and post-quantum checks pass, and the request declares a bound
+  certification path and a separate trust anchor.
 - The oracle requires the stack report to name the applied validation time. A known
   failure overrides unrelated indeterminate input. `not-applicable` cannot bypass presence,
-  recognition, signature, path, validity, revocation, or decision-sensitive-for-fixture checks. Pure
-  post-quantum acceptance cannot be labeled as classical authentication.
+  recognition, signature, path, validity, or decision-sensitive-for-fixture checks. It satisfies
+  only the revocation check when the requested revocation mode is `not-required`. Pure post-quantum
+  acceptance cannot be labeled as classical authentication.
 - P3 is disabled as an acceptance policy until an authenticated continuity record exists. A
   caller-supplied previous level is not enough to preserve, upgrade, or downgrade authentication.
 - Inferred or unknown checks cannot establish hybrid authentication.
@@ -57,6 +60,9 @@ behavior.
   and outer certificate signature algorithms, duplicate OCSP extensions, and unsupported
   critical OCSP extensions. Delegated responders without `id-pkix-ocsp-nocheck` or separate
   responder-revocation evidence produce indeterminate status evidence.
+- Each revocation result records whether it came from OCSP, CRL, or no check, plus the applied
+  hard-fail, soft-fail, or not-required policy. OCSP results also record maximum age and clock
+  skew. The oracle rejects evidence that used a different policy than the request.
 - The isolated current OpenSSL 4.0.1 adapter accepts the classical certificate and rejects the
   post-quantum certificate when the CRL is applied directly. It also rejects the published
   expired post-quantum credential at the same validation time.
@@ -76,7 +82,7 @@ behavior.
   labeled `process-only` and are not part of the authoritative matrix. The Related revocation
   analysis now uses the isolated current OpenSSL container.
 - The repository-owned Go, Bouncy Castle, Python cryptography, and wolfSSL adapters emit typed
-  adapter-scope observations. Go records its direct
+  `adapter_trace` observations. Go records its direct
   issuer-signature check, Web PKI path operation, algorithms, outcomes, and observed extensions.
   Bouncy Castle records PKIX path, alternative-signature, delta-signature, and TLS transcript
   operations. Python cryptography records its Web PKI verification call and parsed leaf
@@ -85,7 +91,9 @@ behavior.
   directly instrumented. Other adapters remain black-box results and do not claim internal
   execution. The current
   matrix has 184 instrumented entries across these eight adapter profiles.
-- The available matrix records 345 isolated raw results: seven valid cases, a deterministic
+- The available matrix records 345 isolated raw results with one exact support expectation and
+  one exact verdict expectation for each adapter profile and fixture. It does not allow
+  `unsupported` for the classical valid baseline. The cases include seven valid designs, a deterministic
   corrupted outer-signature variant for each case, invalid Catalyst, atomic-composite, and
   Chameleon evidence signatures, the published Chameleon study fixture, and Related Certificate
   controls for missing evidence, broken binding, an unknown algorithm, malformed evidence, a
@@ -120,7 +128,11 @@ behavior.
   certificate and reject separate ECDSA and ML-DSA mutations at the leaf, intermediate, and root.
   Both component mutations change path acceptance at the leaf and intermediate. Both root
   mutations do not change path acceptance because the root is the trust anchor. Composite-signed
-  empty CRLs pass at the common validation time. P2 accepts the end-entity and certification-path scopes because trust-anchor self-signatures are not selected path evidence.
+  empty CRLs pass at the common validation time. P2 is indeterminate for the end-entity and
+  certification-path scopes because the adapter reports a presented path, not the path that it
+  selected.
+<!-- report-value reports/local-arm64/atomic-path-scope-report.json /scopes/0/result/policy_verdict indeterminate -->
+<!-- report-value reports/local-arm64/atomic-path-scope-report.json /scopes/1/result/policy_verdict indeterminate -->
 - A deterministic pure ML-DSA hierarchy has post-quantum certificates at the root,
   intermediate, and leaf. The valid path, all direct signature checks, validity checks, and both
   CRLs pass. Invalid signatures change path acceptance at the leaf and intermediate. The trust
@@ -179,8 +191,10 @@ behavior.
   proof of possession with the deterministic leaf key. A control that changes only the ECDSA
   certificate-signature component is rejected. A second control that changes only the ML-DSA-44
   certificate-signature component is also rejected. Both certificate-signature components are
-  therefore decision-sensitive-for-fixture for path acceptance. P2 remains indeterminate because no checked
-  revocation status exists for the composite issuer.
+  therefore decision-sensitive-for-fixture for path acceptance. Handshake rejection does not
+  identify the internal rejection stage, so component signature checks stay indeterminate. P2
+  remains indeterminate because direct component-signature and checked revocation evidence are
+  absent from this TLS report.
 - A Bouncy Castle TLS 1.3 control completes an ML-DSA-44 handshake with the corrected Chameleon
   base certificate. The same handshake accepts a base certificate with an invalid classical
   delta signature. Direct delta verification accepts the valid delta and rejects the invalid
@@ -192,6 +206,9 @@ behavior.
   evidence. A separate ML-DSA-44 handshake shows that the bound post-quantum credential is usable,
   while the common-time CRL check shows that it is revoked. P2 rejects the classical handshake
   and reports classical-only fallback and lifecycle desynchronization.
+<!-- report-value reports/local-arm64/related-openssl-report.json /result/policy_verdict reject -->
+<!-- report-value reports/local-arm64/related-openssl-report.json /result/classical_only_fallback true -->
+<!-- report-value reports/local-arm64/related-openssl-report.json /result/lifecycle_desynchronization true -->
 - Deterministic parallel Related chains cover the leaf, intermediate, and trust anchor. At each
   position, the classical certificate contains a valid RFC 9763 hash of the paired ML-DSA
   certificate. Both complete chains, all direct signatures, all validity checks, and four CRLs
@@ -249,12 +266,11 @@ behavior.
   Rust, Go, Maven, and Python manifests and reports no unhandled vulnerability. Its dated policy
   exception is limited to cryptography 49.0.0, the isolated exact study control; current 50.0.0
   is tested separately.
-- The root `sbom-rust.cdx.json` and `sbom-all.cdx.json` files were regenerated after the
-  `hybrid-x509-evidence/v8` rename. Both identify the current package as
-  `hybrid-x509-evidence`.
-- The Rust toolchain is fixed at 1.92.0. A digest-pinned, read-only Linux container runs the
-  complete 31-test oracle suite from a copied clean source tree. The checked-in workflow defines
-  the same locked oracle checks on Ubuntu and macOS and the complete adapter suite on Ubuntu.
+- The root `sbom-rust.cdx.json` and `sbom-all.cdx.json` files use the older v8 contract. They are
+  historical artifacts until they are regenerated from clean v9 source.
+- The Rust toolchain is fixed at 1.92.0. The checked-in workflow defines locked oracle checks on
+  Ubuntu and macOS and the complete adapter suite on Ubuntu. The current v9 checks have not run in
+  that hosted workflow.
 - A separate digest-pinned Linux check builds the locked release binary twice in independent
   anonymous volumes and requires byte-identical SHA-256 digests. The current local digest is
   `ee83403dca3a30c93c5e070e11fd1a9e86946e81189cdaaf50ae58a5fe93a017`.
@@ -263,22 +279,24 @@ behavior.
   local archive SHA-256 is
   `20f4e7641bb9ab4c74936fac11b3a9ec8acae59d8bd22898f1b47be9719e49e1`.
 
-These statements are covered by runnable tests. They are local macOS arm64 results until the
-same checks run in pinned clean-machine environments.
+Source-level statements have runnable tests. The exact list of `report-value` markers is compared
+with their generated JSON by `tests/documented_verdicts.rs`. Historical counts and artifact
+digests are not current v9 evidence until their named commands run again from a clean tree.
 
 ## Required work not locally provable
 
-- Hosted multi-platform continuous integration has not run from this checkout. The source commit
-  used for the local matrix and SBOM refresh is
-  `4f4626bcb1e03c72a861905d412080340ed53c71`, with tree
-  `a3e45e478c8167a89da09a95d519d2587bcd790b`, and origin
-  `https://github.com/gholtzap/hybrid-x509-verifier.git`.
-- `reports/local-arm64/available-matrix.json`, `reports/local-arm64/matrix-report.json`,
-  `sbom-rust.cdx.json`, and `sbom-all.cdx.json` were regenerated from that clean source commit.
-  Other checked-in `reports/local-arm64/*.json` files remain stale generated artifacts from the
-  version-one contract and are excluded from current release evidence until regenerated.
+- Hosted multi-platform continuous integration has not passed for v9. Run `31119231036` failed
+  during Ubuntu setup before checkout, and its remaining jobs did not establish exact-head proof.
+- The v9 matrix JSON records source commit `c56007a183c6a845f356d246248e168b8277e35b`, source tree
+  `01c69b0db4fa44f7c0f1f6f90abdcd5d522c94a1`, `source_clean: false`, macOS arm64, and 13 unique
+  adapter image content digests. It is local research evidence only. Publication mode rejects this
+  dirty state.
+<!-- report-value reports/local-arm64/matrix-report.json /provenance/source_clean false -->
+- The atomic path, atomic TLS, Related OpenSSL, Related TLS, Related path, and two OCSP reports were
+  regenerated for v9. Other local reports and both SBOM files remain stale and are excluded from
+  current evidence until clean-tree regeneration.
 - Independent review is not available from the local workspace. The local reports state unknowns
   where black-box adapter behavior cannot show internal execution.
 
-The broad local matrix was rerun from the clean source commit above. Remaining publication work is
+The broad local matrix was rerun from the dirty working tree above. Remaining publication work is
 to regenerate the non-matrix local reports and to run the hosted multi-platform checks.

@@ -2,7 +2,7 @@
 
 Paper artifact commit: `b1c2ee5e87862c4103b482571945505f82a0d0d9`.
 
-Current local evidence:
+Historical comparison artifacts, not current local evidence:
 
 - `reports/local-arm64/paper-comparison.json`: 54 common matrix rows compared, 54 matched, zero differences.
 - `reports/local-arm64/paper-wolfssl-comparison.json`: four wolfSSL fixed-vector rows compared, four matched, zero differences.
@@ -17,6 +17,9 @@ Lifecycle coverage:
 - Both credentials good: the stack accepts. The product policy accepts only when post-quantum evidence is decision-sensitive-for-fixture in the selected authentication result.
 - Revoked post-quantum credential alone: direct revocation control rejects.
 - Expired post-quantum credential alone: direct validity control rejects.
+
+These comparison files use an older report contract. Regenerate them from a clean v9 matrix before
+using them as current evidence.
 
 The main semantic difference is intentional. The paper records whether a stack accepts available
 credentials. This evaluator records whether post-quantum evidence affected the final

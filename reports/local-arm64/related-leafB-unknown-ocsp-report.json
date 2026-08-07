@@ -1,9 +1,14 @@
 {
+  "applied_revocation_policy": {
+    "clock_skew_seconds": 300,
+    "max_age_seconds": 604800,
+    "mode": "soft-fail"
+  },
   "certificate_id": {
     "confidence": "observed",
     "state": "pass"
   },
-  "certificate_status": "unknown",
+  "effective_status_at_validation_time": "unknown",
   "extensions": {
     "confidence": "observed",
     "state": "pass"
@@ -24,6 +29,7 @@
     "confidence": "observed",
     "state": "pass"
   },
+  "response_certificate_status": "unknown",
   "response_status": {
     "confidence": "observed",
     "state": "pass"

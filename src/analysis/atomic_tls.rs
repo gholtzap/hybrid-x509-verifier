@@ -3,8 +3,8 @@ use crate::{
     OracleError, PathPosition, PathScope, Policy, StackVerdict, VerificationRequest,
     VerificationResult,
     analysis::{
-        LeafPathProperties, behavioral_check, certificate_der_hash, end_entity_certification_path,
-        issuer_edge_hash,
+        LeafPathProperties, behavioral_check, certificate_der_hash, certificate_trust_anchor,
+        end_entity_certification_path, issuer_edge_hash,
         tls::{
             TlsObservationError, TlsTranscriptConfig, TlsTranscriptEvidence, observe_transcript,
         },
@@ -91,11 +91,10 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
             && invalid_post_quantum_tls.report.observation.verdict == StackVerdict::Reject,
         CheckState::Pass,
     );
-    let component_signature = behavioral_check(
-        classical_outcome.state == CheckState::Pass
-            && post_quantum_outcome.state == CheckState::Pass,
-        CheckState::Pass,
-    );
+    let component_signature = CheckResult {
+        state: CheckState::Indeterminate,
+        confidence: crate::Confidence::Unknown,
+    };
     let path = CheckResult::observed(if valid_accepts {
         CheckState::Pass
     } else {
@@ -117,7 +116,9 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
         path_scope: PathScope::EndEntity,
         validation_time: config.validation_time.clone(),
         previous_authentication: None,
+        revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
         stack: valid_tls.report.observation.clone(),
+        expected_trust_anchor: certificate_trust_anchor(&config.trust_store, INPUT_LIMIT)?,
         certificate_path: end_entity_certification_path(
             &config.valid_certificate,
             &config.issuer,
@@ -129,13 +130,16 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
             },
             INPUT_LIMIT,
         )?,
+        paired_authentications: Vec::new(),
         evidence: vec![
             Evidence {
                 id: "composite-ecdsa-component".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
                 certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                evidence_artifact_der_sha256: Some(certificate_der_sha256.clone()),
                 issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
+                authentication_operation_id: None,
                 kind: EvidenceKind::Classical,
                 present,
                 recognized: present,
@@ -144,6 +148,8 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
                 path,
                 validity,
                 revocation,
+                revocation_method: crate::RevocationMethod::None,
+                applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
                 decision_sensitive_for_fixture: classical_outcome,
             },
             Evidence {
@@ -151,7 +157,9 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
                 certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                evidence_artifact_der_sha256: Some(certificate_der_sha256.clone()),
                 issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
+                authentication_operation_id: None,
                 kind: EvidenceKind::PostQuantum,
                 present,
                 recognized: present,
@@ -160,6 +168,8 @@ pub fn analyze(config: &AtomicTlsConfig) -> Result<AtomicTlsReport, AtomicTlsErr
                 path,
                 validity,
                 revocation,
+                revocation_method: crate::RevocationMethod::None,
+                applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
                 decision_sensitive_for_fixture: post_quantum_outcome,
             },
         ],
@@ -228,6 +238,13 @@ mod tests {
         assert_eq!(
             report.invalid_post_quantum_tls.report.observation.verdict,
             StackVerdict::Reject
+        );
+        assert!(
+            report
+                .result
+                .evaluated_evidence
+                .iter()
+                .all(|evidence| evidence.signature.state == CheckState::Indeterminate)
         );
         assert_eq!(
             report.valid_tls.signature.as_deref(),

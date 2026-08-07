@@ -103,6 +103,8 @@ enum Command {
         max_age_seconds: u64,
         #[arg(long, default_value_t = 300)]
         clock_skew_seconds: u64,
+        #[arg(long, value_enum, default_value_t = RevocationPolicyModeArgument::SoftFail)]
+        revocation_mode: RevocationPolicyModeArgument,
         #[arg(long, default_value_t = 1_048_576)]
         input_limit_bytes: usize,
     },
@@ -807,6 +809,8 @@ enum Command {
         timeout_seconds: u64,
         #[arg(long, default_value_t = 1_048_576)]
         max_output_bytes: usize,
+        #[arg(long)]
+        publication: bool,
     },
     /// Verify generated corpus DER values against the published manifest.
     VerifyCorpus {
@@ -871,6 +875,23 @@ enum BouncyCastleModeArgument {
 enum AuthenticationLevelArgument {
     Classical,
     Hybrid,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+enum RevocationPolicyModeArgument {
+    HardFail,
+    SoftFail,
+    NotRequired,
+}
+
+impl From<RevocationPolicyModeArgument> for hybrid_x509_evidence::RevocationPolicyMode {
+    fn from(mode: RevocationPolicyModeArgument) -> Self {
+        match mode {
+            RevocationPolicyModeArgument::HardFail => Self::HardFail,
+            RevocationPolicyModeArgument::SoftFail => Self::SoftFail,
+            RevocationPolicyModeArgument::NotRequired => Self::NotRequired,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
@@ -1041,6 +1062,7 @@ fn run(args: Args) -> Result<(), Box<dyn std::error::Error>> {
             expected_nonce_base64,
             max_age_seconds,
             clock_skew_seconds,
+            revocation_mode,
             input_limit_bytes,
         } => serde_json::to_value(check_ocsp_status(
             &certificate,
@@ -1051,7 +1073,7 @@ fn run(args: Args) -> Result<(), Box<dyn std::error::Error>> {
             OcspPolicy {
                 max_age: Duration::from_secs(max_age_seconds),
                 clock_skew: Duration::from_secs(clock_skew_seconds),
-                revocation_mode: hybrid_x509_evidence::ocsp::RevocationPolicyMode::SoftFail,
+                revocation_mode: revocation_mode.into(),
                 delegated_responder_revocation: None,
             },
             input_limit_bytes,
@@ -1776,6 +1798,7 @@ fn run(args: Args) -> Result<(), Box<dyn std::error::Error>> {
             validation_time,
             timeout_seconds,
             max_output_bytes,
+            publication,
         } => serde_json::to_value(run_available_matrix(&AvailableMatrixConfig {
             fixtures,
             controls,
@@ -1797,6 +1820,7 @@ fn run(args: Args) -> Result<(), Box<dyn std::error::Error>> {
             validation_time,
             timeout: Duration::from_secs(timeout_seconds),
             max_output_bytes,
+            publication,
         })?)?,
         Command::VerifyCorpus {
             manifest,

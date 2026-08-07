@@ -1,5 +1,5 @@
 use crate::{
-    CheckResult, CheckState, Confidence,
+    CheckResult, CheckState, Confidence, RevocationPolicy, RevocationPolicyMode,
     input::{BoundedInputError, read_bounded_file},
     pem::{PemError, PemKind, read_der},
 };
@@ -34,14 +34,6 @@ pub struct OcspPolicy {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "kebab-case")]
-pub enum RevocationPolicyMode {
-    HardFail,
-    SoftFail,
-    NotRequired,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
-#[serde(rename_all = "kebab-case")]
 pub enum OcspCertificateStatus {
     Good,
     Revoked,
@@ -52,6 +44,7 @@ pub enum OcspCertificateStatus {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct OcspStatusResult {
+    pub applied_revocation_policy: RevocationPolicy,
     pub response_status: CheckResult,
     pub signature: CheckResult,
     pub responder: CheckResult,
@@ -104,7 +97,7 @@ pub fn check_ocsp_status(
 ) -> Result<OcspStatusResult, OcspError> {
     let response_der = read_bounded(response_path, limit)?;
     let Some(basic) = parse_ocsp_der(&response_der, &response_path.display().to_string())? else {
-        return Ok(unavailable_result());
+        return Ok(unavailable_result(policy));
     };
     let certificate_der = read_der(certificate_path, PemKind::Certificate, limit)?;
     let issuer_der = read_der(issuer_path, PemKind::Certificate, limit)?;
@@ -204,6 +197,11 @@ pub fn check_ocsp_status(
     );
 
     Ok(OcspStatusResult {
+        applied_revocation_policy: RevocationPolicy {
+            mode: policy.revocation_mode,
+            max_age_seconds: Some(policy.max_age.as_secs()),
+            clock_skew_seconds: Some(policy.clock_skew.as_secs()),
+        },
         response_status: observed(CheckState::Pass),
         signature: observed(signature_state),
         responder: observed(responder_state),
@@ -314,9 +312,14 @@ fn read_bounded(path: &Path, limit: usize) -> Result<Vec<u8>, OcspError> {
     })
 }
 
-fn unavailable_result() -> OcspStatusResult {
+fn unavailable_result(policy: OcspPolicy) -> OcspStatusResult {
     let indeterminate = observed(CheckState::Indeterminate);
     OcspStatusResult {
+        applied_revocation_policy: RevocationPolicy {
+            mode: policy.revocation_mode,
+            max_age_seconds: Some(policy.max_age.as_secs()),
+            clock_skew_seconds: Some(policy.clock_skew.as_secs()),
+        },
         response_status: observed(CheckState::Fail),
         signature: indeterminate,
         responder: indeterminate,
@@ -669,7 +672,12 @@ mod tests {
 
     #[test]
     fn non_success_response_cannot_supply_revocation_evidence() {
-        let result = unavailable_result();
+        let result = unavailable_result(OcspPolicy {
+            max_age: Duration::from_secs(604_800),
+            clock_skew: Duration::from_secs(300),
+            revocation_mode: RevocationPolicyMode::SoftFail,
+            delegated_responder_revocation: None,
+        });
         assert_eq!(result.response_status, observed(CheckState::Fail));
         assert_eq!(result.revocation, observed(CheckState::Indeterminate));
         assert_eq!(

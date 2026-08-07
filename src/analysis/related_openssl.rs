@@ -5,8 +5,8 @@ use crate::{
     adapters::openssl::{OpenSslContainerConfig, OpenSslError, verify_container as verify_openssl},
     adapters::{AdapterSupportError, check_from_verdict},
     analysis::{
-        LeafPathProperties, certificate_der_hash, end_entity_certification_path, issuer_edge_hash,
-        related_conformance_check,
+        LeafPathProperties, certificate_der_hash, certificate_trust_anchor,
+        end_entity_certification_path, issuer_edge_hash, related_conformance_check,
     },
     evaluate,
     mutation::{MutationError, corrupt_outer_signature, encode_certificate_pem},
@@ -184,6 +184,8 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
     let classical_path_pass = check_from_verdict(classical.observation.verdict);
     let pq_path_pass = check_from_verdict(post_quantum_validity.observation.verdict);
     let certificate_der_sha256 = certificate_der_hash(&config.classical_certificate, INPUT_LIMIT)?;
+    let post_quantum_certificate_der_sha256 =
+        certificate_der_hash(&config.post_quantum_certificate, INPUT_LIMIT)?;
     let issuer_edge_sha256 =
         issuer_edge_hash(&config.classical_certificate, &config.issuer, INPUT_LIMIT)?;
     let request = VerificationRequest {
@@ -192,7 +194,9 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
         path_scope: PathScope::EndEntity,
         validation_time: config.validation_time.clone(),
         previous_authentication: config.previous_authentication,
+        revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
         stack: classical.observation.clone(),
+        expected_trust_anchor: certificate_trust_anchor(&config.trust_store, INPUT_LIMIT)?,
         certificate_path: end_entity_certification_path(
             &config.classical_certificate,
             &config.issuer,
@@ -204,13 +208,21 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
             },
             INPUT_LIMIT,
         )?,
+        paired_authentications: vec![crate::PairedAuthentication {
+            operation_id: "end-entity-related-authentication".to_owned(),
+            classical_certificate_id: "end-entity".to_owned(),
+            post_quantum_certificate_der_sha256: post_quantum_certificate_der_sha256.clone(),
+            same_authentication_operation: CheckResult::observed(CheckState::Fail),
+        }],
         evidence: vec![
             Evidence {
                 id: "classical-certificate-path".to_owned(),
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
                 certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                evidence_artifact_der_sha256: Some(certificate_der_sha256.clone()),
                 issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
+                authentication_operation_id: Some("end-entity-related-authentication".to_owned()),
                 kind: EvidenceKind::Classical,
                 present: observed_pass,
                 recognized: observed_pass,
@@ -219,6 +231,8 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
                 path: classical_path_pass,
                 validity: classical_path_pass,
                 revocation: classical_crl_status.revocation,
+                revocation_method: crate::RevocationMethod::Crl,
+                applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
                 decision_sensitive_for_fixture: classical_outcome,
             },
             Evidence {
@@ -226,7 +240,9 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
                 certificate_id: "end-entity".to_owned(),
                 position: PathPosition::EndEntity,
                 certificate_der_sha256: Some(certificate_der_sha256.clone()),
+                evidence_artifact_der_sha256: Some(post_quantum_certificate_der_sha256),
                 issuer_edge_sha256: Some(issuer_edge_sha256.clone()),
+                authentication_operation_id: Some("end-entity-related-authentication".to_owned()),
                 kind: EvidenceKind::PostQuantum,
                 present: observed_pass,
                 recognized: observed_pass,
@@ -235,6 +251,8 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
                 path: pq_path_pass,
                 validity: pq_path_pass,
                 revocation: post_quantum_crl_status.revocation,
+                revocation_method: crate::RevocationMethod::Crl,
+                applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
                 decision_sensitive_for_fixture: post_quantum_outcome,
             },
         ],

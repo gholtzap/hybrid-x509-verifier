@@ -32,6 +32,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     io::Write,
     path::{Path, PathBuf},
+    process::Command,
     time::Duration,
 };
 use thiserror::Error;
@@ -58,6 +59,7 @@ pub struct AvailableMatrixConfig {
     pub validation_time: String,
     pub timeout: Duration,
     pub max_output_bytes: usize,
+    pub publication: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -69,12 +71,20 @@ pub struct MatrixEntry {
     pub binding_design: BindingDesign,
     pub variant: MatrixVariant,
     pub operation: ValidationProfile,
-    pub allowed_stack_verdicts: Vec<StackVerdict>,
+    pub expected_support: MatrixSupport,
+    pub expected_stack_verdict: StackVerdict,
     pub process_execution: MatrixProcessExecution,
     pub claim_id: String,
     pub specification: String,
     pub specification_revision: String,
     pub report: AdapterReport,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "kebab-case")]
+pub enum MatrixSupport {
+    Supported,
+    Unsupported,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -104,7 +114,25 @@ pub enum MatrixVariant {
 pub struct MatrixReport {
     pub api_version: String,
     pub requested_validation_time: String,
+    pub provenance: MatrixProvenance,
     pub entries: Vec<MatrixEntry>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct MatrixProvenance {
+    pub source_commit: String,
+    pub source_tree: String,
+    pub source_clean: bool,
+    pub platform: String,
+    pub adapter_images: Vec<AdapterImageProvenance>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct AdapterImageProvenance {
+    pub image: String,
+    pub content_digest: String,
 }
 
 #[derive(Debug, Error)]
@@ -133,6 +161,10 @@ pub enum MatrixError {
     Mutation(#[from] MutationError),
     #[error(transparent)]
     Io(#[from] std::io::Error),
+    #[error("publication mode requires a clean source tree")]
+    DirtySourceTree,
+    #[error("cannot collect matrix provenance: {0}")]
+    Provenance(String),
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -221,6 +253,7 @@ const CASES: [Case; 7] = [
 ];
 
 pub fn run_available_matrix(config: &AvailableMatrixConfig) -> Result<MatrixReport, MatrixError> {
+    let provenance = collect_provenance(config)?;
     let root = config.fixtures.join("root.pem");
     let mut entries = Vec::with_capacity((CASES.len() * 2 + 9) * 15);
     for case in CASES {
@@ -326,8 +359,83 @@ pub fn run_available_matrix(config: &AvailableMatrixConfig) -> Result<MatrixRepo
     Ok(MatrixReport {
         api_version: API_VERSION.to_owned(),
         requested_validation_time: config.validation_time.clone(),
+        provenance,
         entries,
     })
+}
+
+fn collect_provenance(config: &AvailableMatrixConfig) -> Result<MatrixProvenance, MatrixError> {
+    let repository = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let git = |arguments: &[&str]| -> Result<String, MatrixError> {
+        let output = Command::new("git")
+            .args(arguments)
+            .current_dir(repository)
+            .output()?;
+        if !output.status.success() {
+            return Err(MatrixError::Provenance(
+                String::from_utf8_lossy(&output.stderr).trim().to_owned(),
+            ));
+        }
+        Ok(String::from_utf8_lossy(&output.stdout).trim().to_owned())
+    };
+    let source_commit = git(&["rev-parse", "HEAD"])?;
+    let source_tree = git(&["rev-parse", "HEAD^{tree}"])?;
+    let source_clean = git(&["status", "--porcelain"])?.is_empty();
+    ensure_publication_source_clean(config.publication, source_clean)?;
+    let mut images = vec![
+        &config.openssl_current_image,
+        &config.openssl_study_image,
+        &config.gnutls_current_image,
+        &config.gnutls_study_image,
+        &config.go_study_image,
+        &config.go_current_image,
+        &config.pyca_study_image,
+        &config.pyca_current_image,
+        &config.bouncy_castle_study_image,
+        &config.bouncy_castle_current_image,
+        &config.nss_study_image,
+        &config.nss_current_image,
+        &config.oqs_provider_image,
+        &config.wolfssl_image,
+    ];
+    images.sort_unstable();
+    images.dedup();
+    let adapter_images = images
+        .into_iter()
+        .map(|image| {
+            let output = Command::new(&config.docker)
+                .args(["image", "inspect", "--format", "{{.Id}}", image])
+                .output()?;
+            if !output.status.success() {
+                return Err(MatrixError::Provenance(format!(
+                    "cannot inspect image {image}: {}",
+                    String::from_utf8_lossy(&output.stderr).trim()
+                )));
+            }
+            Ok(AdapterImageProvenance {
+                image: image.clone(),
+                content_digest: String::from_utf8_lossy(&output.stdout).trim().to_owned(),
+            })
+        })
+        .collect::<Result<Vec<_>, MatrixError>>()?;
+    Ok(MatrixProvenance {
+        source_commit,
+        source_tree,
+        source_clean,
+        platform: format!("{}-{}", std::env::consts::OS, std::env::consts::ARCH),
+        adapter_images,
+    })
+}
+
+fn ensure_publication_source_clean(
+    publication: bool,
+    source_clean: bool,
+) -> Result<(), MatrixError> {
+    if publication && !source_clean {
+        Err(MatrixError::DirtySourceTree)
+    } else {
+        Ok(())
+    }
 }
 
 fn run_case(
@@ -547,7 +655,8 @@ fn push(entries: &mut Vec<MatrixEntry>, case: Case, variant: MatrixVariant, repo
         binding_design: case.binding_design,
         variant,
         operation,
-        allowed_stack_verdicts: allowed_stack_verdicts(case, variant, &adapter, operation),
+        expected_support: expected_support(case, variant, &adapter),
+        expected_stack_verdict: expected_stack_verdict(case, variant, &adapter),
         process_execution: MatrixProcessExecution {
             version: process_record_check(&report.version, StackVerdict::Accept),
             verification: process_record_check(&report.verification, report.observation.verdict),
@@ -579,61 +688,63 @@ fn process_record_check(record: &ProcessRecord, verdict: StackVerdict) -> CheckR
     }
 }
 
-fn allowed_stack_verdicts(
-    case: Case,
-    variant: MatrixVariant,
-    adapter: &str,
-    operation: ValidationProfile,
-) -> Vec<StackVerdict> {
-    if case.id == "pure-pq-signature"
-        && variant == MatrixVariant::Valid
-        && operation == ValidationProfile::WebPkiServer
-        && adapter == "mozilla-nss-current"
-    {
-        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
+fn expected_support(case: Case, variant: MatrixVariant, adapter: &str) -> MatrixSupport {
+    let unsupported = (case.id == "atomic-composite" && !adapter.starts_with("bouncycastle-java"))
+        || (case.id == "pure-pq-key" && adapter == "mozilla-nss-study")
+        || (case.id == "pure-pq-signature"
+            && matches!(
+                adapter,
+                "mozilla-nss-study"
+                    | "gnutls-study"
+                    | "go-crypto-x509-study"
+                    | "go-crypto-x509-current"
+                    | "pyca-cryptography-study"
+            ))
+        || (case.id == "chameleon" && adapter == "mozilla-nss-study")
+        || (case.id == "related"
+            && variant == MatrixVariant::CriticalHybridExtension
+            && matches!(
+                adapter,
+                "mozilla-nss-study"
+                    | "mozilla-nss-current"
+                    | "bouncycastle-java-study"
+                    | "bouncycastle-java-current"
+            ));
+    if unsupported {
+        MatrixSupport::Unsupported
+    } else {
+        MatrixSupport::Supported
     }
-    if case.id == "pure-pq-signature"
-        && variant == MatrixVariant::Valid
-        && operation == ValidationProfile::X509Path
-        && adapter == "gnutls-current"
-    {
-        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
+}
+
+fn expected_stack_verdict(case: Case, variant: MatrixVariant, adapter: &str) -> StackVerdict {
+    if expected_support(case, variant, adapter) == MatrixSupport::Unsupported {
+        return StackVerdict::Unsupported;
     }
-    if case.binding_design == BindingDesign::Catalyst
-        && variant == MatrixVariant::Valid
-        && adapter == "wolfssl-mode2"
+    if variant == MatrixVariant::Valid
+        && ((case.id == "pure-pq-signature"
+            && matches!(adapter, "mozilla-nss-current" | "gnutls-current"))
+            || (case.id == "catalyst" && adapter == "wolfssl-mode2"))
     {
-        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
+        return StackVerdict::Reject;
     }
-    if case.binding_design == BindingDesign::Chameleon
-        && variant == MatrixVariant::InvalidHybridEvidenceSignature
-    {
-        return with_unsupported(vec![StackVerdict::Accept, StackVerdict::Reject]);
-    }
-    let expected = match variant {
-        MatrixVariant::Valid | MatrixVariant::PublishedStudyFixture => vec![StackVerdict::Accept],
+    match variant {
+        MatrixVariant::Valid | MatrixVariant::PublishedStudyFixture => StackVerdict::Accept,
         MatrixVariant::MissingHybridEvidence
         | MatrixVariant::BrokenBinding
         | MatrixVariant::UnknownHybridAlgorithm
-        | MatrixVariant::MalformedHybridEvidence => vec![StackVerdict::Accept],
-        MatrixVariant::InvalidCertificateSignature
-        | MatrixVariant::CriticalHybridExtension
-        | MatrixVariant::InvalidHybridEvidenceSignature => vec![StackVerdict::Reject],
-        MatrixVariant::InvalidPostQuantumSignature
-            if case.binding_design == BindingDesign::Catalyst =>
-        {
-            vec![StackVerdict::Accept, StackVerdict::Reject]
+        | MatrixVariant::MalformedHybridEvidence => StackVerdict::Accept,
+        MatrixVariant::InvalidCertificateSignature | MatrixVariant::CriticalHybridExtension => {
+            StackVerdict::Reject
         }
-        MatrixVariant::InvalidPostQuantumSignature => vec![StackVerdict::Reject],
-    };
-    with_unsupported(expected)
-}
-
-fn with_unsupported(mut verdicts: Vec<StackVerdict>) -> Vec<StackVerdict> {
-    if !verdicts.contains(&StackVerdict::Unsupported) {
-        verdicts.push(StackVerdict::Unsupported);
+        MatrixVariant::InvalidPostQuantumSignature
+            if case.binding_design == BindingDesign::Catalyst && adapter != "wolfssl-mode2" =>
+        {
+            StackVerdict::Accept
+        }
+        MatrixVariant::InvalidPostQuantumSignature => StackVerdict::Reject,
+        MatrixVariant::InvalidHybridEvidenceSignature => StackVerdict::Accept,
     }
-    verdicts
 }
 
 fn specification(binding_design: BindingDesign) -> &'static str {
@@ -668,41 +779,91 @@ mod tests {
 
     #[test]
     fn matrix_variants_have_explicit_expected_verdicts() {
-        for (case, variant, expected) in [
-            (CASES[2], MatrixVariant::Valid, StackVerdict::Accept),
+        for (case, variant, adapter, expected) in [
+            (
+                CASES[2],
+                MatrixVariant::Valid,
+                "bouncycastle-java-current",
+                StackVerdict::Accept,
+            ),
             (
                 CASES[2],
                 MatrixVariant::InvalidCertificateSignature,
+                "bouncycastle-java-current",
                 StackVerdict::Reject,
             ),
             (
                 CASES[2],
                 MatrixVariant::InvalidPostQuantumSignature,
+                "bouncycastle-java-current",
                 StackVerdict::Reject,
             ),
             (
                 CASES[3],
                 MatrixVariant::InvalidPostQuantumSignature,
+                "bouncycastle-java-current",
                 StackVerdict::Accept,
             ),
             (
                 CASES[5],
                 MatrixVariant::MissingHybridEvidence,
+                "bouncycastle-java-current",
                 StackVerdict::Accept,
             ),
-            (CASES[5], MatrixVariant::BrokenBinding, StackVerdict::Accept),
+            (
+                CASES[5],
+                MatrixVariant::BrokenBinding,
+                "bouncycastle-java-current",
+                StackVerdict::Accept,
+            ),
             (
                 CASES[5],
                 MatrixVariant::CriticalHybridExtension,
+                "openssl-current",
                 StackVerdict::Reject,
             ),
         ] {
-            assert!(
-                allowed_stack_verdicts(case, variant, "test-adapter", ValidationProfile::X509Path)
-                    .contains(&expected),
-                "{variant:?}"
+            assert_eq!(expected_stack_verdict(case, variant, adapter), expected);
+        }
+    }
+
+    #[test]
+    fn classical_valid_baseline_never_allows_unsupported() {
+        for adapter in [
+            "openssl-study",
+            "openssl-current",
+            "oqs-provider",
+            "mozilla-nss-study",
+            "mozilla-nss-current",
+            "bouncycastle-java-study",
+            "bouncycastle-java-current",
+            "wolfssl-mode1",
+            "wolfssl-mode2",
+            "gnutls-current",
+            "gnutls-study",
+            "go-crypto-x509-study",
+            "go-crypto-x509-current",
+            "pyca-cryptography-study",
+            "pyca-cryptography-current",
+        ] {
+            assert_eq!(
+                expected_support(CASES[6], MatrixVariant::Valid, adapter),
+                MatrixSupport::Supported
+            );
+            assert_eq!(
+                expected_stack_verdict(CASES[6], MatrixVariant::Valid, adapter),
+                StackVerdict::Accept
             );
         }
+    }
+
+    #[test]
+    fn publication_mode_rejects_a_dirty_source_tree() {
+        assert!(matches!(
+            ensure_publication_source_clean(true, false),
+            Err(MatrixError::DirtySourceTree)
+        ));
+        assert!(ensure_publication_source_clean(false, false).is_ok());
     }
 
     #[test]
@@ -781,6 +942,7 @@ mod tests {
             validation_time: "2026-06-20T00:00:00Z".to_owned(),
             timeout: Duration::from_secs(5),
             max_output_bytes: 64 * 1024,
+            publication: false,
         })
         .unwrap();
 
@@ -788,11 +950,7 @@ mod tests {
         let unexpected_verdicts: Vec<_> = report
             .entries
             .iter()
-            .filter(|entry| {
-                !entry
-                    .allowed_stack_verdicts
-                    .contains(&entry.report.observation.verdict)
-            })
+            .filter(|entry| entry.expected_stack_verdict != entry.report.observation.verdict)
             .map(|entry| {
                 (
                     entry.case_id.as_str(),
@@ -800,7 +958,8 @@ mod tests {
                     entry.report.observation.adapter.as_str(),
                     entry.operation,
                     entry.report.observation.verdict,
-                    &entry.allowed_stack_verdicts,
+                    entry.expected_support,
+                    entry.expected_stack_verdict,
                 )
             })
             .collect();

@@ -120,7 +120,8 @@ cargo run -- check-ocsp \
   --certificate tests/fixtures/paper-v1.0.2/related-leafB.pem \
   --issuer tests/fixtures/paper-v1.0.2/ica.pem \
   --response target/related-leafB-revoked-ocsp.der \
-  --validation-time 2026-06-21T00:00:00Z
+  --validation-time 2026-06-21T00:00:00Z \
+  --revocation-mode soft-fail
 ```
 
 Use `--expected-nonce-base64 ABEiM0RVZneImaq7zN3u/w==` with the generated nonce response.
@@ -143,6 +144,10 @@ tools/wolfssl-x509-adapter/build.sh
 cargo run -- matrix-available \
   --validation-time 2026-06-20T00:00:00Z
 ```
+
+Use `--publication` only from a clean source tree. Publication mode rejects a dirty tree. The
+matrix report records the source commit, source tree, clean-state result, platform, and each
+unique adapter image content digest.
 
 This command records 345 isolated fixture results. Each row records an operation profile, claim
 identifier, expected fixture verdict, and standards status. It runs seven valid cases: classical, Related,

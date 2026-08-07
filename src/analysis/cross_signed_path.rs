@@ -1,7 +1,7 @@
 use crate::{
     API_VERSION, AdapterReport, AlgorithmSecurity, AuthenticationLevel, BindingDesign,
     CertificateNode, CheckResult, CheckState, Evidence, EvidenceKind, OracleError, PathPosition,
-    PathScope, Policy, StackVerdict, VerificationRequest,
+    PathScope, Policy, StackVerdict, TrustAnchor, VerificationRequest,
     adapters::{
         AdapterExecution, AdapterSupportError,
         bouncy_castle::{
@@ -345,6 +345,7 @@ fn evaluate_atomic_route(
         builder,
         atomic.scopes[0].result.certificate_path.clone(),
         evidence,
+        atomic.scopes[0].result.expected_trust_anchor.clone(),
     )
 }
 
@@ -408,7 +409,9 @@ fn evaluate_classical_route(
         certificate_id: "intermediate".to_owned(),
         position: PathPosition::Intermediate,
         certificate_der_sha256: Some(intermediate_hash.clone()),
+        evidence_artifact_der_sha256: Some(intermediate_hash.clone()),
         issuer_edge_sha256: Some(intermediate_edge_hash.clone()),
+        authentication_operation_id: None,
         kind: EvidenceKind::Classical,
         present: pass,
         recognized: pass,
@@ -421,6 +424,8 @@ fn evaluate_classical_route(
             INPUT_LIMIT,
         )?,
         revocation: check_from_verdict(root_crl.observation.verdict),
+        revocation_method: crate::RevocationMethod::Crl,
+        applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
         decision_sensitive_for_fixture: intermediate_outcome,
     });
     evidence.push(Evidence {
@@ -428,7 +433,9 @@ fn evaluate_classical_route(
         certificate_id: "root".to_owned(),
         position: PathPosition::TrustAnchor,
         certificate_der_sha256: Some(root_hash.clone()),
+        evidence_artifact_der_sha256: Some(root_hash.clone()),
         issuer_edge_sha256: None,
+        authentication_operation_id: None,
         kind: EvidenceKind::Classical,
         present: pass,
         recognized: pass,
@@ -441,8 +448,13 @@ fn evaluate_classical_route(
             INPUT_LIMIT,
         )?,
         revocation: check_from_verdict(root_crl.observation.verdict),
+        revocation_method: crate::RevocationMethod::Crl,
+        applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
         decision_sensitive_for_fixture: root_outcome,
     });
+    let expected_trust_anchor = TrustAnchor::CertificateDerSha256 {
+        der_sha256: root_hash.clone(),
+    };
     Ok(evaluate_scopes(
         config,
         builder,
@@ -476,15 +488,19 @@ fn evaluate_classical_route(
             ),
         ],
         evidence,
+        expected_trust_anchor,
     )?)
 }
 
 fn evaluate_scopes(
     config: &CrossSignedPathConfig,
     builder: &AdapterExecution,
-    certificate_path: Vec<CertificateNode>,
-    evidence: Vec<Evidence>,
+    mut certificate_path: Vec<CertificateNode>,
+    mut evidence: Vec<Evidence>,
+    expected_trust_anchor: TrustAnchor,
 ) -> Result<Vec<ScopedVerificationResult>, OracleError> {
+    certificate_path.retain(|certificate| certificate.position != PathPosition::TrustAnchor);
+    evidence.retain(|item| item.position != PathPosition::TrustAnchor);
     [PathScope::EndEntity, PathScope::CertificationPath]
         .into_iter()
         .map(|scope| {
@@ -496,8 +512,11 @@ fn evaluate_scopes(
                     path_scope: scope,
                     validation_time: config.validation_time.clone(),
                     previous_authentication: config.previous_authentication,
+                    revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
                     stack: builder.observation.clone(),
+                    expected_trust_anchor: expected_trust_anchor.clone(),
                     certificate_path: certificate_path.clone(),
+                    paired_authentications: Vec::new(),
                     evidence: evidence.clone(),
                 })?,
             })

@@ -10,8 +10,8 @@ use crate::{
         check_from_verdict,
     },
     analysis::{
-        ScopedVerificationResult, behavioral_check, certificate_der_hash, issuer_edge_hash,
-        related_conformance_check,
+        ScopedVerificationResult, behavioral_check, certificate_der_hash, certificate_trust_anchor,
+        issuer_edge_hash, related_conformance_check,
     },
     evaluate,
     pem::{
@@ -108,6 +108,7 @@ pub enum RelatedPathScopeError {
 struct PositionAnalysis {
     position: PathPosition,
     certificate_der_sha256: String,
+    post_quantum_certificate_der_sha256: String,
     issuer_edge_sha256: Option<String>,
     conformance: RelatedConformanceResult,
     binding: RelatedBindingResult,
@@ -193,6 +194,7 @@ pub fn analyze(
     ];
     let certificate_path = analyses
         .iter()
+        .filter(|analysis| analysis.position != PathPosition::TrustAnchor)
         .map(|analysis| CertificateNode {
             id: position_id(analysis.position).to_owned(),
             position: analysis.position,
@@ -205,6 +207,7 @@ pub fn analyze(
         .collect::<Vec<_>>();
     let evidence = analyses
         .iter()
+        .filter(|analysis| analysis.position != PathPosition::TrustAnchor)
         .flat_map(|analysis| {
             position_evidence(
                 analysis,
@@ -213,6 +216,19 @@ pub fn analyze(
             )
         })
         .collect::<Vec<_>>();
+    let paired_authentications = analyses
+        .iter()
+        .filter(|analysis| analysis.position != PathPosition::TrustAnchor)
+        .map(|analysis| crate::PairedAuthentication {
+            operation_id: format!("{}-related-authentication", position_id(analysis.position)),
+            classical_certificate_id: position_id(analysis.position).to_owned(),
+            post_quantum_certificate_der_sha256: analysis
+                .post_quantum_certificate_der_sha256
+                .clone(),
+            same_authentication_operation: CheckResult::observed(CheckState::Fail),
+        })
+        .collect::<Vec<_>>();
+    let expected_trust_anchor = certificate_trust_anchor(&config.classical_root, INPUT_LIMIT)?;
     let scopes = [PathScope::EndEntity, PathScope::CertificationPath]
         .into_iter()
         .map(|scope| {
@@ -224,8 +240,11 @@ pub fn analyze(
                     path_scope: scope,
                     validation_time: config.validation_time.clone(),
                     previous_authentication: config.previous_authentication,
+                    revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
                     stack: classical_path.observation.clone(),
+                    expected_trust_anchor: expected_trust_anchor.clone(),
                     certificate_path: certificate_path.clone(),
+                    paired_authentications: paired_authentications.clone(),
                     evidence: evidence.clone(),
                 })?,
             })
@@ -308,6 +327,10 @@ fn analyze_position(
     Ok(PositionAnalysis {
         position,
         certificate_der_sha256: certificate_der_hash(inputs.classical, INPUT_LIMIT)?,
+        post_quantum_certificate_der_sha256: certificate_der_hash(
+            inputs.post_quantum,
+            INPUT_LIMIT,
+        )?,
         issuer_edge_sha256: (position != PathPosition::TrustAnchor)
             .then(|| issuer_edge_hash(inputs.classical, inputs.classical_issuer, INPUT_LIMIT))
             .transpose()?,
@@ -420,6 +443,7 @@ fn position_evidence(
     post_quantum_path: StackVerdict,
 ) -> [Evidence; 2] {
     let id = position_id(analysis.position);
+    let operation_id = format!("{id}-related-authentication");
     let pass = CheckResult::observed(CheckState::Pass);
     [
         Evidence {
@@ -427,7 +451,9 @@ fn position_evidence(
             certificate_id: id.to_owned(),
             position: analysis.position,
             certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            evidence_artifact_der_sha256: Some(analysis.certificate_der_sha256.clone()),
             issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
+            authentication_operation_id: Some(operation_id.clone()),
             kind: EvidenceKind::Classical,
             present: pass,
             recognized: pass,
@@ -436,6 +462,8 @@ fn position_evidence(
             path: check_from_verdict(classical_path),
             validity: analysis.classical_validity,
             revocation: check_from_verdict(analysis.classical_crl.observation.verdict),
+            revocation_method: crate::RevocationMethod::Crl,
+            applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
             decision_sensitive_for_fixture: analysis.classical_outcome,
         },
         Evidence {
@@ -443,7 +471,11 @@ fn position_evidence(
             certificate_id: id.to_owned(),
             position: analysis.position,
             certificate_der_sha256: Some(analysis.certificate_der_sha256.clone()),
+            evidence_artifact_der_sha256: Some(
+                analysis.post_quantum_certificate_der_sha256.clone(),
+            ),
             issuer_edge_sha256: analysis.issuer_edge_sha256.clone(),
+            authentication_operation_id: Some(operation_id),
             kind: EvidenceKind::PostQuantum,
             present: pass,
             recognized: pass,
@@ -452,6 +484,8 @@ fn position_evidence(
             path: check_from_verdict(post_quantum_path),
             validity: analysis.post_quantum_validity,
             revocation: check_from_verdict(analysis.post_quantum_crl.observation.verdict),
+            revocation_method: crate::RevocationMethod::Crl,
+            applied_revocation_policy: crate::RevocationPolicy::crl_hard_fail(),
             decision_sensitive_for_fixture: analysis.post_quantum_outcome,
         },
     ]

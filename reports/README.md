@@ -7,10 +7,11 @@ execution-isolation record, raw-output hashes, and available adapter instrumenta
 Regenerate these reports after schema or confidence-model changes before treating them as current
 local artifacts.
 
-`available-matrix.json`, `matrix-report.json`, `sbom-rust.cdx.json`, and `sbom-all.cdx.json`
-were regenerated for the `hybrid-x509-evidence/v8` contract from clean source commit
-`4f4626bcb1e03c72a861905d412080340ed53c71`. Other `local-arm64` JSON reports are stale against
-the current contract and must not be published as current results until regenerated from a clean
+The v9 matrix reports contain the source commit, source tree, dirty-state result, platform, and
+adapter image content digests. A dirty-state result prevents publication use. The atomic path,
+atomic TLS, Related OpenSSL, Related TLS, Related path, and two OCSP reports were also regenerated
+for this working change. Other `local-arm64` JSON reports and both SBOM files are stale against the
+v9 contract and must not be published as current results until they are regenerated from a clean
 commit.
 
 Regenerate the reports with the commands in the project README from a clean commit. Do not treat
