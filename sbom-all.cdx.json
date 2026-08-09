@@ -221,11 +221,11 @@
       "hashes": [
         {
           "alg": "SHA-1",
-          "content": "9b819f1f39108bcad05d8218b089b9e69250ac41"
+          "content": "24f8a24bb77d21da2932d1e639e48bcbf72cff2b"
         },
         {
           "alg": "SHA-256",
-          "content": "2c9a66e78b93fd3455e83824f9a4368cbde67d196352da42a1a2c7335d46ef69"
+          "content": "b4cbcdfae81909e6a38e305609a85df42c4ae4f4b2ac9ed885032862d8a66edb"
         }
       ]
     },
