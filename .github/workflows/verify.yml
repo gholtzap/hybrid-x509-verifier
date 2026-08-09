@@ -34,11 +34,14 @@ jobs:
       - run: rustup toolchain install 1.92.0 --profile minimal --component clippy,rustfmt
       - run: sudo apt-get update && sudo apt-get install -y gnutls-bin jq
       - run: |
-          for build in tools/*-x509-adapter/build.sh; do
+          python3 -m venv .venv
+          .venv/bin/pip install cryptography==46.0.4
+      - run: |
+          for build in tools/*-adapter/build.sh; do
             "$build"
           done
       - run: tools/corpus-generator/generate.sh
-      - run: cargo test --locked --all-features
+      - run: PATH="$PWD/.venv/bin:$PATH" cargo test --locked --all-features -- --test-threads=1
       - run: scripts/dependency-check.sh
       - run: scripts/generate-sbom.sh
       - run: git diff --exit-code -- sbom-rust.cdx.json sbom-all.cdx.json

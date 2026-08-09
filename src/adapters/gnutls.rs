@@ -266,7 +266,12 @@ mod tests {
     fn accepts_the_valid_classical_path_of_a_related_certificate() {
         let _guard = crate::adapter_test_lock();
         let result = verify(&GnuTlsConfig {
-            executable: "/opt/homebrew/opt/gnutls/bin/gnutls-certtool".into(),
+            executable: if cfg!(target_os = "macos") {
+                "/opt/homebrew/opt/gnutls/bin/gnutls-certtool"
+            } else {
+                "certtool"
+            }
+            .into(),
             trust_store: fixture("root.pem"),
             untrusted_chain: Some(fixture("ica.pem")),
             leaf: fixture("related-certA.pem"),
