@@ -23,6 +23,8 @@ jobs:
       - if: runner.os == 'Linux'
         run: scripts/reproducible-build-check.sh
       - if: runner.os == 'Linux'
+        run: docker buildx create --driver docker-container --use
+      - if: runner.os == 'Linux'
         run: scripts/reproducible-image-check.sh
 
   linux-adapters:

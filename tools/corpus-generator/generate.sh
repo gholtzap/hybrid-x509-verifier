@@ -7,6 +7,7 @@ mkdir -p "$output"
 output=$(CDPATH= cd -- "$output" && pwd)
 check=$(mktemp -d)
 trap 'rm -rf "$check"' EXIT
+host_user=$(id -u):$(id -g)
 
 cp "$repo/tests/fixtures/paper-v1.0.2/composite-ica.pem" "$output/composite-ica.pem"
 cp "$repo/tests/fixtures/paper-v1.0.2/composite-leaf.pem" "$output/composite-leaf.pem"
@@ -14,8 +15,8 @@ cp "$repo/tests/fixtures/paper-v1.0.2/composite-ica.pem" "$check/composite-ica.p
 cp "$repo/tests/fixtures/paper-v1.0.2/composite-leaf.pem" "$check/composite-leaf.pem"
 
 docker build -q -t hybrid-x509-corpus-generator "$repo/tools/corpus-generator" >/dev/null
-docker run --rm -v "$output:/out" hybrid-x509-corpus-generator
-docker run --rm -v "$check:/out" hybrid-x509-corpus-generator
+docker run --rm --user "$host_user" -v "$output:/out" hybrid-x509-corpus-generator
+docker run --rm --user "$host_user" -v "$check:/out" hybrid-x509-corpus-generator
 for file in \
   catalyst-leaf-base-key.pem \
   pure-leaf-key.pem \
