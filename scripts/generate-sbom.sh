@@ -13,6 +13,7 @@ SOURCE_DATE_EPOCH=1782000000 "$repo/target/tooling/bin/cargo-cyclonedx" cycloned
   --format json \
   --spec-version 1.5 \
   --all-features \
+  --target x86_64-unknown-linux-gnu \
   --override-filename sbom-rust.cdx
 
 generate_all() {
