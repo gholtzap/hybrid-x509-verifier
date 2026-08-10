@@ -3,7 +3,7 @@ use crate::{
     CheckState, Confidence, Evidence, EvidenceKind, OracleError, PathPosition, PathScope, Policy,
     StackVerdict, VerificationRequest, VerificationResult,
     adapters::openssl::{OpenSslContainerConfig, OpenSslError, verify_container as verify_openssl},
-    adapters::{AdapterSupportError, check_from_verdict},
+    adapters::{AdapterSupportError, check_from_verdict, container::readable_tempfile},
     analysis::{
         LeafPathProperties, certificate_der_hash, certificate_trust_anchor,
         end_entity_certification_path, issuer_edge_hash, related_conformance_check,
@@ -18,7 +18,7 @@ use crate::{
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::{io::Write, path::PathBuf, time::Duration};
+use std::{path::PathBuf, time::Duration};
 use thiserror::Error;
 
 const INPUT_LIMIT: usize = 16 * 1024 * 1024;
@@ -121,8 +121,7 @@ pub fn analyze(config: &RelatedOpenSslConfig) -> Result<RelatedOpenSslReport, Re
         INPUT_LIMIT,
     )?;
     let invalid_der = corrupt_outer_signature(&classical_der)?;
-    let mut invalid_file = tempfile::NamedTempFile::new()?;
-    invalid_file.write_all(encode_certificate_pem(&invalid_der).as_bytes())?;
+    let invalid_file = readable_tempfile(encode_certificate_pem(&invalid_der).as_bytes())?;
     let classical_invalid = verify_openssl(&openssl_config(
         config,
         invalid_file.path().to_owned(),

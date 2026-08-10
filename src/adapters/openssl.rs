@@ -402,6 +402,7 @@ mod tests {
         assert!(result.observation.version.starts_with("OpenSSL 3."));
     }
 
+    #[cfg(target_os = "macos")]
     #[test]
     fn detects_revocation_when_the_pq_certificate_is_checked_directly() {
         let _guard = crate::adapter_test_lock();

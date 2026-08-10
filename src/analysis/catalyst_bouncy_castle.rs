@@ -8,6 +8,7 @@ use crate::{
             BouncyCastleConfig, BouncyCastleError, BouncyCastleMode, verify as verify_bouncy_castle,
         },
         check_from_verdict,
+        container::readable_tempfile,
     },
     analysis::{
         ScopedVerificationResult, behavioral_check, certificate_der_hash, certificate_trust_anchor,
@@ -22,7 +23,7 @@ use crate::{
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::{io::Write, path::PathBuf, time::Duration};
+use std::{path::PathBuf, time::Duration};
 use thiserror::Error;
 
 const INPUT_LIMIT: usize = 16 * 1024 * 1024;
@@ -144,17 +145,16 @@ pub fn analyze(
     )?;
 
     let valid_der = read_der(&config.valid_certificate, PemKind::Certificate, INPUT_LIMIT)?;
-    let mut invalid_classical_file = tempfile::NamedTempFile::new()?;
-    invalid_classical_file
-        .write_all(encode_certificate_pem(&corrupt_outer_signature(&valid_der)?).as_bytes())?;
+    let invalid_classical_file = readable_tempfile(
+        encode_certificate_pem(&corrupt_outer_signature(&valid_der)?).as_bytes(),
+    )?;
     let invalid_classical = run(
         config,
         invalid_classical_file.path().to_owned(),
         BouncyCastleMode::Path,
     )?;
     let intermediate_der = read_der(&config.issuer, PemKind::Certificate, INPUT_LIMIT)?;
-    let mut invalid_intermediate_file = tempfile::NamedTempFile::new()?;
-    invalid_intermediate_file.write_all(
+    let invalid_intermediate_file = readable_tempfile(
         encode_certificate_pem(&corrupt_outer_signature(&intermediate_der)?).as_bytes(),
     )?;
     let invalid_intermediate = run_paths(
@@ -165,9 +165,8 @@ pub fn analyze(
         BouncyCastleMode::Path,
     )?;
     let root_der = read_der(&config.trust_store, PemKind::Certificate, INPUT_LIMIT)?;
-    let mut invalid_root_file = tempfile::NamedTempFile::new()?;
-    invalid_root_file
-        .write_all(encode_certificate_pem(&corrupt_outer_signature(&root_der)?).as_bytes())?;
+    let invalid_root_file =
+        readable_tempfile(encode_certificate_pem(&corrupt_outer_signature(&root_der)?).as_bytes())?;
     let invalid_root = run_paths(
         config,
         invalid_root_file.path().to_owned(),

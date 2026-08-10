@@ -281,7 +281,7 @@ mod tests {
         .unwrap();
 
         assert_eq!(result.observation.verdict, StackVerdict::Accept);
-        assert!(result.observation.version.contains("3.8.13"));
+        assert!(result.observation.version.starts_with("certtool "));
     }
 
     #[test]

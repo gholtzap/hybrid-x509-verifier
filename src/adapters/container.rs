@@ -1,4 +1,17 @@
-use std::{collections::HashSet, ffi::OsString, fs, io, path::Path};
+use std::{collections::HashSet, ffi::OsString, fs, io, io::Write, path::Path};
+
+pub(crate) fn readable_tempfile(contents: &[u8]) -> io::Result<tempfile::NamedTempFile> {
+    let mut file = tempfile::NamedTempFile::new()?;
+    file.write_all(contents)?;
+    file.flush()?;
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        file.as_file()
+            .set_permissions(fs::Permissions::from_mode(0o644))?;
+    }
+    Ok(file)
+}
 
 pub(crate) fn isolated_arguments(
     image: &str,
@@ -67,6 +80,19 @@ pub(crate) fn isolated_arguments(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(unix)]
+    #[test]
+    fn temporary_container_inputs_are_readable_by_the_container_user() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let input = readable_tempfile(b"input").unwrap();
+
+        assert_eq!(
+            input.as_file().metadata().unwrap().permissions().mode() & 0o777,
+            0o644
+        );
+    }
 
     #[test]
     fn container_arguments_enforce_runtime_confinement() {

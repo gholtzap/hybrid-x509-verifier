@@ -2,6 +2,7 @@ use crate::{
     API_VERSION, AlgorithmSecurity, BindingDesign, CheckResult, CheckState, Evidence, EvidenceKind,
     OracleError, PathPosition, PathScope, Policy, StackVerdict, VerificationRequest,
     VerificationResult,
+    adapters::container::readable_tempfile,
     analysis::{
         LeafPathProperties, behavioral_check, certificate_der_hash, certificate_trust_anchor,
         end_entity_certification_path, issuer_edge_hash, related_conformance_check,
@@ -19,7 +20,7 @@ use crate::{
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::{io::Write, path::PathBuf, time::Duration};
+use std::{path::PathBuf, time::Duration};
 use thiserror::Error;
 
 const INPUT_LIMIT: usize = 16 * 1024 * 1024;
@@ -141,9 +142,9 @@ pub fn analyze(config: &RelatedTlsConfig) -> Result<RelatedTlsReport, RelatedTls
         PemKind::Certificate,
         INPUT_LIMIT,
     )?;
-    let mut invalid_classical_file = tempfile::NamedTempFile::new()?;
-    invalid_classical_file
-        .write_all(encode_certificate_pem(&corrupt_outer_signature(&classical_der)?).as_bytes())?;
+    let invalid_classical_file = readable_tempfile(
+        encode_certificate_pem(&corrupt_outer_signature(&classical_der)?).as_bytes(),
+    )?;
     let invalid_classical_signature_tls = run_tls(
         config,
         invalid_classical_file.path().to_owned(),

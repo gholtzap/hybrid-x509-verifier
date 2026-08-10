@@ -6,6 +6,7 @@ use crate::{
         bouncy_castle::{
             BouncyCastleConfig, BouncyCastleError, BouncyCastleMode, verify as verify_bouncy_castle,
         },
+        container::readable_tempfile,
         gnutls::{
             GnuTlsContainerConfig, GnuTlsError, GnuTlsStudyConfig,
             verify_container as verify_gnutls_container, verify_study as verify_gnutls_study,
@@ -30,7 +31,6 @@ use crate::{
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::{
-    io::Write,
     path::{Path, PathBuf},
     process::Command,
     time::Duration,
@@ -274,9 +274,8 @@ pub fn run_available_matrix(config: &AvailableMatrixConfig) -> Result<MatrixRepo
         )?;
 
         let der = read_der(&leaf, PemKind::Certificate, 16 * 1024 * 1024)?;
-        let mut invalid_leaf = tempfile::NamedTempFile::new()?;
-        invalid_leaf
-            .write_all(encode_certificate_pem(&corrupt_outer_signature(&der)?).as_bytes())?;
+        let invalid_leaf =
+            readable_tempfile(encode_certificate_pem(&corrupt_outer_signature(&der)?).as_bytes())?;
         run_case(
             config,
             &mut entries,

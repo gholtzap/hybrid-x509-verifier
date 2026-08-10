@@ -8,6 +8,7 @@ use crate::{
             BouncyCastleConfig, BouncyCastleError, BouncyCastleMode, verify as verify_bouncy_castle,
         },
         check_from_verdict,
+        container::readable_tempfile,
         openssl::OpenSslTlsConfig,
     },
     analysis::{
@@ -27,7 +28,7 @@ use crate::{
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::{io::Write, path::PathBuf, time::Duration};
+use std::{path::PathBuf, time::Duration};
 use thiserror::Error;
 
 const INPUT_LIMIT: usize = 16 * 1024 * 1024;
@@ -105,9 +106,9 @@ pub fn analyze(config: &CatalystTlsConfig) -> Result<CatalystTlsReport, Catalyst
         run_tls(config, config.invalid_post_quantum_certificate.clone())?;
 
     let valid_der = read_der(&config.valid_certificate, PemKind::Certificate, INPUT_LIMIT)?;
-    let mut invalid_classical_file = tempfile::NamedTempFile::new()?;
-    invalid_classical_file
-        .write_all(encode_certificate_pem(&corrupt_outer_signature(&valid_der)?).as_bytes())?;
+    let invalid_classical_file = readable_tempfile(
+        encode_certificate_pem(&corrupt_outer_signature(&valid_der)?).as_bytes(),
+    )?;
     let invalid_classical_tls = run_tls(config, invalid_classical_file.path().to_owned())?;
 
     let valid_post_quantum = run_post_quantum(config, config.valid_certificate.clone())?;

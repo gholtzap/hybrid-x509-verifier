@@ -8,6 +8,7 @@ use crate::{
             BouncyCastleConfig, BouncyCastleError, BouncyCastleMode, verify as verify_bouncy_castle,
         },
         check_from_verdict,
+        container::readable_tempfile,
     },
     analysis::{
         ScopedVerificationResult, behavioral_check, certificate_der_hash, certificate_trust_anchor,
@@ -23,7 +24,6 @@ use crate::{
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::{
-    io::Write,
     path::{Path, PathBuf},
     time::Duration,
 };
@@ -223,9 +223,8 @@ fn analyze_position(
     let invalid_alternative_path = path_with_replacement(config, position, invalid_alternative)?;
 
     let der = read_der(certificate, PemKind::Certificate, INPUT_LIMIT)?;
-    let mut invalid_classical_file = tempfile::NamedTempFile::new()?;
-    invalid_classical_file
-        .write_all(encode_certificate_pem(&corrupt_outer_signature(&der)?).as_bytes())?;
+    let invalid_classical_file =
+        readable_tempfile(encode_certificate_pem(&corrupt_outer_signature(&der)?).as_bytes())?;
     let invalid_classical_path =
         path_with_replacement(config, position, invalid_classical_file.path())?;
 

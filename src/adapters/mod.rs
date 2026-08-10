@@ -301,7 +301,7 @@ mod tests {
 }
 
 pub mod bouncy_castle;
-mod container;
+pub(crate) mod container;
 pub mod gnutls;
 pub mod go_x509;
 pub mod nss;

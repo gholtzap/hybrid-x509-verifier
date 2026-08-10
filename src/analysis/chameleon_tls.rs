@@ -7,6 +7,7 @@ use crate::{
         bouncy_castle::{
             BouncyCastleConfig, BouncyCastleError, BouncyCastleMode, verify as verify_bouncy_castle,
         },
+        container::readable_tempfile,
     },
     analysis::{
         LeafPathProperties, behavioral_check, certificate_der_hash, certificate_trust_anchor,
@@ -21,7 +22,7 @@ use crate::{
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::{io::Write, path::PathBuf, time::Duration};
+use std::{path::PathBuf, time::Duration};
 use thiserror::Error;
 
 const INPUT_LIMIT: usize = 16 * 1024 * 1024;
@@ -106,9 +107,8 @@ pub fn analyze(config: &ChameleonTlsConfig) -> Result<ChameleonTlsReport, Chamel
         PemKind::Certificate,
         INPUT_LIMIT,
     )?;
-    let mut invalid_base_file = tempfile::NamedTempFile::new()?;
-    invalid_base_file
-        .write_all(encode_certificate_pem(&corrupt_outer_signature(&base_der)?).as_bytes())?;
+    let invalid_base_file =
+        readable_tempfile(encode_certificate_pem(&corrupt_outer_signature(&base_der)?).as_bytes())?;
     let invalid_base_signature_tls = run_tls(
         config,
         invalid_base_file.path().to_owned(),
