@@ -15,6 +15,10 @@ SOURCE_DATE_EPOCH=1782000000 "$repo/target/tooling/bin/cargo-cyclonedx" cycloned
   --all-features \
   --target x86_64-unknown-linux-gnu \
   --override-filename sbom-rust.cdx
+jq --arg root "path+file://$repo" '
+  walk(if type == "string" then split($root) | join("path+file://.") else . end)
+' "$repo/sbom-rust.cdx.json" >"$repo/target/sbom-rust.cdx.json"
+mv "$repo/target/sbom-rust.cdx.json" "$repo/sbom-rust.cdx.json"
 
 generate_all() {
   destination=$1
@@ -32,6 +36,7 @@ generate_all() {
     scan dir:/source \
     --exclude './target/**' \
     --exclude './.git/**' \
+    --exclude './.venv/**' \
     --source-name hybrid-x509-evidence \
     --source-version 0.1.0 \
     --output "cyclonedx-json=/output/$(basename "$raw")" \
