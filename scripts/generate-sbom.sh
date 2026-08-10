@@ -19,6 +19,7 @@ generate_all() {
   destination=$1
   raw="$destination.raw"
   docker run --rm \
+    --user "$(id -u):$(id -g)" \
     --network=none \
     --read-only \
     --cap-drop=ALL \
