@@ -6,15 +6,9 @@ and post-quantum evidence affected the same authentication result.
 
 The experiments cover certificate paths, revocation, TLS authentication, fallback, and the
 classical, pure post-quantum, composite, Catalyst, Chameleon, and Related certificate designs.
+
 Publication runs use isolated adapters for OpenSSL, GnuTLS, Go crypto/x509, Python cryptography,
 Bouncy Castle, NSS, oqs-provider, and wolfSSL.
-
-The checked-in publication package contains 30 JSON reports and both SBOM files. Its 345-row
-matrix has clean source provenance and no recorded process, support, or verdict mismatch. These
-results are bound to the named fixtures, versions, adapters, and commands.
-
-See [verification status](docs/verification-status.md) for exact source hashes, hosted runs, trust
-boundaries, and result details. See [report notes](reports/README.md) for artifact details.
 
 ## Requirements
 
