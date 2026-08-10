@@ -18,7 +18,8 @@
   },
   "protocol": null,
   "report": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": null,
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -35,13 +36,13 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/composite-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
       "--",
       "hybrid-x509-openssl:4.0.1",
       "--tls-server-client",
@@ -78,38 +79,46 @@
     "observation": {
       "adapter": "openssl-current-tls",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "1129a91c3df29373d42e3e89b2cc3d8f30525eb7b02a5ce61e0bfbfd5e3fc875",
+        "f78197fc9ba8eb7b0adbe9b6b05702ad5458ee9f7ebbac79836073eea82e7369"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "web-pki-server",
       "validation_time": {
         "confidence": "observed",
         "state": "pass"
       },
-      "verdict": "reject",
+      "verdict": "indeterminate",
       "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
       "version_track": "current"
     },
-    "source_instrumentation": null,
     "verification": {
-      "elapsed_milliseconds": 621,
+      "elapsed_milliseconds": 1154,
       "status_code": 1,
       "stderr": {
         "captured_bytes": 162,
-        "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKZXJyb3Igc2V0dGluZyBjZXJ0aWZpY2F0ZQpDMDZGMUJBOEZGRkYwMDAwOmVycm9yOjBBMDAwMThFOlNTTCByb3V0aW5lczpTU0xfQ1RYX3VzZV9jZXJ0aWZpY2F0ZTpjYSBtZCB0b28gd2Vhazpzc2wvc3NsX3JzYS5jOjI1MjoK",
+        "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKZXJyb3Igc2V0dGluZyBjZXJ0aWZpY2F0ZQpDMDFGNUJCMEZGRkYwMDAwOmVycm9yOjBBMDAwMThFOlNTTCByb3V0aW5lczpTU0xfQ1RYX3VzZV9jZXJ0aWZpY2F0ZTpjYSBtZCB0b28gd2Vhazpzc2wvc3NsX3JzYS5jOjI1MjoK",
         "encoding": "base64",
-        "sha256": "5a0d8b33a57d47aa5756ebb2123b61e8a9330ecf9d9412b2ffdb317813d5a3f6",
+        "sha256": "c673b463824eadc04c71a2deefea4889fa41b536048b77bea42acc4bea511a10",
         "truncated": false
       },
       "stdout": {
         "captured_bytes": 240,
-        "data": "QzAxRjQ5QjdGRkZGMDAwMDplcnJvcjo4MDAwMDA2RjpzeXN0ZW0gbGlicmFyeTpCSU9fY29ubmVjdDpDb25uZWN0aW9uIHJlZnVzZWQ6Y3J5cHRvL2Jpby9iaW9fc29jazIuYzoxODM6Y2FsbGluZyBjb25uZWN0KCkKQzAxRjQ5QjdGRkZGMDAwMDplcnJvcjoxMDAwMDA2NzpCSU8gcm91dGluZXM6QklPX2Nvbm5lY3Q6Y29ubmVjdCBlcnJvcjpjcnlwdG8vYmlvL2Jpb19zb2NrMi5jOjE4NToKY29ubmVjdDplcnJubz0xMTEK",
+        "data": "QzBERjI0QUZGRkZGMDAwMDplcnJvcjo4MDAwMDA2RjpzeXN0ZW0gbGlicmFyeTpCSU9fY29ubmVjdDpDb25uZWN0aW9uIHJlZnVzZWQ6Y3J5cHRvL2Jpby9iaW9fc29jazIuYzoxODM6Y2FsbGluZyBjb25uZWN0KCkKQzBERjI0QUZGRkZGMDAwMDplcnJvcjoxMDAwMDA2NzpCSU8gcm91dGluZXM6QklPX2Nvbm5lY3Q6Y29ubmVjdCBlcnJvcjpjcnlwdG8vYmlvL2Jpb19zb2NrMi5jOjE4NToKY29ubmVjdDplcnJubz0xMTEK",
         "encoding": "base64",
-        "sha256": "b701b7ffb7fbdc834a6518ae2401e0119fb68734440511fbe786bda2cf4212e2",
+        "sha256": "23c59603c1b522dba5c8f9b561649c578b19063b33e6a4cb929d106ec2f86198",
         "truncated": false
       },
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 558,
+      "elapsed_milliseconds": 1018,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

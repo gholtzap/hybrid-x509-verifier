@@ -12,7 +12,20 @@
     "state": "indeterminate"
   },
   "report": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-handshake",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -29,13 +42,13 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/pure-path-root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/pure-path-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-path-leaf.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/pure-path-leaf.pem,dst=/input/leaf.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/pure-leaf-key.pem,dst=/input/key.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/pure-leaf-key.pem,dst=/input/key.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -77,8 +90,17 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "75dfc08fca9d6afb2cbee94aeadf441f162518344cb30b1ccfe26db45fd31007",
+        "eeffc57de40a66d4f44dc0151046f32bc11b5399f3756191a3a1b79700ad6786"
+      ],
       "execution_isolation": "container",
-      "validation_profile": "evidence-signature",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "67cea47fd18bc0328512063db48ace8ad0ff90864a85c708e74611a36bc01d3c",
+        "kind": "certificate-der-sha256"
+      },
+      "validation_profile": "web-pki-server",
       "validation_time": {
         "confidence": "observed",
         "state": "pass"
@@ -87,21 +109,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "mldsa44",
-          "operation": "tls-handshake",
-          "outcome": "reject",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 632,
+      "elapsed_milliseconds": 1201,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -120,7 +129,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 783,
+      "elapsed_milliseconds": 1081,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

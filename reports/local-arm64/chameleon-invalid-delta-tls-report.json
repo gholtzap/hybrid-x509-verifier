@@ -12,7 +12,38 @@
     "state": "pass"
   },
   "report": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": null,
+          "operation": "validate-pkix-path",
+          "outcome": "pass",
+          "target": "leaf"
+        },
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-certificate-verify",
+          "outcome": "pass",
+          "target": "leaf"
+        },
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-altered-transcript",
+          "outcome": "reject",
+          "target": "leaf"
+        },
+        {
+          "algorithm": "mldsa44",
+          "operation": "tls-incompatible-signature",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -29,13 +60,13 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-bad-delta.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-bad-delta.pem,dst=/input/leaf.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -77,8 +108,17 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "364d6d54645304d180b8c4155fc163c2b9e2ae9fbcac86ec411c67a1673999c7",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
-      "validation_profile": "evidence-signature",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
+      "validation_profile": "web-pki-server",
       "validation_time": {
         "confidence": "observed",
         "state": "pass"
@@ -87,39 +127,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": null,
-          "operation": "validate-pkix-path",
-          "outcome": "pass",
-          "target": "leaf"
-        },
-        {
-          "algorithm": "mldsa44",
-          "operation": "tls-certificate-verify",
-          "outcome": "pass",
-          "target": "leaf"
-        },
-        {
-          "algorithm": "mldsa44",
-          "operation": "tls-altered-transcript",
-          "outcome": "reject",
-          "target": "leaf"
-        },
-        {
-          "algorithm": "mldsa44",
-          "operation": "tls-incompatible-signature",
-          "outcome": "reject",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 615,
+      "elapsed_milliseconds": 1235,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -138,7 +147,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 712,
+      "elapsed_milliseconds": 2413,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

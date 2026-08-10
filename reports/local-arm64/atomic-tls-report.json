@@ -44,13 +44,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpfLh6wG,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmposSSfV,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -80,7 +80,7 @@
         },
         {
           "bytes": 4044,
-          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpfLh6wG",
+          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmposSSfV",
           "sha256": "aed686ccdbd8167c9f02839acca91a0111956885e77851ea919f565f8df61f91"
         },
         {
@@ -112,7 +112,7 @@
         "version_track": "current"
       },
       "verification": {
-        "elapsed_milliseconds": 989,
+        "elapsed_milliseconds": 1249,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -131,7 +131,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 1031,
+        "elapsed_milliseconds": 1136,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -200,13 +200,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/composite-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -268,7 +268,7 @@
         "version_track": "current"
       },
       "verification": {
-        "elapsed_milliseconds": 966,
+        "elapsed_milliseconds": 1268,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -287,7 +287,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 1031,
+        "elapsed_milliseconds": 1136,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -560,13 +560,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/composite-ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/composite-leaf.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/composite-leaf.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/composite-leaf-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -628,7 +628,7 @@
         "version_track": "current"
       },
       "verification": {
-        "elapsed_milliseconds": 814,
+        "elapsed_milliseconds": 1313,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -647,7 +647,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 1031,
+        "elapsed_milliseconds": 1136,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,

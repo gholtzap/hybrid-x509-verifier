@@ -1,5 +1,5 @@
 {
-  "api_version": "hybrid-x509-verifier/v1",
+  "api_version": "hybrid-x509-evidence/v9",
   "invalid_base_signature_tls": {
     "altered_transcript_rejected": {
       "confidence": "unknown",
@@ -14,7 +14,20 @@
       "state": "indeterminate"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-handshake",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -31,13 +44,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpmsxMIn,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpjDQTBu,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -67,7 +80,7 @@
         },
         {
           "bytes": 2854,
-          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpmsxMIn",
+          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpjDQTBu",
           "sha256": "bbd5b611d96dd95b3c3a42cc2f50e6d36680def40137a32d567a31bbfe154722"
         },
         {
@@ -79,8 +92,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "a4b3023194f8eae14496c6785b227f152c2aea99ffa0fa448b34169751b83135",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -89,21 +111,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-handshake",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 618,
+        "elapsed_milliseconds": 1163,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -122,7 +131,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 558,
+        "elapsed_milliseconds": 1012,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -161,7 +170,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -178,13 +218,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-bad-delta.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-bad-delta.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -226,8 +266,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "364d6d54645304d180b8c4155fc163c2b9e2ae9fbcac86ec411c67a1673999c7",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -236,39 +285,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 702,
+        "elapsed_milliseconds": 1246,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -287,7 +305,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 624,
+        "elapsed_milliseconds": 1012,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -313,7 +331,20 @@
     }
   },
   "invalid_delta_direct_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "1.2.840.10045.4.3.2",
+          "operation": "check-delta-certificate-signature",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -330,11 +361,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-bad-delta.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-bad-delta.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -369,7 +400,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "364d6d54645304d180b8c4155fc163c2b9e2ae9fbcac86ec411c67a1673999c7",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "evidence-signature",
       "validation_time": {
         "confidence": "observed",
@@ -379,21 +419,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "1.2.840.10045.4.3.2",
-          "operation": "check-delta-certificate-signature",
-          "outcome": "reject",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 597,
+      "elapsed_milliseconds": 1128,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -412,7 +439,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 582,
+      "elapsed_milliseconds": 1012,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -432,28 +459,49 @@
     }
   },
   "result": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "api_version": "hybrid-x509-evidence/v9",
     "certificate_path": [
       {
+        "binding_design": "chameleon",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
         "id": "end-entity",
+        "issuer_edge_sha256": "31497020075d0cfa0dbee582e3a1f61492954bd2758ba27e5dbbbdcf7b376903",
         "position": "end-entity",
-        "scheme": "chameleon"
+        "subject_public_key_scheme": "classical"
+      },
+      {
+        "binding_design": "none",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87",
+        "id": "issuer",
+        "issuer_edge_sha256": "928681191c9381f82188398d403516bee261fd05e42e700df6fc7fd7430294e5",
+        "position": "intermediate",
+        "subject_public_key_scheme": "classical"
       }
     ],
     "classical_only_fallback": false,
     "evaluated_evidence": [
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "pass"
         },
+        "certificate_der_sha256": "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
         "certificate_id": "end-entity",
-        "id": "delta-classical-certificate",
-        "kind": "classical",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "behaviorally-established",
           "state": "fail"
         },
+        "evidence_artifact_der_sha256": "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
+        "id": "delta-classical-certificate",
+        "issuer_edge_sha256": "31497020075d0cfa0dbee582e3a1f61492954bd2758ba27e5dbbbdcf7b376903",
+        "kind": "classical",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -471,6 +519,7 @@
           "confidence": "observed",
           "state": "not-checked"
         },
+        "revocation_method": "none",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -481,17 +530,25 @@
         }
       },
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "not-applicable"
         },
+        "certificate_der_sha256": "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
         "certificate_id": "end-entity",
-        "id": "base-mldsa-certificate",
-        "kind": "post-quantum",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "behaviorally-established",
           "state": "pass"
         },
+        "evidence_artifact_der_sha256": "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
+        "id": "base-mldsa-certificate",
+        "issuer_edge_sha256": "31497020075d0cfa0dbee582e3a1f61492954bd2758ba27e5dbbbdcf7b376903",
+        "kind": "post-quantum",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -509,6 +566,7 @@
           "confidence": "observed",
           "state": "not-checked"
         },
+        "revocation_method": "none",
         "signature": {
           "confidence": "behaviorally-established",
           "state": "pass"
@@ -519,6 +577,10 @@
         }
       }
     ],
+    "expected_trust_anchor": {
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "kind": "certificate-der-sha256"
+    },
     "failed_checks": [
       {
         "check": "revocation",
@@ -527,7 +589,7 @@
         "state": "not-checked"
       },
       {
-        "check": "outcome-bearing",
+        "check": "decision-sensitive-for-fixture",
         "confidence": "behaviorally-established",
         "evidence_id": "delta-classical-certificate",
         "state": "fail"
@@ -540,16 +602,31 @@
       }
     ],
     "lifecycle_desynchronization": false,
+    "paired_authentications": [],
     "path_scope": "end-entity",
     "policy": "p2-required-hybrid",
     "policy_verdict": "reject",
     "previous_authentication": null,
     "reason": "Required classical or post-quantum evidence did not pass.",
+    "revocation_policy": {
+      "clock_skew_seconds": null,
+      "max_age_seconds": null,
+      "mode": "hard-fail"
+    },
     "stack": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
-      "validation_profile": "evidence-signature",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
+      "validation_profile": "web-pki-server",
       "validation_time": {
         "confidence": "observed",
         "state": "pass"
@@ -575,7 +652,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -592,13 +700,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-delta-valid.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-delta-valid.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-delta-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-delta-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -640,8 +748,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "9efec91086efdd0d18ea34497bfdfdda3f0d3f2aec53fe25411552135556708b",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -650,39 +767,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "ecdsa_secp256r1_sha256",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "ecdsa_secp256r1_sha256",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "ecdsa_secp256r1_sha256",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 609,
+        "elapsed_milliseconds": 1223,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -701,7 +787,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 503,
+        "elapsed_milliseconds": 1012,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -740,7 +826,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "mldsa44",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -757,13 +874,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-valid-delta.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-valid-delta.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -805,8 +922,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
+          "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -815,39 +941,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "mldsa44",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 785,
+        "elapsed_milliseconds": 1177,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -866,7 +961,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 1064,
+        "elapsed_milliseconds": 1012,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -892,7 +987,20 @@
     }
   },
   "valid_delta_direct_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "1.2.840.10045.4.3.2",
+          "operation": "check-delta-certificate-signature",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -909,11 +1017,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-valid-delta.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-valid-delta.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -948,7 +1056,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
+        "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "evidence-signature",
       "validation_time": {
         "confidence": "observed",
@@ -958,21 +1075,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "1.2.840.10045.4.3.2",
-          "operation": "check-delta-certificate-signature",
-          "outcome": "accept",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 522,
+      "elapsed_milliseconds": 1154,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -991,7 +1095,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 525,
+      "elapsed_milliseconds": 1012,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

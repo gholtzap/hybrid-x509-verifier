@@ -8,12 +8,9 @@ Regenerate these reports after schema or confidence-model changes before treatin
 local artifacts.
 
 The v9 matrix reports contain the source commit, source tree, dirty-state result, platform, and
-adapter image content digests. A dirty-state result prevents publication use. The atomic path,
-atomic TLS, Related OpenSSL, Related TLS, Related path, and two OCSP reports were also regenerated
-for this working change. Other `local-arm64` JSON reports and both SBOM files are stale against the
-v9 contract and must not be published as current results until they are regenerated from a clean
-commit.
+adapter image content digests. All 30 JSON reports and both root SBOM files were regenerated from
+clean source commit `ee72f1cb5403866130c66dbe6d4522c93eed6074`. The matrix records 345 entries,
+no process, support, or verdict mismatch, and `source_clean: true`.
 
-Regenerate the reports with the commands in the project README from a clean commit. Do not treat
-these local reports as publication-grade, hosted continuous-integration, independent-review, or
-security-boundary verification evidence.
+These are fixture-specific local reports. Do not treat them as independent review, general library
+support, or security-boundary verification evidence.

@@ -1,5 +1,5 @@
 {
-  "api_version": "hybrid-x509-verifier/v1",
+  "api_version": "hybrid-x509-evidence/v9",
   "crl_status": {
     "freshness": {
       "confidence": "observed",
@@ -38,7 +38,8 @@
     },
     "protocol": null,
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": null,
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -55,13 +56,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpyCe4vl,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmppPRFBC,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-openssl:4.0.1",
         "--tls-server-client",
@@ -86,7 +87,7 @@
         },
         {
           "bytes": 5937,
-          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpyCe4vl",
+          "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmppPRFBC",
           "sha256": "f4ff2c686979d1f0179384473db399f2b7ba43c55a8bc5e81d0b87b7f3d6939a"
         },
         {
@@ -98,7 +99,16 @@
       "observation": {
         "adapter": "openssl-current-tls",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "75ab4c2347a3b4079e7f1cf05ac8956762c2e8a3b1f34d20285c6b0d2a45f018",
+          "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+        ],
         "execution_isolation": "container",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
         "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
@@ -108,28 +118,27 @@
         "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
         "version_track": "current"
       },
-      "source_instrumentation": null,
       "verification": {
-        "elapsed_milliseconds": 526,
+        "elapsed_milliseconds": 1003,
         "status_code": 1,
         "stderr": {
           "captured_bytes": 574,
-          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUCkMwMkZBNTk5RkZGRjAwMDA6ZXJyb3I6MEEwMDA0MUI6U1NMIHJvdXRpbmVzOnNzbDNfcmVhZF9ieXRlczp0bHN2MSBhbGVydCBkZWNyeXB0IGVycm9yOnNzbC9yZWNvcmQvcmVjX2xheWVyX3MzLmM6OTIzOlNTTCBhbGVydCBudW1iZXIgNTEKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDAgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
+          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUCkMwNEZDRjdGRkZGRjAwMDA6ZXJyb3I6MEEwMDA0MUI6U1NMIHJvdXRpbmVzOnNzbDNfcmVhZF9ieXRlczp0bHN2MSBhbGVydCBkZWNyeXB0IGVycm9yOnNzbC9yZWNvcmQvcmVjX2xheWVyX3MzLmM6OTIzOlNTTCBhbGVydCBudW1iZXIgNTEKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDAgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
           "encoding": "base64",
-          "sha256": "518bcd105cbec40f6911ac54e99343b79b2716bae6d8bd7e7a64bc8c0ca97a61",
+          "sha256": "f32b084f822c77e3afd75659f4b50af23de05e2df28c2b44a9624fdb4a2b457e",
           "truncated": false
         },
         "stdout": {
           "captured_bytes": 548,
-          "data": "Q29ubmVjdGluZyB0byAxMjcuMC4wLjEKZGVwdGg9MCBDTj1jYXRhbHlzdCBsZWFmIGJhc2UtRUNEU0EgYWx0LU1MRFNBLCBPPXBxYy1wcm9iZSwgQz1LUgp2ZXJpZnkgZXJyb3I6bnVtPTc6Y2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKQzA4RjVDQUJGRkZGMDAwMDplcnJvcjowMzAwMDBFQTpkaWdpdGFsIGVudmVsb3BlIHJvdXRpbmVzOkVWUF9EaWdlc3RWZXJpZnlGaW5hbDpwcm92aWRlciBzaWduYXR1cmUgZmFpbHVyZTpjcnlwdG8vZXZwL21fc2lndmVyLmM6NTMzOkVDRFNBIGRpZ2VzdF92ZXJpZnlfZmluYWw6CkMwOEY1Q0FCRkZGRjAwMDA6ZXJyb3I6MDY4ODAwMDY6YXNuMSBlbmNvZGluZyByb3V0aW5lczpBU04xX2l0ZW1fdmVyaWZ5X2N0eDpFVlAgbGliOmNyeXB0by9hc24xL2FfdmVyaWZ5LmM6MjIwOgpDMDhGNUNBQkZGRkYwMDAwOmVycm9yOjBBMDAwMDg2OlNTTCByb3V0aW5lczp0bHNfcG9zdF9wcm9jZXNzX3NlcnZlcl9jZXJ0aWZpY2F0ZTpjZXJ0aWZpY2F0ZSB2ZXJpZnkgZmFpbGVkOnNzbC9zdGF0ZW0vc3RhdGVtX2NsbnQuYzoyNDk3Ogo=",
+          "data": "Q29ubmVjdGluZyB0byAxMjcuMC4wLjEKZGVwdGg9MCBDTj1jYXRhbHlzdCBsZWFmIGJhc2UtRUNEU0EgYWx0LU1MRFNBLCBPPXBxYy1wcm9iZSwgQz1LUgp2ZXJpZnkgZXJyb3I6bnVtPTc6Y2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKQzAxRkI5OThGRkZGMDAwMDplcnJvcjowMzAwMDBFQTpkaWdpdGFsIGVudmVsb3BlIHJvdXRpbmVzOkVWUF9EaWdlc3RWZXJpZnlGaW5hbDpwcm92aWRlciBzaWduYXR1cmUgZmFpbHVyZTpjcnlwdG8vZXZwL21fc2lndmVyLmM6NTMzOkVDRFNBIGRpZ2VzdF92ZXJpZnlfZmluYWw6CkMwMUZCOTk4RkZGRjAwMDA6ZXJyb3I6MDY4ODAwMDY6YXNuMSBlbmNvZGluZyByb3V0aW5lczpBU04xX2l0ZW1fdmVyaWZ5X2N0eDpFVlAgbGliOmNyeXB0by9hc24xL2FfdmVyaWZ5LmM6MjIwOgpDMDFGQjk5OEZGRkYwMDAwOmVycm9yOjBBMDAwMDg2OlNTTCByb3V0aW5lczp0bHNfcG9zdF9wcm9jZXNzX3NlcnZlcl9jZXJ0aWZpY2F0ZTpjZXJ0aWZpY2F0ZSB2ZXJpZnkgZmFpbGVkOnNzbC9zdGF0ZW0vc3RhdGVtX2NsbnQuYzoyNDk3Ogo=",
           "encoding": "base64",
-          "sha256": "b1457f6558be23e5ae0e8d75aae56c9bc1b1b74ba125ecc015eb46f12e37d525",
+          "sha256": "9eba81962be59360cc7c96dcf9ea84e2dabc78384ab2e1af4174a4fb84ceeec6",
           "truncated": false
         },
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 320,
+        "elapsed_milliseconds": 769,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -154,7 +163,20 @@
     }
   },
   "invalid_post_quantum_direct_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "ML-DSA",
+          "operation": "check-alternative-signature",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -171,11 +193,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -210,7 +232,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "eed7146cd645a6a24b137978986ad6eeb1cfd717d5aa777b6102a9a4428ce57c",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "evidence-signature",
       "validation_time": {
         "confidence": "observed",
@@ -220,21 +251,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "ML-DSA",
-          "operation": "check-alternative-signature",
-          "outcome": "reject",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 528,
+      "elapsed_milliseconds": 1289,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -253,7 +271,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 536,
+      "elapsed_milliseconds": 1144,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -292,7 +310,8 @@
     },
     "protocol": "TLSv1.3",
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": null,
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -309,13 +328,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-openssl:4.0.1",
         "--tls-server-client",
@@ -352,7 +371,16 @@
       "observation": {
         "adapter": "openssl-current-tls",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "eed7146cd645a6a24b137978986ad6eeb1cfd717d5aa777b6102a9a4428ce57c",
+          "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+        ],
         "execution_isolation": "container",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
         "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
@@ -362,15 +390,14 @@
         "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
         "version_track": "current"
       },
-      "source_instrumentation": null,
       "verification": {
-        "elapsed_milliseconds": 610,
+        "elapsed_milliseconds": 1116,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 952,
-          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUClNTTC1TZXNzaW9uOgogICAgUHJvdG9jb2wgIDogVExTdjEuMwogICAgQ2lwaGVyICAgIDogVExTX0FFU18yNTZfR0NNX1NIQTM4NAogICAgU2Vzc2lvbi1JRDogNjQyRTAzMzZDRkFBOEIxRDJGNkZDMEI0MUU0MkRGRjgwMTkzRTFCMzI1NjE4NDY2Qjc0MDA0RTk5NTBFQkQ1RQogICAgU2Vzc2lvbi1JRC1jdHg6IDAxMDAwMDAwCiAgICBSZXN1bXB0aW9uIFBTSzogQTJCNjUzQjVGNjhFMTYxNkMyOEM3MkY4MDRENjc4REYxN0FGRjg5Q0M4RDVDMzMzMjE0QUM4MTE0RTg0OThBMjA5NDAxQTlBMDMyRUFFMDYxRENDN0I3REQxODFGN0VDCiAgICBQU0sgaWRlbnRpdHk6IE5vbmUKICAgIFBTSyBpZGVudGl0eSBoaW50OiBOb25lCiAgICBTUlAgdXNlcm5hbWU6IE5vbmUKICAgIFN0YXJ0IFRpbWU6IDE3ODU5NDQxNTYKICAgIFRpbWVvdXQgICA6IDcyMDAgKHNlYykKICAgIFZlcmlmeSByZXR1cm4gY29kZTogMCAob2spCiAgICBFeHRlbmRlZCBtYXN0ZXIgc2VjcmV0OiBubwogICAgTWF4IEVhcmx5IERhdGE6IDAKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
+          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUClNTTC1TZXNzaW9uOgogICAgUHJvdG9jb2wgIDogVExTdjEuMwogICAgQ2lwaGVyICAgIDogVExTX0FFU18yNTZfR0NNX1NIQTM4NAogICAgU2Vzc2lvbi1JRDogQzlCN0M2RDUxNTY1MzM5QzQxMTM1MENENENBQ0MxNTk2Mzk5QTEyMDRBQ0MyMDA1NEU1MjVBODE0NkY4OEE1RQogICAgU2Vzc2lvbi1JRC1jdHg6IDAxMDAwMDAwCiAgICBSZXN1bXB0aW9uIFBTSzogMDg4QzQ0NEU2OUNFMkQ2MUNDQkY3RUU4MTlFQkVEODc4OEE5MDcwNkM2QjA5RkNENEREOUI5RkZFRUVBQUI5Q0Q1MUNEOUU3QTk5NDBDODFCOTVFRUI5NUU0NTY1OUFECiAgICBQU0sgaWRlbnRpdHk6IE5vbmUKICAgIFBTSyBpZGVudGl0eSBoaW50OiBOb25lCiAgICBTUlAgdXNlcm5hbWU6IE5vbmUKICAgIFN0YXJ0IFRpbWU6IDE3ODYzMjY0MjMKICAgIFRpbWVvdXQgICA6IDcyMDAgKHNlYykKICAgIFZlcmlmeSByZXR1cm4gY29kZTogMCAob2spCiAgICBFeHRlbmRlZCBtYXN0ZXIgc2VjcmV0OiBubwogICAgTWF4IEVhcmx5IERhdGE6IDAKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
           "encoding": "base64",
-          "sha256": "a112a4a6f3b2357bd90231636f11da6ce1092a256284f9572531d890d1a983d2",
+          "sha256": "8e009d6697e1e42aa3deb8959118e1dea34f4b6c0f391ea4f758f5f21d12d37f",
           "truncated": false
         },
         "stdout": {
@@ -383,7 +410,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 387,
+        "elapsed_milliseconds": 769,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -408,28 +435,49 @@
     }
   },
   "result": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "api_version": "hybrid-x509-evidence/v9",
     "certificate_path": [
       {
+        "binding_design": "catalyst",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
         "id": "end-entity",
+        "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
         "position": "end-entity",
-        "scheme": "catalyst"
+        "subject_public_key_scheme": "classical"
+      },
+      {
+        "binding_design": "none",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
+        "id": "issuer",
+        "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
+        "position": "intermediate",
+        "subject_public_key_scheme": "classical"
       }
     ],
     "classical_only_fallback": true,
     "evaluated_evidence": [
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "not-applicable"
         },
+        "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
         "certificate_id": "end-entity",
-        "id": "classical-base-signature",
-        "kind": "classical",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "behaviorally-established",
           "state": "pass"
         },
+        "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "id": "classical-base-signature",
+        "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
+        "kind": "classical",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -447,6 +495,7 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -457,17 +506,25 @@
         }
       },
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "pass"
         },
+        "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
         "certificate_id": "end-entity",
-        "id": "catalyst-alternative-signature",
-        "kind": "post-quantum",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "behaviorally-established",
           "state": "fail"
         },
+        "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "id": "catalyst-alternative-signature",
+        "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
+        "kind": "post-quantum",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -485,6 +542,7 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -495,24 +553,43 @@
         }
       }
     ],
+    "expected_trust_anchor": {
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "kind": "certificate-der-sha256"
+    },
     "failed_checks": [
       {
-        "check": "outcome-bearing",
+        "check": "decision-sensitive-for-fixture",
         "confidence": "behaviorally-established",
         "evidence_id": "catalyst-alternative-signature",
         "state": "fail"
       }
     ],
     "lifecycle_desynchronization": false,
+    "paired_authentications": [],
     "path_scope": "end-entity",
     "policy": "p2-required-hybrid",
     "policy_verdict": "reject",
     "previous_authentication": null,
-    "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+    "reason": "The stack accepted through classical evidence without valid, decision-sensitive-for-fixture post-quantum evidence.",
+    "revocation_policy": {
+      "clock_skew_seconds": null,
+      "max_age_seconds": null,
+      "mode": "hard-fail"
+    },
     "stack": {
       "adapter": "openssl-current-tls",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "web-pki-server",
       "validation_time": {
         "confidence": "observed",
@@ -539,7 +616,38 @@
       "state": "pass"
     },
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": {
+        "confidence": "observed",
+        "events": [
+          {
+            "algorithm": null,
+            "operation": "validate-pkix-path",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-certificate-verify",
+            "outcome": "pass",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-altered-transcript",
+            "outcome": "reject",
+            "target": "leaf"
+          },
+          {
+            "algorithm": "ecdsa_secp256r1_sha256",
+            "operation": "tls-incompatible-signature",
+            "outcome": "reject",
+            "target": "leaf"
+          }
+        ],
+        "extensions": [],
+        "instrumentation_scope": "adapter"
+      },
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -556,13 +664,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-bouncycastle:1.85",
         "--root",
@@ -604,8 +712,17 @@
       "observation": {
         "adapter": "bouncycastle-java-current",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+          "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+        ],
         "execution_isolation": "container",
-        "validation_profile": "evidence-signature",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
+        "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
           "state": "pass"
@@ -614,39 +731,8 @@
         "version": "1.85",
         "version_track": "current"
       },
-      "source_instrumentation": {
-        "confidence": "behaviorally-established",
-        "events": [
-          {
-            "algorithm": null,
-            "operation": "validate-pkix-path",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "ecdsa_secp256r1_sha256",
-            "operation": "tls-certificate-verify",
-            "outcome": "pass",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "ecdsa_secp256r1_sha256",
-            "operation": "tls-altered-transcript",
-            "outcome": "reject",
-            "target": "leaf"
-          },
-          {
-            "algorithm": "ecdsa_secp256r1_sha256",
-            "operation": "tls-incompatible-signature",
-            "outcome": "reject",
-            "target": "leaf"
-          }
-        ],
-        "extensions": [],
-        "instrumentation_scope": "adapter"
-      },
       "verification": {
-        "elapsed_milliseconds": 587,
+        "elapsed_milliseconds": 1242,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -665,7 +751,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 471,
+        "elapsed_milliseconds": 1144,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,
@@ -691,7 +777,20 @@
     }
   },
   "valid_post_quantum_direct_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "ML-DSA",
+          "operation": "check-alternative-signature",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -708,11 +807,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -747,7 +846,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "evidence-signature",
       "validation_time": {
         "confidence": "observed",
@@ -757,21 +865,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "ML-DSA",
-          "operation": "check-alternative-signature",
-          "outcome": "accept",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 567,
+      "elapsed_milliseconds": 1259,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -790,7 +885,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 490,
+      "elapsed_milliseconds": 1144,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -829,7 +924,8 @@
     },
     "protocol": "TLSv1.3",
     "report": {
-      "api_version": "hybrid-x509-verifier/v1",
+      "adapter_trace": null,
+      "api_version": "hybrid-x509-evidence/v9",
       "arguments": [
         "run",
         "--rm",
@@ -846,13 +942,13 @@
         "--ulimit=nofile=64:64",
         "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
         "--mount",
-        "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
+        "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/catalyst-leaf-base-key.pem,dst=/input/key.pem,readonly",
         "--",
         "hybrid-x509-openssl:4.0.1",
         "--tls-server-client",
@@ -889,7 +985,16 @@
       "observation": {
         "adapter": "openssl-current-tls",
         "applied_validation_time": "2026-06-20T00:00:00Z",
+        "certification_path_der_sha256": [
+          "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+          "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+        ],
         "execution_isolation": "container",
+        "selected_path_source": "presented-input",
+        "trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
         "validation_profile": "web-pki-server",
         "validation_time": {
           "confidence": "observed",
@@ -899,15 +1004,14 @@
         "version": "OpenSSL 4.0.1 9 Jun 2026 (Library: OpenSSL 4.0.1 9 Jun 2026)",
         "version_track": "current"
       },
-      "source_instrumentation": null,
       "verification": {
-        "elapsed_milliseconds": 622,
+        "elapsed_milliseconds": 1187,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 952,
-          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUClNTTC1TZXNzaW9uOgogICAgUHJvdG9jb2wgIDogVExTdjEuMwogICAgQ2lwaGVyICAgIDogVExTX0FFU18yNTZfR0NNX1NIQTM4NAogICAgU2Vzc2lvbi1JRDogMTlEODQzMzUzQjVBRDA1NTJBMTJGRUMwMUVBMUY1QTYwMEYwMUEyODY3NTM2NUY3NUQ5MjlBNTY4NDFFNTYzNQogICAgU2Vzc2lvbi1JRC1jdHg6IDAxMDAwMDAwCiAgICBSZXN1bXB0aW9uIFBTSzogMzc4NkYzNDMzQ0Y5QzI2OTJEQzhDMERGQjBGRjVGNzFERUQ2NzYyNzgxNzM3OEMxOERFQjY1M0UxNjAwM0VBN0Q4OTQ1MTVDRUIzMTY5QkExQTE5MzZFNUY0MzZCNTY0CiAgICBQU0sgaWRlbnRpdHk6IE5vbmUKICAgIFBTSyBpZGVudGl0eSBoaW50OiBOb25lCiAgICBTUlAgdXNlcm5hbWU6IE5vbmUKICAgIFN0YXJ0IFRpbWU6IDE3ODU5NDQxNTUKICAgIFRpbWVvdXQgICA6IDcyMDAgKHNlYykKICAgIFZlcmlmeSByZXR1cm4gY29kZTogMCAob2spCiAgICBFeHRlbmRlZCBtYXN0ZXIgc2VjcmV0OiBubwogICAgTWF4IEVhcmx5IERhdGE6IDAKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
+          "data": "VXNpbmcgZGVmYXVsdCB0ZW1wIERIIHBhcmFtZXRlcnMKQUNDRVBUClNTTC1TZXNzaW9uOgogICAgUHJvdG9jb2wgIDogVExTdjEuMwogICAgQ2lwaGVyICAgIDogVExTX0FFU18yNTZfR0NNX1NIQTM4NAogICAgU2Vzc2lvbi1JRDogMzJENEZCQUJDNkYxN0Q4OUIwQzQ1MjY3QzYwNUExOTU4MzVEODQzQkRBMkZDMUQwMjFDMzEzQ0IwMTEyQkQ2OQogICAgU2Vzc2lvbi1JRC1jdHg6IDAxMDAwMDAwCiAgICBSZXN1bXB0aW9uIFBTSzogQTdGQ0JGMTVCQjI4NDcwM0M0Rjg4RjY4NkRGNEVDMkVGNjRDNTY3MUEzNTU3MDNGOUU4ODhBNDc1ODBERDBCQzU3Nzk0N0I3RjY2NjhBMzM5ODQ0OEE4NEFGMTIwNTI5CiAgICBQU0sgaWRlbnRpdHk6IE5vbmUKICAgIFBTSyBpZGVudGl0eSBoaW50OiBOb25lCiAgICBTUlAgdXNlcm5hbWU6IE5vbmUKICAgIFN0YXJ0IFRpbWU6IDE3ODYzMjY0MjEKICAgIFRpbWVvdXQgICA6IDcyMDAgKHNlYykKICAgIFZlcmlmeSByZXR1cm4gY29kZTogMCAob2spCiAgICBFeHRlbmRlZCBtYXN0ZXIgc2VjcmV0OiBubwogICAgTWF4IEVhcmx5IERhdGE6IDAKICAgMCBpdGVtcyBpbiB0aGUgc2Vzc2lvbiBjYWNoZQogICAwIGNsaWVudCBjb25uZWN0cyAoU1NMX2Nvbm5lY3QoKSkKICAgMCBjbGllbnQgcmVuZWdvdGlhdGVzIChTU0xfY29ubmVjdCgpKQogICAwIGNsaWVudCBjb25uZWN0cyB0aGF0IGZpbmlzaGVkCiAgIDEgc2VydmVyIGFjY2VwdHMgKFNTTF9hY2NlcHQoKSkKICAgMCBzZXJ2ZXIgcmVuZWdvdGlhdGVzIChTU0xfYWNjZXB0KCkpCiAgIDEgc2VydmVyIGFjY2VwdHMgdGhhdCBmaW5pc2hlZAogICAwIHNlc3Npb24gY2FjaGUgaGl0cwogICAwIHNlc3Npb24gY2FjaGUgbWlzc2VzCiAgIDAgc2Vzc2lvbiBjYWNoZSB0aW1lb3V0cwogICAwIGNhbGxiYWNrIGNhY2hlIGhpdHMKICAgMCBjYWNoZSBmdWxsIG92ZXJmbG93cyAoMTI4IGFsbG93ZWQpCg==",
           "encoding": "base64",
-          "sha256": "f3c76c68d73a427b9a79fd0bc563a98cd10be3dbbd84dc99ab85e5dd62b87fa6",
+          "sha256": "e44efa20d957b17fd6a579353f01fab9ee1d0ea1c3d6f3e63ed923b37a843528",
           "truncated": false
         },
         "stdout": {
@@ -920,7 +1024,7 @@
         "timed_out": false
       },
       "version": {
-        "elapsed_milliseconds": 663,
+        "elapsed_milliseconds": 769,
         "status_code": 0,
         "stderr": {
           "captured_bytes": 0,

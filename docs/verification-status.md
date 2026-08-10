@@ -7,6 +7,9 @@ Do not publish it as a Hybrid X.509 authentication verifier. The main command ev
 caller-supplied evidence claims. It does not independently derive most certificate, path,
 revocation, or TLS facts from the original inputs.
 
+The frozen v9 evidence package is ready for public expert review as this limited harness. It is
+not ready for production use or publication as an X.509 or TLS verifier.
+
 The local results below are fixture-specific observations for the named source tree, commands,
 adapters, and versions. They are not general proofs of X.509, TLS, hybrid-draft, or library
 behavior.
@@ -258,45 +261,49 @@ behavior.
   covered by the Related OpenSSL and oracle reports. The both-good lifecycle row has an explicit
   semantic difference: the paper records stack acceptance for two valid separate credentials,
   while this product requires the post-quantum evidence to be decision-sensitive-for-fixture for P2 acceptance.
-- A one-hour libFuzzer campaign completed 270,973,987 PEM parser executions, 298,856,673 oracle
-  JSON executions, and 232,053,158 OCSP DER executions without a crash. A current-source
-  30-second pass then completed 2,402,600 PEM executions, 2,384,611 oracle JSON executions, and
-  2,153,800 OCSP DER executions without a crash.
+- A historical one-hour libFuzzer campaign completed 270,973,987 PEM parser executions,
+  298,856,673 oracle JSON executions, and 232,053,158 OCSP DER executions without a crash. A later
+  30-second pass completed 2,402,600 PEM executions, 2,384,611 oracle JSON executions, and
+  2,153,800 OCSP DER executions without a crash. These campaigns are not exact-source evidence for
+  the current commit.
 - RustSec reports no advisory for the locked Rust graph. The pinned OSV Scanner 2.4.0 checks the
   Rust, Go, Maven, and Python manifests and reports no unhandled vulnerability. Its dated policy
   exception is limited to cryptography 49.0.0, the isolated exact study control; current 50.0.0
   is tested separately.
-- The root `sbom-rust.cdx.json` and `sbom-all.cdx.json` files use the older v8 contract. They are
-  historical artifacts until they are regenerated from clean v9 source.
+- The root `sbom-rust.cdx.json` and `sbom-all.cdx.json` files were regenerated from clean v9
+  source. The Rust SBOM uses the fixed `x86_64-unknown-linux-gnu` target so hosted Linux and local
+  generation have the same dependency graph.
 - The Rust toolchain is fixed at 1.92.0. The checked-in workflow defines locked oracle checks on
-  Ubuntu and macOS and the complete adapter suite on Ubuntu. The current v9 checks have not run in
-  that hosted workflow.
+  Ubuntu and macOS and the complete adapter suite on Ubuntu. Exact-head run
+  [`31347674834`](https://github.com/gholtzap/hybrid-x509-verifier/actions/runs/31347674834)
+  passed for source commit `ee72f1cb5403866130c66dbe6d4522c93eed6074`.
 - A separate digest-pinned Linux check builds the locked release binary twice in independent
-  anonymous volumes and requires byte-identical SHA-256 digests. The current local digest is
-  `ee83403dca3a30c93c5e070e11fd1a9e86946e81189cdaaf50ae58a5fe93a017`.
+  anonymous volumes and requires byte-identical SHA-256 digests. The exact-head hosted run passed
+  this check.
 - A digest-pinned release Dockerfile runs as user 65532. Two no-cache arm64 builds produced
   byte-identical OCI archives after layer times were rewritten to the fixed source epoch. The
-  local archive SHA-256 is
-  `20f4e7641bb9ab4c74936fac11b3a9ec8acae59d8bd22898f1b47be9719e49e1`.
+  exact-head hosted run passed this check with a Docker container Buildx builder.
 
 Source-level statements have runnable tests. The exact list of `report-value` markers is compared
 with their generated JSON by `tests/documented_verdicts.rs`. Historical counts and artifact
 digests are not current v9 evidence until their named commands run again from a clean tree.
 
-## Required work not locally provable
+## Exact-source publication evidence
 
-- Hosted multi-platform continuous integration has not passed for v9. Run `31119231036` failed
-  during Ubuntu setup before checkout, and its remaining jobs did not establish exact-head proof.
-- The v9 matrix JSON records source commit `c56007a183c6a845f356d246248e168b8277e35b`, source tree
-  `01c69b0db4fa44f7c0f1f6f90abdcd5d522c94a1`, `source_clean: false`, macOS arm64, and 13 unique
-  adapter image content digests. It is local research evidence only. Publication mode rejects this
-  dirty state.
-<!-- report-value reports/local-arm64/matrix-report.json /provenance/source_clean false -->
-- The atomic path, atomic TLS, Related OpenSSL, Related TLS, Related path, and two OCSP reports were
-  regenerated for v9. Other local reports and both SBOM files remain stale and are excluded from
-  current evidence until clean-tree regeneration.
+- Exact-head hosted Verify run
+  [`31347674834`](https://github.com/gholtzap/hybrid-x509-verifier/actions/runs/31347674834)
+  passed on Ubuntu 24.04 and macOS 14. The Ubuntu jobs passed the portable oracle, reproducible
+  binary and OCI image checks, corpus reproduction, serial adapter suite, dependency checks, SBOM
+  generation, and checked-in SBOM comparison.
+- The v9 matrix JSON records source commit `ee72f1cb5403866130c66dbe6d4522c93eed6074`, source tree
+  `1b14e5c820f51f36f03dcfa0c38ac8663771dfeb`, `source_clean: true`, macOS arm64, and 13 unique
+  adapter image content digests. Its 345 entries have no process, support, or verdict mismatch.
+<!-- report-value reports/local-arm64/matrix-report.json /provenance/source_clean true -->
+- All 30 local JSON reports and both root SBOM files were regenerated from that clean source
+  commit. The two paper comparison reports match all 54 common matrix rows and all four wolfSSL
+  fixed-vector rows.
 - Independent review is not available from the local workspace. The local reports state unknowns
   where black-box adapter behavior cannot show internal execution.
 
-The broad local matrix was rerun from the dirty working tree above. Remaining publication work is
-to regenerate the non-matrix local reports and to run the hosted multi-platform checks.
+The evidence package is complete for the frozen fixture-specific claims. Independent expert review
+remains external work and is not claimed here.

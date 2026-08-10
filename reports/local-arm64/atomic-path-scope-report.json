@@ -37,13 +37,13 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica-crl.pem,dst=/input/crl.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica-crl.pem,dst=/input/crl.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -105,7 +105,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 635,
+          "elapsed_milliseconds": 1216,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -124,7 +124,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -174,11 +174,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -233,7 +233,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 609,
+          "elapsed_milliseconds": 1233,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -252,7 +252,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -302,11 +302,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -361,7 +361,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 686,
+          "elapsed_milliseconds": 1180,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -380,7 +380,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -430,11 +430,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -489,7 +489,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 684,
+          "elapsed_milliseconds": 1195,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -508,7 +508,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -558,11 +558,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -617,7 +617,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 603,
+          "elapsed_milliseconds": 1160,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -636,7 +636,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -691,11 +691,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -750,7 +750,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 838,
+          "elapsed_milliseconds": 1250,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -769,7 +769,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -829,13 +829,13 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/leaf.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root-crl.pem,dst=/input/crl.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root-crl.pem,dst=/input/crl.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -897,7 +897,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 641,
+          "elapsed_milliseconds": 1228,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -916,7 +916,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -966,11 +966,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica-bad-ecdsa.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica-bad-ecdsa.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1025,7 +1025,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 585,
+          "elapsed_milliseconds": 1215,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1044,7 +1044,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1094,11 +1094,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1153,7 +1153,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 607,
+          "elapsed_milliseconds": 1276,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1172,7 +1172,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1222,11 +1222,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica-bad-mldsa.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica-bad-mldsa.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1281,7 +1281,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 744,
+          "elapsed_milliseconds": 1237,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1300,7 +1300,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1350,11 +1350,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1409,7 +1409,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 579,
+          "elapsed_milliseconds": 1150,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1428,7 +1428,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1483,11 +1483,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1542,7 +1542,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 683,
+          "elapsed_milliseconds": 1180,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1561,7 +1561,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1621,13 +1621,13 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/leaf.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root-crl.pem,dst=/input/crl.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root-crl.pem,dst=/input/crl.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1689,7 +1689,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 609,
+          "elapsed_milliseconds": 1122,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1708,7 +1708,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1758,11 +1758,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root-bad-ecdsa.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root-bad-ecdsa.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1817,7 +1817,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 594,
+          "elapsed_milliseconds": 1105,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1836,7 +1836,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1886,11 +1886,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root-bad-ecdsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -1945,7 +1945,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 599,
+          "elapsed_milliseconds": 1184,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -1964,7 +1964,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -2014,11 +2014,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root-bad-mldsa.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root-bad-mldsa.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -2073,7 +2073,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 612,
+          "elapsed_milliseconds": 1163,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -2092,7 +2092,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -2142,11 +2142,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root-bad-mldsa.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -2201,7 +2201,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 641,
+          "elapsed_milliseconds": 1115,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -2220,7 +2220,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -2275,11 +2275,11 @@
           "--ulimit=nofile=64:64",
           "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/intermediate.pem,readonly",
           "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/leaf.pem,readonly",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/leaf.pem,readonly",
           "--",
           "hybrid-x509-bouncycastle:1.85",
           "--root",
@@ -2334,7 +2334,7 @@
           "version_track": "current"
         },
         "verification": {
-          "elapsed_milliseconds": 609,
+          "elapsed_milliseconds": 1123,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -2353,7 +2353,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 1092,
+          "elapsed_milliseconds": 1112,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -2927,11 +2927,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/atomic-path-leaf.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -2986,7 +2986,7 @@
       "version_track": "current"
     },
     "verification": {
-      "elapsed_milliseconds": 845,
+      "elapsed_milliseconds": 1196,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -3005,7 +3005,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 1092,
+      "elapsed_milliseconds": 1112,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

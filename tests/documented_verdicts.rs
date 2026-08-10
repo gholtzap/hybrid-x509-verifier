@@ -29,7 +29,7 @@ const EXPECTED_MARKERS: [(&str, &str, &str); 6] = [
     (
         "reports/local-arm64/matrix-report.json",
         "/provenance/source_clean",
-        "false",
+        "true",
     ),
 ];
 

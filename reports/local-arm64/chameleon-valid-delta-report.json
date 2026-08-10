@@ -1,5 +1,18 @@
 {
-  "api_version": "hybrid-x509-verifier/v1",
+  "adapter_trace": {
+    "confidence": "observed",
+    "events": [
+      {
+        "algorithm": "1.2.840.10045.4.3.2",
+        "operation": "check-delta-certificate-signature",
+        "outcome": "accept",
+        "target": "leaf"
+      }
+    ],
+    "extensions": [],
+    "instrumentation_scope": "adapter"
+  },
+  "api_version": "hybrid-x509-evidence/v9",
   "arguments": [
     "run",
     "--rm",
@@ -16,11 +29,11 @@
     "--ulimit=nofile=64:64",
     "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
     "--mount",
-    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+    "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
     "--mount",
-    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+    "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
     "--mount",
-    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/chameleon-base-valid-delta.pem,dst=/input/leaf.pem,readonly",
+    "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/chameleon-base-valid-delta.pem,dst=/input/leaf.pem,readonly",
     "--",
     "hybrid-x509-bouncycastle:1.85",
     "--root",
@@ -55,7 +68,16 @@
   "observation": {
     "adapter": "bouncycastle-java-current",
     "applied_validation_time": "2026-06-20T00:00:00Z",
+    "certification_path_der_sha256": [
+      "c77ac2c8f70df1d3296b20e8c71ce4948c56ff4eb79f4ead719620cee0d64a19",
+      "a92853b5348f2b4883f588b1534e6725eb3e6e02d9aefe11fef91c5d5b1dcd87"
+    ],
     "execution_isolation": "container",
+    "selected_path_source": "presented-input",
+    "trust_anchor": {
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "kind": "certificate-der-sha256"
+    },
     "validation_profile": "evidence-signature",
     "validation_time": {
       "confidence": "observed",
@@ -65,21 +87,8 @@
     "version": "1.85",
     "version_track": "current"
   },
-  "source_instrumentation": {
-    "confidence": "behaviorally-established",
-    "events": [
-      {
-        "algorithm": "1.2.840.10045.4.3.2",
-        "operation": "check-delta-certificate-signature",
-        "outcome": "accept",
-        "target": "leaf"
-      }
-    ],
-    "extensions": [],
-    "instrumentation_scope": "adapter"
-  },
   "verification": {
-    "elapsed_milliseconds": 549,
+    "elapsed_milliseconds": 1114,
     "status_code": 0,
     "stderr": {
       "captured_bytes": 0,
@@ -98,7 +107,7 @@
     "timed_out": false
   },
   "version": {
-    "elapsed_milliseconds": 554,
+    "elapsed_milliseconds": 1102,
     "status_code": 0,
     "stderr": {
       "captured_bytes": 0,

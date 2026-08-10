@@ -1,5 +1,5 @@
 {
-  "api_version": "hybrid-x509-verifier/v1",
+  "api_version": "hybrid-x509-evidence/v9",
   "crl_status": {
     "freshness": {
       "confidence": "observed",
@@ -37,7 +37,20 @@
     }
   },
   "intermediate_invalid_classical_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "SHA256WITHECDSA",
+          "operation": "validate-pkix-path",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -54,11 +67,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmp2VpLUe,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpl2wQ9D,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -81,7 +94,7 @@
       },
       {
         "bytes": 2504,
-        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmp2VpLUe",
+        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpl2wQ9D",
         "sha256": "6730eaf8ee3409b9b908cededa7afc777075b6442fa9b3509b162c4aff9c8745"
       },
       {
@@ -93,7 +106,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "16fcbef646accb8ebec637d4b0a57ea22f7458793d0f746424e04fb79ab6d766"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -103,21 +125,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "SHA256WITHECDSA",
-          "operation": "validate-pkix-path",
-          "outcome": "reject",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 788,
+      "elapsed_milliseconds": 1012,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -136,7 +145,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 667,
+      "elapsed_milliseconds": 1041,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -156,7 +165,20 @@
     }
   },
   "invalid_classical_default_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "SHA256WITHECDSA",
+          "operation": "validate-pkix-path",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -173,11 +195,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpvi5jls,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpttrjr8,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -205,14 +227,23 @@
       },
       {
         "bytes": 5937,
-        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpvi5jls",
+        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpttrjr8",
         "sha256": "f4ff2c686979d1f0179384473db399f2b7ba43c55a8bc5e81d0b87b7f3d6939a"
       }
     ],
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "75ab4c2347a3b4079e7f1cf05ac8956762c2e8a3b1f34d20285c6b0d2a45f018",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -222,21 +253,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "SHA256WITHECDSA",
-          "operation": "validate-pkix-path",
-          "outcome": "reject",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 782,
+      "elapsed_milliseconds": 1036,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -255,7 +273,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 632,
+      "elapsed_milliseconds": 1041,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -275,7 +293,20 @@
     }
   },
   "invalid_post_quantum_default_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "SHA256WITHECDSA",
+          "operation": "validate-pkix-path",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -292,11 +323,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -331,7 +362,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "eed7146cd645a6a24b137978986ad6eeb1cfd717d5aa777b6102a9a4428ce57c",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -341,21 +381,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "SHA256WITHECDSA",
-          "operation": "validate-pkix-path",
-          "outcome": "accept",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 687,
+      "elapsed_milliseconds": 987,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -374,7 +401,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 606,
+      "elapsed_milliseconds": 1041,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -394,7 +421,20 @@
     }
   },
   "invalid_post_quantum_direct_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "ML-DSA",
+          "operation": "check-alternative-signature",
+          "outcome": "reject",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -411,11 +451,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-leaf-bad-alt.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -450,7 +490,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "eed7146cd645a6a24b137978986ad6eeb1cfd717d5aa777b6102a9a4428ce57c",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "evidence-signature",
       "validation_time": {
         "confidence": "observed",
@@ -460,21 +509,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "ML-DSA",
-          "operation": "check-alternative-signature",
-          "outcome": "reject",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 667,
+      "elapsed_milliseconds": 1026,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -493,7 +529,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 602,
+      "elapsed_milliseconds": 1041,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -513,38 +549,49 @@
     }
   },
   "result": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "api_version": "hybrid-x509-evidence/v9",
     "certificate_path": [
       {
+        "binding_design": "catalyst",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
         "id": "end-entity",
+        "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
         "position": "end-entity",
-        "scheme": "catalyst"
+        "subject_public_key_scheme": "classical"
       },
       {
+        "binding_design": "catalyst",
+        "certificate_signature_scheme": "classical",
+        "der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
         "id": "intermediate",
+        "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
         "position": "intermediate",
-        "scheme": "catalyst"
-      },
-      {
-        "id": "root",
-        "position": "trust-anchor",
-        "scheme": "classical"
+        "subject_public_key_scheme": "classical"
       }
     ],
     "classical_only_fallback": true,
     "evaluated_evidence": [
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "not-applicable"
         },
+        "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
         "certificate_id": "end-entity",
+        "decision_sensitive_for_fixture": {
+          "confidence": "behaviorally-established",
+          "state": "pass"
+        },
+        "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
         "id": "classical-base-signature",
+        "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
         "kind": "classical",
-        "outcome_bearing": {
-          "confidence": "behaviorally-established",
-          "state": "pass"
-        },
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -562,6 +609,7 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -572,17 +620,25 @@
         }
       },
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "pass"
         },
+        "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
         "certificate_id": "end-entity",
-        "id": "catalyst-alternative-signature",
-        "kind": "post-quantum",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "behaviorally-established",
           "state": "fail"
         },
+        "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "id": "catalyst-alternative-signature",
+        "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
+        "kind": "post-quantum",
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -600,6 +656,7 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -610,17 +667,25 @@
         }
       },
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "not-applicable"
         },
+        "certificate_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
         "certificate_id": "intermediate",
+        "decision_sensitive_for_fixture": {
+          "confidence": "behaviorally-established",
+          "state": "pass"
+        },
+        "evidence_artifact_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
         "id": "intermediate-classical-signature",
+        "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
         "kind": "classical",
-        "outcome_bearing": {
-          "confidence": "behaviorally-established",
-          "state": "pass"
-        },
         "path": {
           "confidence": "observed",
           "state": "pass"
@@ -638,6 +703,7 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "pass"
@@ -648,17 +714,25 @@
         }
       },
       {
+        "applied_revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "binding": {
           "confidence": "observed",
           "state": "not-checked"
         },
+        "certificate_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
         "certificate_id": "intermediate",
-        "id": "intermediate-alternative-signature",
-        "kind": "post-quantum",
-        "outcome_bearing": {
+        "decision_sensitive_for_fixture": {
           "confidence": "observed",
           "state": "not-checked"
         },
+        "evidence_artifact_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
+        "id": "intermediate-alternative-signature",
+        "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
+        "kind": "post-quantum",
         "path": {
           "confidence": "observed",
           "state": "not-checked"
@@ -676,47 +750,10 @@
           "confidence": "observed",
           "state": "pass"
         },
+        "revocation_method": "crl",
         "signature": {
           "confidence": "observed",
           "state": "not-checked"
-        },
-        "validity": {
-          "confidence": "observed",
-          "state": "pass"
-        }
-      },
-      {
-        "binding": {
-          "confidence": "observed",
-          "state": "not-applicable"
-        },
-        "certificate_id": "root",
-        "id": "root-classical-signature",
-        "kind": "classical",
-        "outcome_bearing": {
-          "confidence": "behaviorally-established",
-          "state": "fail"
-        },
-        "path": {
-          "confidence": "observed",
-          "state": "pass"
-        },
-        "position": "trust-anchor",
-        "present": {
-          "confidence": "observed",
-          "state": "pass"
-        },
-        "recognized": {
-          "confidence": "observed",
-          "state": "pass"
-        },
-        "revocation": {
-          "confidence": "observed",
-          "state": "pass"
-        },
-        "signature": {
-          "confidence": "observed",
-          "state": "pass"
         },
         "validity": {
           "confidence": "observed",
@@ -724,24 +761,43 @@
         }
       }
     ],
+    "expected_trust_anchor": {
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "kind": "certificate-der-sha256"
+    },
     "failed_checks": [
       {
-        "check": "outcome-bearing",
+        "check": "decision-sensitive-for-fixture",
         "confidence": "behaviorally-established",
         "evidence_id": "catalyst-alternative-signature",
         "state": "fail"
       }
     ],
     "lifecycle_desynchronization": false,
+    "paired_authentications": [],
     "path_scope": "end-entity",
     "policy": "p2-required-hybrid",
     "policy_verdict": "reject",
     "previous_authentication": null,
-    "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+    "reason": "The stack accepted through classical evidence without valid, decision-sensitive-for-fixture post-quantum evidence.",
+    "revocation_policy": {
+      "clock_skew_seconds": null,
+      "max_age_seconds": null,
+      "mode": "hard-fail"
+    },
     "stack": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -773,7 +829,20 @@
     }
   },
   "root_invalid_classical_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "SHA256WITHECDSA",
+          "operation": "validate-pkix-path",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -790,11 +859,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpKKB334,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpevW0KS,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -812,7 +881,7 @@
     "inputs": [
       {
         "bytes": 668,
-        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpKKB334",
+        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpevW0KS",
         "sha256": "fd2727dd64b95957cff692b1644297660b31c3bf2a5d2c8f513c85ec647e28ae"
       },
       {
@@ -829,7 +898,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "123ffc3bf7f1dbc3b46d148af454e00713acffac8c882c03ad937b021edf6470",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -839,21 +917,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "SHA256WITHECDSA",
-          "operation": "validate-pkix-path",
-          "outcome": "accept",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 696,
+      "elapsed_milliseconds": 1008,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -872,7 +937,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 656,
+      "elapsed_milliseconds": 1041,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -894,38 +959,49 @@
   "scopes": [
     {
       "result": {
-        "api_version": "hybrid-x509-verifier/v1",
+        "api_version": "hybrid-x509-evidence/v9",
         "certificate_path": [
           {
+            "binding_design": "catalyst",
+            "certificate_signature_scheme": "classical",
+            "der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "id": "end-entity",
+            "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
             "position": "end-entity",
-            "scheme": "catalyst"
+            "subject_public_key_scheme": "classical"
           },
           {
+            "binding_design": "catalyst",
+            "certificate_signature_scheme": "classical",
+            "der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "id": "intermediate",
+            "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
             "position": "intermediate",
-            "scheme": "catalyst"
-          },
-          {
-            "id": "root",
-            "position": "trust-anchor",
-            "scheme": "classical"
+            "subject_public_key_scheme": "classical"
           }
         ],
         "classical_only_fallback": true,
         "evaluated_evidence": [
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "not-applicable"
             },
+            "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "certificate_id": "end-entity",
+            "decision_sensitive_for_fixture": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "id": "classical-base-signature",
+            "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
             "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "pass"
-            },
             "path": {
               "confidence": "observed",
               "state": "pass"
@@ -943,6 +1019,7 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "pass"
@@ -953,17 +1030,25 @@
             }
           },
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "pass"
             },
+            "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "certificate_id": "end-entity",
-            "id": "catalyst-alternative-signature",
-            "kind": "post-quantum",
-            "outcome_bearing": {
+            "decision_sensitive_for_fixture": {
               "confidence": "behaviorally-established",
               "state": "fail"
             },
+            "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+            "id": "catalyst-alternative-signature",
+            "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
+            "kind": "post-quantum",
             "path": {
               "confidence": "observed",
               "state": "pass"
@@ -981,6 +1066,7 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "pass"
@@ -991,17 +1077,25 @@
             }
           },
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "not-applicable"
             },
+            "certificate_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "certificate_id": "intermediate",
+            "decision_sensitive_for_fixture": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "evidence_artifact_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "id": "intermediate-classical-signature",
+            "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
             "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "pass"
-            },
             "path": {
               "confidence": "observed",
               "state": "pass"
@@ -1019,6 +1113,7 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "pass"
@@ -1029,17 +1124,25 @@
             }
           },
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "not-checked"
             },
+            "certificate_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "certificate_id": "intermediate",
-            "id": "intermediate-alternative-signature",
-            "kind": "post-quantum",
-            "outcome_bearing": {
+            "decision_sensitive_for_fixture": {
               "confidence": "observed",
               "state": "not-checked"
             },
+            "evidence_artifact_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
+            "id": "intermediate-alternative-signature",
+            "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
+            "kind": "post-quantum",
             "path": {
               "confidence": "observed",
               "state": "not-checked"
@@ -1057,47 +1160,10 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "not-checked"
-            },
-            "validity": {
-              "confidence": "observed",
-              "state": "pass"
-            }
-          },
-          {
-            "binding": {
-              "confidence": "observed",
-              "state": "not-applicable"
-            },
-            "certificate_id": "root",
-            "id": "root-classical-signature",
-            "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "fail"
-            },
-            "path": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "position": "trust-anchor",
-            "present": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "recognized": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "revocation": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "signature": {
-              "confidence": "observed",
-              "state": "pass"
             },
             "validity": {
               "confidence": "observed",
@@ -1105,24 +1171,43 @@
             }
           }
         ],
+        "expected_trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
         "failed_checks": [
           {
-            "check": "outcome-bearing",
+            "check": "decision-sensitive-for-fixture",
             "confidence": "behaviorally-established",
             "evidence_id": "catalyst-alternative-signature",
             "state": "fail"
           }
         ],
         "lifecycle_desynchronization": false,
+        "paired_authentications": [],
         "path_scope": "end-entity",
         "policy": "p2-required-hybrid",
         "policy_verdict": "reject",
         "previous_authentication": null,
-        "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+        "reason": "The stack accepted through classical evidence without valid, decision-sensitive-for-fixture post-quantum evidence.",
+        "revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "stack": {
           "adapter": "bouncycastle-java-current",
           "applied_validation_time": "2026-06-20T00:00:00Z",
+          "certification_path_der_sha256": [
+            "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+            "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+          ],
           "execution_isolation": "container",
+          "selected_path_source": "presented-input",
+          "trust_anchor": {
+            "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+            "kind": "certificate-der-sha256"
+          },
           "validation_profile": "x509-path",
           "validation_time": {
             "confidence": "observed",
@@ -1139,38 +1224,49 @@
     },
     {
       "result": {
-        "api_version": "hybrid-x509-verifier/v1",
+        "api_version": "hybrid-x509-evidence/v9",
         "certificate_path": [
           {
+            "binding_design": "catalyst",
+            "certificate_signature_scheme": "classical",
+            "der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "id": "end-entity",
+            "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
             "position": "end-entity",
-            "scheme": "catalyst"
+            "subject_public_key_scheme": "classical"
           },
           {
+            "binding_design": "catalyst",
+            "certificate_signature_scheme": "classical",
+            "der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "id": "intermediate",
+            "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
             "position": "intermediate",
-            "scheme": "catalyst"
-          },
-          {
-            "id": "root",
-            "position": "trust-anchor",
-            "scheme": "classical"
+            "subject_public_key_scheme": "classical"
           }
         ],
         "classical_only_fallback": true,
         "evaluated_evidence": [
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "not-applicable"
             },
+            "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "certificate_id": "end-entity",
+            "decision_sensitive_for_fixture": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "id": "classical-base-signature",
+            "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
             "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "pass"
-            },
             "path": {
               "confidence": "observed",
               "state": "pass"
@@ -1188,6 +1284,7 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "pass"
@@ -1198,17 +1295,25 @@
             }
           },
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "pass"
             },
+            "certificate_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
             "certificate_id": "end-entity",
-            "id": "catalyst-alternative-signature",
-            "kind": "post-quantum",
-            "outcome_bearing": {
+            "decision_sensitive_for_fixture": {
               "confidence": "behaviorally-established",
               "state": "fail"
             },
+            "evidence_artifact_der_sha256": "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+            "id": "catalyst-alternative-signature",
+            "issuer_edge_sha256": "d8c30d5e15eded7b797308689c6c50ff10484219fce2330c55712b80668a0347",
+            "kind": "post-quantum",
             "path": {
               "confidence": "observed",
               "state": "pass"
@@ -1226,6 +1331,7 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "pass"
@@ -1236,17 +1342,25 @@
             }
           },
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "not-applicable"
             },
+            "certificate_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "certificate_id": "intermediate",
+            "decision_sensitive_for_fixture": {
+              "confidence": "behaviorally-established",
+              "state": "pass"
+            },
+            "evidence_artifact_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "id": "intermediate-classical-signature",
+            "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
             "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "pass"
-            },
             "path": {
               "confidence": "observed",
               "state": "pass"
@@ -1264,6 +1378,7 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "pass"
@@ -1274,17 +1389,25 @@
             }
           },
           {
+            "applied_revocation_policy": {
+              "clock_skew_seconds": null,
+              "max_age_seconds": null,
+              "mode": "hard-fail"
+            },
             "binding": {
               "confidence": "observed",
               "state": "not-checked"
             },
+            "certificate_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
             "certificate_id": "intermediate",
-            "id": "intermediate-alternative-signature",
-            "kind": "post-quantum",
-            "outcome_bearing": {
+            "decision_sensitive_for_fixture": {
               "confidence": "observed",
               "state": "not-checked"
             },
+            "evidence_artifact_der_sha256": "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e",
+            "id": "intermediate-alternative-signature",
+            "issuer_edge_sha256": "39077287a9044e0777db0cc78c34747387475f3a97f5866ccfa407673c8eb7f4",
+            "kind": "post-quantum",
             "path": {
               "confidence": "observed",
               "state": "not-checked"
@@ -1302,47 +1425,10 @@
               "confidence": "observed",
               "state": "pass"
             },
+            "revocation_method": "crl",
             "signature": {
               "confidence": "observed",
               "state": "not-checked"
-            },
-            "validity": {
-              "confidence": "observed",
-              "state": "pass"
-            }
-          },
-          {
-            "binding": {
-              "confidence": "observed",
-              "state": "not-applicable"
-            },
-            "certificate_id": "root",
-            "id": "root-classical-signature",
-            "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "fail"
-            },
-            "path": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "position": "trust-anchor",
-            "present": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "recognized": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "revocation": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "signature": {
-              "confidence": "observed",
-              "state": "pass"
             },
             "validity": {
               "confidence": "observed",
@@ -1350,9 +1436,13 @@
             }
           }
         ],
+        "expected_trust_anchor": {
+          "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+          "kind": "certificate-der-sha256"
+        },
         "failed_checks": [
           {
-            "check": "outcome-bearing",
+            "check": "decision-sensitive-for-fixture",
             "confidence": "behaviorally-established",
             "evidence_id": "catalyst-alternative-signature",
             "state": "fail"
@@ -1388,22 +1478,37 @@
             "state": "not-checked"
           },
           {
-            "check": "outcome-bearing",
+            "check": "decision-sensitive-for-fixture",
             "confidence": "observed",
             "evidence_id": "intermediate-alternative-signature",
             "state": "not-checked"
           }
         ],
         "lifecycle_desynchronization": false,
-        "path_scope": "issuing-path",
+        "paired_authentications": [],
+        "path_scope": "certification-path",
         "policy": "p2-required-hybrid",
         "policy_verdict": "reject",
         "previous_authentication": null,
-        "reason": "The stack accepted through classical evidence without valid, outcome-bearing post-quantum evidence.",
+        "reason": "The stack accepted through classical evidence without valid, decision-sensitive-for-fixture post-quantum evidence.",
+        "revocation_policy": {
+          "clock_skew_seconds": null,
+          "max_age_seconds": null,
+          "mode": "hard-fail"
+        },
         "stack": {
           "adapter": "bouncycastle-java-current",
           "applied_validation_time": "2026-06-20T00:00:00Z",
+          "certification_path_der_sha256": [
+            "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+            "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+          ],
           "execution_isolation": "container",
+          "selected_path_source": "presented-input",
+          "trust_anchor": {
+            "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+            "kind": "certificate-der-sha256"
+          },
           "validation_profile": "x509-path",
           "validation_time": {
             "confidence": "observed",
@@ -1416,298 +1521,24 @@
         "stack_verdict": "accept",
         "validation_time": "2026-06-20T00:00:00Z"
       },
-      "scope": "issuing-path"
-    },
-    {
-      "result": {
-        "api_version": "hybrid-x509-verifier/v1",
-        "certificate_path": [
-          {
-            "id": "end-entity",
-            "position": "end-entity",
-            "scheme": "catalyst"
-          },
-          {
-            "id": "intermediate",
-            "position": "intermediate",
-            "scheme": "catalyst"
-          },
-          {
-            "id": "root",
-            "position": "trust-anchor",
-            "scheme": "classical"
-          }
-        ],
-        "classical_only_fallback": false,
-        "evaluated_evidence": [
-          {
-            "binding": {
-              "confidence": "observed",
-              "state": "not-applicable"
-            },
-            "certificate_id": "end-entity",
-            "id": "classical-base-signature",
-            "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "pass"
-            },
-            "path": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "position": "end-entity",
-            "present": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "recognized": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "revocation": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "signature": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "validity": {
-              "confidence": "observed",
-              "state": "pass"
-            }
-          },
-          {
-            "binding": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "certificate_id": "end-entity",
-            "id": "catalyst-alternative-signature",
-            "kind": "post-quantum",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "fail"
-            },
-            "path": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "position": "end-entity",
-            "present": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "recognized": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "revocation": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "signature": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "validity": {
-              "confidence": "observed",
-              "state": "pass"
-            }
-          },
-          {
-            "binding": {
-              "confidence": "observed",
-              "state": "not-applicable"
-            },
-            "certificate_id": "intermediate",
-            "id": "intermediate-classical-signature",
-            "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "pass"
-            },
-            "path": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "position": "intermediate",
-            "present": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "recognized": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "revocation": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "signature": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "validity": {
-              "confidence": "observed",
-              "state": "pass"
-            }
-          },
-          {
-            "binding": {
-              "confidence": "observed",
-              "state": "not-checked"
-            },
-            "certificate_id": "intermediate",
-            "id": "intermediate-alternative-signature",
-            "kind": "post-quantum",
-            "outcome_bearing": {
-              "confidence": "observed",
-              "state": "not-checked"
-            },
-            "path": {
-              "confidence": "observed",
-              "state": "not-checked"
-            },
-            "position": "intermediate",
-            "present": {
-              "confidence": "observed",
-              "state": "fail"
-            },
-            "recognized": {
-              "confidence": "observed",
-              "state": "not-checked"
-            },
-            "revocation": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "signature": {
-              "confidence": "observed",
-              "state": "not-checked"
-            },
-            "validity": {
-              "confidence": "observed",
-              "state": "pass"
-            }
-          },
-          {
-            "binding": {
-              "confidence": "observed",
-              "state": "not-applicable"
-            },
-            "certificate_id": "root",
-            "id": "root-classical-signature",
-            "kind": "classical",
-            "outcome_bearing": {
-              "confidence": "behaviorally-established",
-              "state": "fail"
-            },
-            "path": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "position": "trust-anchor",
-            "present": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "recognized": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "revocation": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "signature": {
-              "confidence": "observed",
-              "state": "pass"
-            },
-            "validity": {
-              "confidence": "observed",
-              "state": "pass"
-            }
-          }
-        ],
-        "failed_checks": [
-          {
-            "check": "outcome-bearing",
-            "confidence": "behaviorally-established",
-            "evidence_id": "catalyst-alternative-signature",
-            "state": "fail"
-          },
-          {
-            "check": "present",
-            "confidence": "observed",
-            "evidence_id": "intermediate-alternative-signature",
-            "state": "fail"
-          },
-          {
-            "check": "recognized",
-            "confidence": "observed",
-            "evidence_id": "intermediate-alternative-signature",
-            "state": "not-checked"
-          },
-          {
-            "check": "signature",
-            "confidence": "observed",
-            "evidence_id": "intermediate-alternative-signature",
-            "state": "not-checked"
-          },
-          {
-            "check": "binding",
-            "confidence": "observed",
-            "evidence_id": "intermediate-alternative-signature",
-            "state": "not-checked"
-          },
-          {
-            "check": "path",
-            "confidence": "observed",
-            "evidence_id": "intermediate-alternative-signature",
-            "state": "not-checked"
-          },
-          {
-            "check": "outcome-bearing",
-            "confidence": "observed",
-            "evidence_id": "intermediate-alternative-signature",
-            "state": "not-checked"
-          },
-          {
-            "check": "outcome-bearing",
-            "confidence": "behaviorally-established",
-            "evidence_id": "root-classical-signature",
-            "state": "fail"
-          }
-        ],
-        "lifecycle_desynchronization": false,
-        "path_scope": "full-path-with-trust-anchor-evidence",
-        "policy": "p2-required-hybrid",
-        "policy_verdict": "reject",
-        "previous_authentication": null,
-        "reason": "Required classical or post-quantum evidence did not pass.",
-        "stack": {
-          "adapter": "bouncycastle-java-current",
-          "applied_validation_time": "2026-06-20T00:00:00Z",
-          "execution_isolation": "container",
-          "validation_profile": "x509-path",
-          "validation_time": {
-            "confidence": "observed",
-            "state": "pass"
-          },
-          "verdict": "accept",
-          "version": "1.85",
-          "version_track": "current"
-        },
-        "stack_verdict": "accept",
-        "validation_time": "2026-06-20T00:00:00Z"
-      },
-      "scope": "full-path-with-trust-anchor-evidence"
+      "scope": "certification-path"
     }
   ],
   "valid_default_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "SHA256WITHECDSA",
+          "operation": "validate-pkix-path",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -1724,11 +1555,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -1763,7 +1594,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "x509-path",
       "validation_time": {
         "confidence": "observed",
@@ -1773,21 +1613,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "SHA256WITHECDSA",
-          "operation": "validate-pkix-path",
-          "outcome": "accept",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 688,
+      "elapsed_milliseconds": 1135,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -1806,7 +1633,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 1068,
+      "elapsed_milliseconds": 1041,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -1826,7 +1653,20 @@
     }
   },
   "valid_post_quantum_direct_control": {
-    "api_version": "hybrid-x509-verifier/v1",
+    "adapter_trace": {
+      "confidence": "observed",
+      "events": [
+        {
+          "algorithm": "ML-DSA",
+          "operation": "check-alternative-signature",
+          "outcome": "accept",
+          "target": "leaf"
+        }
+      ],
+      "extensions": [],
+      "instrumentation_scope": "adapter"
+    },
+    "api_version": "hybrid-x509-evidence/v9",
     "arguments": [
       "run",
       "--rm",
@@ -1843,11 +1683,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/target/generated-corpus/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-bouncycastle:1.85",
       "--root",
@@ -1882,7 +1722,16 @@
     "observation": {
       "adapter": "bouncycastle-java-current",
       "applied_validation_time": "2026-06-20T00:00:00Z",
+      "certification_path_der_sha256": [
+        "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+        "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+      ],
       "execution_isolation": "container",
+      "selected_path_source": "presented-input",
+      "trust_anchor": {
+        "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+        "kind": "certificate-der-sha256"
+      },
       "validation_profile": "evidence-signature",
       "validation_time": {
         "confidence": "observed",
@@ -1892,21 +1741,8 @@
       "version": "1.85",
       "version_track": "current"
     },
-    "source_instrumentation": {
-      "confidence": "behaviorally-established",
-      "events": [
-        {
-          "algorithm": "ML-DSA",
-          "operation": "check-alternative-signature",
-          "outcome": "accept",
-          "target": "leaf"
-        }
-      ],
-      "extensions": [],
-      "instrumentation_scope": "adapter"
-    },
     "verification": {
-      "elapsed_milliseconds": 627,
+      "elapsed_milliseconds": 1075,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -1925,7 +1761,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 605,
+      "elapsed_milliseconds": 1041,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

@@ -10,65 +10,8 @@
       "case": "valid",
       "expected": "accept",
       "report": {
-        "api_version": "hybrid-x509-verifier/v1",
-        "arguments": [
-          "run",
-          "--rm",
-          "--pull=never",
-          "--network=none",
-          "--ipc=none",
-          "--read-only",
-          "--cap-drop=ALL",
-          "--security-opt=no-new-privileges",
-          "--user=65532:65532",
-          "--pids-limit=64",
-          "--memory=768m",
-          "--cpus=2",
-          "--ulimit=nofile=64:64",
-          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem,dst=/input/leaf.pem,readonly",
-          "--",
-          "hybrid-x509-wolfssl:5.9.2",
-          "mode1",
-          "2026-07-07 11:59:59",
-          "--scheme",
-          "catalyst-wolfgen",
-          "--root",
-          "/input/root.pem",
-          "--leaf",
-          "/input/leaf.pem"
-        ],
-        "executable": "/usr/local/bin/docker",
-        "inputs": [
-          {
-            "bytes": 2464,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
-            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
-          },
-          {
-            "bytes": 5746,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem",
-            "sha256": "cfbbab5ff7c661cb849c9283aeec340eb7de5bce6df08bb8f360bf752e1dffed"
-          }
-        ],
-        "observation": {
-          "adapter": "wolfssl-mode1",
-          "applied_validation_time": "2026-07-07T11:59:59Z",
-          "execution_isolation": "container",
-          "validation_profile": "x509-path",
-          "validation_time": {
-            "confidence": "observed",
-            "state": "pass"
-          },
-          "verdict": "accept",
-          "version": "wolfSSL 5.9.2 mode1-default",
-          "version_track": "current-and-study"
-        },
-        "source_instrumentation": {
-          "confidence": "behaviorally-established",
+        "adapter_trace": {
+          "confidence": "observed",
           "events": [
             {
               "algorithm": null,
@@ -86,8 +29,73 @@
           "extensions": [],
           "instrumentation_scope": "adapter"
         },
+        "api_version": "hybrid-x509-evidence/v9",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-wolfssl:5.9.2",
+          "mode1",
+          "2026-07-07 11:59:59",
+          "--scheme",
+          "catalyst-wolfgen",
+          "--root",
+          "/input/root.pem",
+          "--leaf",
+          "/input/leaf.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 2464,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
+            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
+          },
+          {
+            "bytes": 5746,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem",
+            "sha256": "cfbbab5ff7c661cb849c9283aeec340eb7de5bce6df08bb8f360bf752e1dffed"
+          }
+        ],
+        "observation": {
+          "adapter": "wolfssl-mode1",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
+          "certification_path_der_sha256": [
+            "f77248dea12f137fb6a397cf9679e1d3825871dfbc3c13dc45f9d9b1e7b1b563"
+          ],
+          "execution_isolation": "container",
+          "selected_path_source": "presented-input",
+          "trust_anchor": {
+            "der_sha256": "f013cec9c9f33e1e1df6a3cdbca4b07925db33cdf526931b8c6c4cbffc538a5a",
+            "kind": "certificate-der-sha256"
+          },
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "wolfSSL 5.9.2 mode1-default",
+          "version_track": "current-and-study"
+        },
         "verification": {
-          "elapsed_milliseconds": 372,
+          "elapsed_milliseconds": 1018,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -106,7 +114,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 780,
+          "elapsed_milliseconds": 845,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -133,65 +141,8 @@
       "case": "pqc-corrupt",
       "expected": "accept",
       "report": {
-        "api_version": "hybrid-x509-verifier/v1",
-        "arguments": [
-          "run",
-          "--rm",
-          "--pull=never",
-          "--network=none",
-          "--ipc=none",
-          "--read-only",
-          "--cap-drop=ALL",
-          "--security-opt=no-new-privileges",
-          "--user=65532:65532",
-          "--pids-limit=64",
-          "--memory=768m",
-          "--cpus=2",
-          "--ulimit=nofile=64:64",
-          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem,dst=/input/leaf.pem,readonly",
-          "--",
-          "hybrid-x509-wolfssl:5.9.2",
-          "mode1",
-          "2026-07-07 11:59:59",
-          "--scheme",
-          "catalyst-wolfgen",
-          "--root",
-          "/input/root.pem",
-          "--leaf",
-          "/input/leaf.pem"
-        ],
-        "executable": "/usr/local/bin/docker",
-        "inputs": [
-          {
-            "bytes": 2464,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
-            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
-          },
-          {
-            "bytes": 5750,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem",
-            "sha256": "06c4214c4816fcf234eb5bf6e0589c107e405441205ad76d59a3ebd59e88c00d"
-          }
-        ],
-        "observation": {
-          "adapter": "wolfssl-mode1",
-          "applied_validation_time": "2026-07-07T11:59:59Z",
-          "execution_isolation": "container",
-          "validation_profile": "x509-path",
-          "validation_time": {
-            "confidence": "observed",
-            "state": "pass"
-          },
-          "verdict": "accept",
-          "version": "wolfSSL 5.9.2 mode1-default",
-          "version_track": "current-and-study"
-        },
-        "source_instrumentation": {
-          "confidence": "behaviorally-established",
+        "adapter_trace": {
+          "confidence": "observed",
           "events": [
             {
               "algorithm": null,
@@ -209,8 +160,73 @@
           "extensions": [],
           "instrumentation_scope": "adapter"
         },
+        "api_version": "hybrid-x509-evidence/v9",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-wolfssl:5.9.2",
+          "mode1",
+          "2026-07-07 11:59:59",
+          "--scheme",
+          "catalyst-wolfgen",
+          "--root",
+          "/input/root.pem",
+          "--leaf",
+          "/input/leaf.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 2464,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
+            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
+          },
+          {
+            "bytes": 5750,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem",
+            "sha256": "06c4214c4816fcf234eb5bf6e0589c107e405441205ad76d59a3ebd59e88c00d"
+          }
+        ],
+        "observation": {
+          "adapter": "wolfssl-mode1",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
+          "certification_path_der_sha256": [
+            "66145782587a463aeab617d100c669e98b0b12d383cb5cbe9cf70392731fdddb"
+          ],
+          "execution_isolation": "container",
+          "selected_path_source": "presented-input",
+          "trust_anchor": {
+            "der_sha256": "f013cec9c9f33e1e1df6a3cdbca4b07925db33cdf526931b8c6c4cbffc538a5a",
+            "kind": "certificate-der-sha256"
+          },
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "wolfSSL 5.9.2 mode1-default",
+          "version_track": "current-and-study"
+        },
         "verification": {
-          "elapsed_milliseconds": 353,
+          "elapsed_milliseconds": 1054,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -229,7 +245,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 339,
+          "elapsed_milliseconds": 984,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -256,65 +272,8 @@
       "case": "valid",
       "expected": "accept",
       "report": {
-        "api_version": "hybrid-x509-verifier/v1",
-        "arguments": [
-          "run",
-          "--rm",
-          "--pull=never",
-          "--network=none",
-          "--ipc=none",
-          "--read-only",
-          "--cap-drop=ALL",
-          "--security-opt=no-new-privileges",
-          "--user=65532:65532",
-          "--pids-limit=64",
-          "--memory=768m",
-          "--cpus=2",
-          "--ulimit=nofile=64:64",
-          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem,dst=/input/leaf.pem,readonly",
-          "--",
-          "hybrid-x509-wolfssl:5.9.2",
-          "mode2",
-          "2026-07-07 11:59:59",
-          "--scheme",
-          "catalyst-wolfgen",
-          "--root",
-          "/input/root.pem",
-          "--leaf",
-          "/input/leaf.pem"
-        ],
-        "executable": "/usr/local/bin/docker",
-        "inputs": [
-          {
-            "bytes": 2464,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
-            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
-          },
-          {
-            "bytes": 5746,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem",
-            "sha256": "cfbbab5ff7c661cb849c9283aeec340eb7de5bce6df08bb8f360bf752e1dffed"
-          }
-        ],
-        "observation": {
-          "adapter": "wolfssl-mode2",
-          "applied_validation_time": "2026-07-07T11:59:59Z",
-          "execution_isolation": "container",
-          "validation_profile": "x509-path",
-          "validation_time": {
-            "confidence": "observed",
-            "state": "pass"
-          },
-          "verdict": "accept",
-          "version": "wolfSSL 5.9.2 mode2-dualalg",
-          "version_track": "current-and-study"
-        },
-        "source_instrumentation": {
-          "confidence": "behaviorally-established",
+        "adapter_trace": {
+          "confidence": "observed",
           "events": [
             {
               "algorithm": null,
@@ -332,8 +291,73 @@
           "extensions": [],
           "instrumentation_scope": "adapter"
         },
+        "api_version": "hybrid-x509-evidence/v9",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-wolfssl:5.9.2",
+          "mode2",
+          "2026-07-07 11:59:59",
+          "--scheme",
+          "catalyst-wolfgen",
+          "--root",
+          "/input/root.pem",
+          "--leaf",
+          "/input/leaf.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 2464,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
+            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
+          },
+          {
+            "bytes": 5746,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-good.pem",
+            "sha256": "cfbbab5ff7c661cb849c9283aeec340eb7de5bce6df08bb8f360bf752e1dffed"
+          }
+        ],
+        "observation": {
+          "adapter": "wolfssl-mode2",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
+          "certification_path_der_sha256": [
+            "f77248dea12f137fb6a397cf9679e1d3825871dfbc3c13dc45f9d9b1e7b1b563"
+          ],
+          "execution_isolation": "container",
+          "selected_path_source": "presented-input",
+          "trust_anchor": {
+            "der_sha256": "f013cec9c9f33e1e1df6a3cdbca4b07925db33cdf526931b8c6c4cbffc538a5a",
+            "kind": "certificate-der-sha256"
+          },
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "accept",
+          "version": "wolfSSL 5.9.2 mode2-dualalg",
+          "version_track": "current-and-study"
+        },
         "verification": {
-          "elapsed_milliseconds": 331,
+          "elapsed_milliseconds": 1036,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -352,7 +376,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 318,
+          "elapsed_milliseconds": 939,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,
@@ -379,65 +403,8 @@
       "case": "pqc-corrupt",
       "expected": "reject",
       "report": {
-        "api_version": "hybrid-x509-verifier/v1",
-        "arguments": [
-          "run",
-          "--rm",
-          "--pull=never",
-          "--network=none",
-          "--ipc=none",
-          "--read-only",
-          "--cap-drop=ALL",
-          "--security-opt=no-new-privileges",
-          "--user=65532:65532",
-          "--pids-limit=64",
-          "--memory=768m",
-          "--cpus=2",
-          "--ulimit=nofile=64:64",
-          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
-          "--mount",
-          "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem,dst=/input/leaf.pem,readonly",
-          "--",
-          "hybrid-x509-wolfssl:5.9.2",
-          "mode2",
-          "2026-07-07 11:59:59",
-          "--scheme",
-          "catalyst-wolfgen",
-          "--root",
-          "/input/root.pem",
-          "--leaf",
-          "/input/leaf.pem"
-        ],
-        "executable": "/usr/local/bin/docker",
-        "inputs": [
-          {
-            "bytes": 2464,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
-            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
-          },
-          {
-            "bytes": 5750,
-            "path": "/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem",
-            "sha256": "06c4214c4816fcf234eb5bf6e0589c107e405441205ad76d59a3ebd59e88c00d"
-          }
-        ],
-        "observation": {
-          "adapter": "wolfssl-mode2",
-          "applied_validation_time": "2026-07-07T11:59:59Z",
-          "execution_isolation": "container",
-          "validation_profile": "x509-path",
-          "validation_time": {
-            "confidence": "observed",
-            "state": "pass"
-          },
-          "verdict": "reject",
-          "version": "wolfSSL 5.9.2 mode2-dualalg",
-          "version_track": "current-and-study"
-        },
-        "source_instrumentation": {
-          "confidence": "behaviorally-established",
+        "adapter_trace": {
+          "confidence": "observed",
           "events": [
             {
               "algorithm": null,
@@ -455,8 +422,73 @@
           "extensions": [],
           "instrumentation_scope": "adapter"
         },
+        "api_version": "hybrid-x509-evidence/v9",
+        "arguments": [
+          "run",
+          "--rm",
+          "--pull=never",
+          "--network=none",
+          "--ipc=none",
+          "--read-only",
+          "--cap-drop=ALL",
+          "--security-opt=no-new-privileges",
+          "--user=65532:65532",
+          "--pids-limit=64",
+          "--memory=768m",
+          "--cpus=2",
+          "--ulimit=nofile=64:64",
+          "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem,dst=/input/root.pem,readonly",
+          "--mount",
+          "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem,dst=/input/leaf.pem,readonly",
+          "--",
+          "hybrid-x509-wolfssl:5.9.2",
+          "mode2",
+          "2026-07-07 11:59:59",
+          "--scheme",
+          "catalyst-wolfgen",
+          "--root",
+          "/input/root.pem",
+          "--leaf",
+          "/input/leaf.pem"
+        ],
+        "executable": "/usr/local/bin/docker",
+        "inputs": [
+          {
+            "bytes": 2464,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-ca.pem",
+            "sha256": "78ca2763fd88e0114019b1edf5a04602fe357e51f20b089232351e7784f3d622"
+          },
+          {
+            "bytes": 5750,
+            "path": "/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/wolfgen/wolfgen-leaf-bad.pem",
+            "sha256": "06c4214c4816fcf234eb5bf6e0589c107e405441205ad76d59a3ebd59e88c00d"
+          }
+        ],
+        "observation": {
+          "adapter": "wolfssl-mode2",
+          "applied_validation_time": "2026-07-07T11:59:59Z",
+          "certification_path_der_sha256": [
+            "66145782587a463aeab617d100c669e98b0b12d383cb5cbe9cf70392731fdddb"
+          ],
+          "execution_isolation": "container",
+          "selected_path_source": "presented-input",
+          "trust_anchor": {
+            "der_sha256": "f013cec9c9f33e1e1df6a3cdbca4b07925db33cdf526931b8c6c4cbffc538a5a",
+            "kind": "certificate-der-sha256"
+          },
+          "validation_profile": "x509-path",
+          "validation_time": {
+            "confidence": "observed",
+            "state": "pass"
+          },
+          "verdict": "reject",
+          "version": "wolfSSL 5.9.2 mode2-dualalg",
+          "version_track": "current-and-study"
+        },
         "verification": {
-          "elapsed_milliseconds": 322,
+          "elapsed_milliseconds": 1059,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 88,
@@ -475,7 +507,7 @@
           "timed_out": false
         },
         "version": {
-          "elapsed_milliseconds": 300,
+          "elapsed_milliseconds": 974,
           "status_code": 0,
           "stderr": {
             "captured_bytes": 0,

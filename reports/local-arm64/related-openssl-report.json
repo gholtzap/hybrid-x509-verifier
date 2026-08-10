@@ -28,13 +28,13 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-certA.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/related-certA.pem,dst=/input/leaf.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
       "--",
       "hybrid-x509-openssl:4.0.1",
       "-attime",
@@ -94,7 +94,7 @@
       "version_track": "current"
     },
     "verification": {
-      "elapsed_milliseconds": 500,
+      "elapsed_milliseconds": 944,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -113,7 +113,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 780,
+      "elapsed_milliseconds": 795,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -169,13 +169,13 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmphSzvJf,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpr7uDLS,dst=/input/leaf.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
       "--",
       "hybrid-x509-openssl:4.0.1",
       "-attime",
@@ -203,7 +203,7 @@
       },
       {
         "bytes": 1298,
-        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmphSzvJf",
+        "path": "/var/folders/w3/qsx0dn4x28jcg79dx16mdhvr0000gn/T/.tmpr7uDLS",
         "sha256": "a238b58cc7286ee212956a0ae827677e2ed8233d8eb2657e7b6d394bc9b1f1f4"
       },
       {
@@ -235,13 +235,13 @@
       "version_track": "current"
     },
     "verification": {
-      "elapsed_milliseconds": 414,
+      "elapsed_milliseconds": 946,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 420,
-        "data": "Q049cmVsYXRlZCBDZXJ0IEEgKFJTQS0zMDcyKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgNyBhdCAwIGRlcHRoIGxvb2t1cDogY2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKZXJyb3IgL2lucHV0L2xlYWYucGVtOiB2ZXJpZmljYXRpb24gZmFpbGVkCkMwM0YwQjg0RkZGRjAwMDA6ZXJyb3I6MDMwMDAwRUE6ZGlnaXRhbCBlbnZlbG9wZSByb3V0aW5lczpFVlBfRGlnZXN0VmVyaWZ5RmluYWw6cHJvdmlkZXIgc2lnbmF0dXJlIGZhaWx1cmU6Y3J5cHRvL2V2cC9tX3NpZ3Zlci5jOjUzMzpFQ0RTQSBkaWdlc3RfdmVyaWZ5X2ZpbmFsOgpDMDNGMEI4NEZGRkYwMDAwOmVycm9yOjA2ODgwMDA2OmFzbjEgZW5jb2Rpbmcgcm91dGluZXM6QVNOMV9pdGVtX3ZlcmlmeV9jdHg6RVZQIGxpYjpjcnlwdG8vYXNuMS9hX3ZlcmlmeS5jOjIyMDoK",
+        "data": "Q049cmVsYXRlZCBDZXJ0IEEgKFJTQS0zMDcyKSwgTz1wcWMtcHJvYmUsIEM9S1IKZXJyb3IgNyBhdCAwIGRlcHRoIGxvb2t1cDogY2VydGlmaWNhdGUgc2lnbmF0dXJlIGZhaWx1cmUKZXJyb3IgL2lucHV0L2xlYWYucGVtOiB2ZXJpZmljYXRpb24gZmFpbGVkCkMwRkY1QkIxRkZGRjAwMDA6ZXJyb3I6MDMwMDAwRUE6ZGlnaXRhbCBlbnZlbG9wZSByb3V0aW5lczpFVlBfRGlnZXN0VmVyaWZ5RmluYWw6cHJvdmlkZXIgc2lnbmF0dXJlIGZhaWx1cmU6Y3J5cHRvL2V2cC9tX3NpZ3Zlci5jOjUzMzpFQ0RTQSBkaWdlc3RfdmVyaWZ5X2ZpbmFsOgpDMEZGNUJCMUZGRkYwMDAwOmVycm9yOjA2ODgwMDA2OmFzbjEgZW5jb2Rpbmcgcm91dGluZXM6QVNOMV9pdGVtX3ZlcmlmeV9jdHg6RVZQIGxpYjpjcnlwdG8vYXNuMS9hX3ZlcmlmeS5jOjIyMDoK",
         "encoding": "base64",
-        "sha256": "9cd8c62c03b07cd86b3bc0e8af01b2f2042090ce22ed9bc8881ba77997700172",
+        "sha256": "a3e6d854064dfb2547ebe69423ba73ee3d1af6224462ee83c44b3d435c9c45aa",
         "truncated": false
       },
       "stdout": {
@@ -254,7 +254,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 780,
+      "elapsed_milliseconds": 795,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -362,11 +362,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-leafB-expired.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/related-leafB-expired.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-openssl:4.0.1",
       "-attime",
@@ -418,7 +418,7 @@
       "version_track": "current"
     },
     "verification": {
-      "elapsed_milliseconds": 399,
+      "elapsed_milliseconds": 959,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 149,
@@ -437,7 +437,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 780,
+      "elapsed_milliseconds": 795,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -475,11 +475,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/generated-controls/related-leafB-unbound.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/generated-controls/related-leafB-unbound.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-openssl:4.0.1",
       "-attime",
@@ -531,7 +531,7 @@
       "version_track": "current"
     },
     "verification": {
-      "elapsed_milliseconds": 390,
+      "elapsed_milliseconds": 935,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -550,7 +550,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 780,
+      "elapsed_milliseconds": 795,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -588,13 +588,13 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-leafB.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/related-leafB.pem,dst=/input/leaf.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/related-crl.pem,dst=/input/crl.pem,readonly",
       "--",
       "hybrid-x509-openssl:4.0.1",
       "-attime",
@@ -654,7 +654,7 @@
       "version_track": "current"
     },
     "verification": {
-      "elapsed_milliseconds": 401,
+      "elapsed_milliseconds": 988,
       "status_code": 2,
       "stderr": {
         "captured_bytes": 137,
@@ -673,7 +673,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 780,
+      "elapsed_milliseconds": 795,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -711,11 +711,11 @@
       "--ulimit=nofile=64:64",
       "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/ica.pem,dst=/input/intermediate.pem,readonly",
       "--mount",
-      "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/related-leafB.pem,dst=/input/leaf.pem,readonly",
+      "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/related-leafB.pem,dst=/input/leaf.pem,readonly",
       "--",
       "hybrid-x509-openssl:4.0.1",
       "-attime",
@@ -767,7 +767,7 @@
       "version_track": "current"
     },
     "verification": {
-      "elapsed_milliseconds": 404,
+      "elapsed_milliseconds": 920,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,
@@ -786,7 +786,7 @@
       "timed_out": false
     },
     "version": {
-      "elapsed_milliseconds": 780,
+      "elapsed_milliseconds": 795,
       "status_code": 0,
       "stderr": {
         "captured_bytes": 0,

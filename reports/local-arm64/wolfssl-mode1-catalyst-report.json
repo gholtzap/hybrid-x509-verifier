@@ -1,5 +1,24 @@
 {
-  "api_version": "hybrid-x509-verifier/v1",
+  "adapter_trace": {
+    "confidence": "observed",
+    "events": [
+      {
+        "algorithm": null,
+        "operation": "load-ca-certificate",
+        "outcome": "pass",
+        "target": "certificate-path"
+      },
+      {
+        "algorithm": null,
+        "operation": "verify-certificate-path",
+        "outcome": "accept",
+        "target": "leaf"
+      }
+    ],
+    "extensions": [],
+    "instrumentation_scope": "adapter"
+  },
+  "api_version": "hybrid-x509-evidence/v9",
   "arguments": [
     "run",
     "--rm",
@@ -16,11 +35,11 @@
     "--ulimit=nofile=64:64",
     "--tmpfs=/tmp:rw,noexec,nosuid,size=16m",
     "--mount",
-    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
+    "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/root.pem,dst=/input/root.pem,readonly",
     "--mount",
-    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
+    "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-leaf.pem,dst=/input/leaf.pem,readonly",
     "--mount",
-    "type=bind,src=/Users/gmh/dev/quantum/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
+    "type=bind,src=/private/tmp/quantum-publication-ee72/tests/fixtures/paper-v1.0.2/catalyst-ica.pem,dst=/input/intermediate.pem,readonly",
     "--",
     "hybrid-x509-wolfssl:5.9.2",
     "mode1",
@@ -55,7 +74,16 @@
   "observation": {
     "adapter": "wolfssl-mode1",
     "applied_validation_time": "2026-06-20T00:00:00Z",
+    "certification_path_der_sha256": [
+      "9fd428de0a565549a2d55daaf899bf9ef336b904f4b447b6b38d4497eed95669",
+      "0ea566f25dbf78d9f44b136aac048052bb56ac825722fe6a8c38a97db01c0c9e"
+    ],
     "execution_isolation": "container",
+    "selected_path_source": "presented-input",
+    "trust_anchor": {
+      "der_sha256": "414005efd6544ead5ac13a50c0a72664e1c6acb72a6b38bafac019057d4050d7",
+      "kind": "certificate-der-sha256"
+    },
     "validation_profile": "x509-path",
     "validation_time": {
       "confidence": "observed",
@@ -65,27 +93,8 @@
     "version": "wolfSSL 5.9.2 mode1-default",
     "version_track": "current-and-study"
   },
-  "source_instrumentation": {
-    "confidence": "behaviorally-established",
-    "events": [
-      {
-        "algorithm": null,
-        "operation": "load-ca-certificate",
-        "outcome": "pass",
-        "target": "certificate-path"
-      },
-      {
-        "algorithm": null,
-        "operation": "verify-certificate-path",
-        "outcome": "accept",
-        "target": "leaf"
-      }
-    ],
-    "extensions": [],
-    "instrumentation_scope": "adapter"
-  },
   "verification": {
-    "elapsed_milliseconds": 332,
+    "elapsed_milliseconds": 1100,
     "status_code": 0,
     "stderr": {
       "captured_bytes": 0,
@@ -104,7 +113,7 @@
     "timed_out": false
   },
   "version": {
-    "elapsed_milliseconds": 387,
+    "elapsed_milliseconds": 954,
     "status_code": 0,
     "stderr": {
       "captured_bytes": 0,
