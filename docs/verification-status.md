@@ -2,19 +2,15 @@
 
 ## Publication status
 
-Publish this repository only as a pre-alpha fixture research harness with known semantic limits.
-Do not publish it as a Hybrid X.509 authentication verifier. The main command evaluates trusted,
-caller-supplied evidence claims. It does not independently derive most certificate, path,
-revocation, or TLS facts from the original inputs.
+This pre-alpha research harness evaluates trusted, caller-supplied evidence claims. It does not
+independently derive most certificate, path, revocation, or TLS facts from the original inputs.
+The frozen v9 package is ready for expert review of its fixture-specific results. It is not a
+production X.509 or TLS verifier.
 
-The frozen v9 evidence package is ready for public expert review as this limited harness. It is
-not ready for production use or publication as an X.509 or TLS verifier.
+The results below apply to the named source tree, commands, adapters, and versions. They do not
+establish general X.509, TLS, hybrid-draft, or library behavior.
 
-The local results below are fixture-specific observations for the named source tree, commands,
-adapters, and versions. They are not general proofs of X.509, TLS, hybrid-draft, or library
-behavior.
-
-## Locally observed in the current repository
+## Recorded local results
 
 - The policy oracle cannot return hybrid acceptance under P2 unless all in-scope certificates use
   a hybrid certificate-signature design or an explicit same-operation Related certificate pair,
@@ -76,8 +72,7 @@ behavior.
 - A timeout terminates the adapter process group. A test shows that a descendant cannot remain
   active after the timeout.
 - Each stack observation states whether it used X.509 path validation or Web PKI server
-  validation and whether execution had container isolation or process-only limits. The current
-  matrix does not hide either difference.
+  validation and whether execution had container isolation or process-only limits.
 - All 345 authoritative matrix entries use the shared container boundary. It disables network
   and IPC access, uses a read-only root and read-only input mounts, removes all capabilities,
   prevents privilege gain, runs as user 65532, rejects unsafe mount delimiters, and sets CPU,
@@ -90,10 +85,9 @@ behavior.
   Bouncy Castle records PKIX path, alternative-signature, delta-signature, and TLS transcript
   operations. Python cryptography records its Web PKI verification call and parsed leaf
   extensions. wolfSSL records its direct certificate-manager load and path-verification calls.
-  These observations do not show full library internal behavior unless the library source is
-  directly instrumented. Other adapters remain black-box results and do not claim internal
-  execution. The current
-  matrix has 184 instrumented entries across these eight adapter profiles.
+  These observations show adapter behavior, not full library internals. Other adapters have
+  black-box results. The current matrix has 184 instrumented entries across these eight adapter
+  profiles.
 - The available matrix records 345 isolated raw results with one exact support expectation and
   one exact verdict expectation for each adapter profile and fixture. It does not allow
   `unsupported` for the classical valid baseline. The cases include seven valid designs, a deterministic
@@ -175,7 +169,7 @@ behavior.
 - The same analysis evaluates the published mixed chain at all scopes. End-entity P2 rejects
   because the leaf alternative signature is not decision-sensitive-for-fixture. Certification-path P2 also records
   that the Catalyst intermediate has an alternative public key but no alternative issuer
-  signature. All three scopes reject, and no missing check is promoted to success.
+  signature. All three scopes reject.
 - An isolated OpenSSL 4.0.1 TLS 1.3 server and client complete hostname and path verification for
   both the valid Catalyst certificate and its independently checked invalid-PQ control. The same
   client rejects a certificate with an invalid classical outer signature. Both accepted cases use
@@ -230,13 +224,11 @@ behavior.
   adapter. Govulncheck reports no reachable vulnerability for current 1.26.5. It reports two
   fixed standard-library advisories in study 1.26.4, but neither affected symbol is reachable.
 - The NSS 3.98 study adapter accepts Catalyst and Related through their classical paths. It
-  reports the other four designs as unsupported. It runs without network access, capabilities,
-  or a writable root file system.
+  reports the other four designs as unsupported.
 - Current NSS 3.126 accepts both pure post-quantum designs, Catalyst, Chameleon, and Related. It
-  reports atomic composite as unsupported. It uses `vfychain`, as does the study adapter. An
-  earlier `certutil -V` adapter path accepted five corrupted leaf signatures after database
-  import; the invalid-signature matrix found this adapter defect, and a build regression check
-  prevents its return. The image verifies Mozilla's published source archive SHA-256 value before it
+  reports atomic composite as unsupported. It uses `vfychain`, as does the study adapter. The
+  invalid-signature matrix and build check guard this adapter path. The image verifies Mozilla's
+  published source archive SHA-256 value before it
   builds NSS 3.126 and NSPR 4.39. Build packages are not fixed to a dated repository snapshot.
 - The oqs-provider 0.11.0 adapter reproduces the paper's six valid-case results. Its version
   transcript shows that OpenSSL 3.5.7 and both the default and OQS providers are active. The
@@ -302,8 +294,7 @@ digests are not current v9 evidence until their named commands run again from a 
 - All 30 local JSON reports and both root SBOM files were regenerated from that clean source
   commit. The two paper comparison reports match all 54 common matrix rows and all four wolfSSL
   fixed-vector rows.
-- Independent review is not available from the local workspace. The local reports state unknowns
-  where black-box adapter behavior cannot show internal execution.
+- The local reports state unknowns where black-box adapter behavior cannot show internal execution.
 
-The evidence package is complete for the frozen fixture-specific claims. Independent expert review
-remains external work and is not claimed here.
+The evidence package covers the frozen fixture-specific claims. Independent expert review remains
+external work.

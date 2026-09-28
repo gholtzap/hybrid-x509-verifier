@@ -6,8 +6,7 @@ the same key and certificate. A third handshake offers only an incompatible Cert
 signature algorithm. The mode passes only when the first handshake completes and both negative
 controls are rejected.
 
-This adapter runs Bouncy Castle Java 1.84 PKIX validation at an exact validation time. Version
-1.84 is both the study version and the current release as of 2026-08-04.
+This adapter runs Bouncy Castle Java 1.84 PKIX validation at an exact validation time.
 
 Build the pinned container:
 

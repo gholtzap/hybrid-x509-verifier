@@ -54,7 +54,7 @@ scripts/reproducible-image-check.sh
 
 ## Generate the fixture matrix
 
-Build the adapters first, then run publication mode from a clean source tree:
+Build the adapters, then run publication mode from a clean source tree:
 
 ```sh
 for build in tools/*-adapter/build.sh; do
@@ -68,8 +68,7 @@ cargo run --locked -- matrix-available \
 jq -e . target/publication/matrix-report.json >/dev/null
 ```
 
-Publication mode requires a clean tree. The report records the source commit, source tree, clean
-state, platform, and adapter image digests.
+The report records the source commit, source tree, clean state, platform, and adapter image digests.
 
 ## Reproduce the lifecycle result
 
@@ -118,8 +117,8 @@ cargo run --locked -- schema result
 
 The initial fixtures and observations come from [“Classical Acceptance Is Not Hybrid
 Authentication: How Deployed X.509 Validation Stacks Treat Hybrid
-Certificates”](https://arxiv.org/abs/2607.20800), arXiv:2607.20800. The fixtures preserve the
-paper inputs and published observations, while the policy evaluator lives in this repository.
+Certificates”](https://arxiv.org/abs/2607.20800), arXiv:2607.20800. This repository adds the
+policy evaluator.
 
 See [paper reproduction](docs/paper-reproduction.md) and [specification
 baseline](docs/specification-baseline.md) for the exact comparison and standards scope.

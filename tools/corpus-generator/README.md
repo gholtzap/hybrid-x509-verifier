@@ -21,21 +21,20 @@ the published DER size and SHA-256 digest.
 
 New atomic path controls do not use that key generator. They construct composite keys from
 deterministic ML-DSA-44 and P-256 component keys and set the Bouncy Castle component random source
-before each composite signature. The full atomic chain, keys, mutations, and CRLs are
-byte-identical across two runs.
+before each composite signature.
 
 The pure path controls form a deterministic ML-DSA root, intermediate, and leaf chain. They
-include one invalid signature at each position and current root and intermediate CRLs. All files
-are byte-identical across two runs.
+include one invalid signature at each position and current root and intermediate CRLs.
 
 The cross-signed controls use one composite intermediate key under separate classical and atomic
 trust anchors. They include both intermediate certificates, route bundles, broken-route bundles,
-component mutations, and current CRLs. All files are byte-identical across two runs.
+component mutations, and current CRLs.
 
 The generator also creates `catalyst-leaf-bad-alt.pem`. Its classical signature is valid, but
-its alternative ML-DSA signature is invalid. The command runs the generator twice and confirms
-that this control is byte-identical.
+its alternative ML-DSA signature is invalid.
 
 It also creates `composite-leaf-bad-mldsa.pem` from the fixed composite vector. The mutation
 changes one byte in the 2,420-byte ML-DSA-44 component and leaves the ECDSA component and signed
 certificate data unchanged.
+
+The script generates the new controls twice and checks byte equality.
