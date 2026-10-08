@@ -783,7 +783,7 @@ enum Command {
         gnutls_study_image: String,
         #[arg(long, default_value = "hybrid-x509-go:1.26.4")]
         go_study_image: String,
-        #[arg(long, default_value = "hybrid-x509-go:1.26.5")]
+        #[arg(long, default_value = "hybrid-x509-go:1.26.6")]
         go_current_image: String,
         #[arg(long, default_value = "hybrid-x509-pyca:49.0.0")]
         pyca_study_image: String,

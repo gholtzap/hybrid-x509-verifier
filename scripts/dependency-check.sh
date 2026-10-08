@@ -12,7 +12,7 @@ fi
 docker run --rm \
   --mount "type=bind,src=$repo/tools/go-x509-adapter,dst=/source,readonly" \
   -w /source \
-  golang:1.26.5-bookworm@sha256:8d36439c36258ba98de1bf2b316eda72905f9d743117119f6db9705c49245644 \
+  golang:1.26.6-bookworm@sha256:116d58cbd88c1297624acc6e967a060012422bacf9930927e23fb719189c6f36 \
   go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
 
 docker run --rm \
