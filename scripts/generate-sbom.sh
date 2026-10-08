@@ -3,6 +3,7 @@ set -eu
 
 repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 mkdir -p "$repo/target/tooling"
+host_user=$("$repo/scripts/container-user.sh")
 
 if [ ! -x "$repo/target/tooling/bin/cargo-cyclonedx" ]; then
   cargo install --root "$repo/target/tooling" cargo-cyclonedx --version 0.5.9 --locked
@@ -24,7 +25,7 @@ generate_all() {
   destination=$1
   raw="$destination.raw"
   docker run --rm \
-    --user "$(id -u):$(id -g)" \
+    --user "$host_user" \
     --network=none \
     --read-only \
     --cap-drop=ALL \

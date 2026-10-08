@@ -596,7 +596,7 @@ fn run_case(
     );
     for (release, image) in [
         (GoX509Release::Study1264, &config.go_study_image),
-        (GoX509Release::Current1265, &config.go_current_image),
+        (GoX509Release::Current1266, &config.go_current_image),
     ] {
         push(
             entries,
@@ -928,7 +928,7 @@ mod tests {
             gnutls_current_image: "hybrid-x509-gnutls:3.8.13".to_owned(),
             gnutls_study_image: "hybrid-x509-gnutls:3.7.3".to_owned(),
             go_study_image: "hybrid-x509-go:1.26.4".to_owned(),
-            go_current_image: "hybrid-x509-go:1.26.5".to_owned(),
+            go_current_image: "hybrid-x509-go:1.26.6".to_owned(),
             pyca_study_image: "hybrid-x509-pyca:49.0.0".to_owned(),
             pyca_current_image: "hybrid-x509-pyca:50.0.0".to_owned(),
             docker: "docker".into(),

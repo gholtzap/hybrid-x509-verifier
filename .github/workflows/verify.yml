@@ -13,29 +13,37 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, macos-14]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ vars.CI_RUNNER_PROVIDER == 'mini' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (matrix.os == 'macos-14' && 'mini-macos' || 'mini-linux') || matrix.os }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - run: rustup toolchain install 1.92.0 --profile minimal --component clippy,rustfmt
       - run: cargo fmt --check
       - run: cargo clippy --all-targets --all-features -- -D warnings
       - run: cargo test --locked --test oracle
+      - run: scripts/ci-docker.sh start
       - if: runner.os == 'Linux'
         run: scripts/reproducible-build-check.sh
       - if: runner.os == 'Linux'
         run: docker buildx create --driver docker-container --use
       - if: runner.os == 'Linux'
         run: scripts/reproducible-image-check.sh
+      - if: always()
+        run: scripts/ci-docker.sh stop
 
   linux-adapters:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ vars.CI_RUNNER_PROVIDER == 'mini' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'mini-linux' || 'ubuntu-24.04' }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - run: rustup toolchain install 1.92.0 --profile minimal --component clippy,rustfmt
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version: '1.26.6'
+          cache: false
       - run: sudo apt-get update && sudo apt-get install -y gnutls-bin jq
       - run: |
           python3 -m venv .venv
           .venv/bin/pip install cryptography==46.0.4
+      - run: scripts/ci-docker.sh start
       - run: |
           for build in tools/*-adapter/build.sh; do
             "$build"
@@ -45,3 +53,5 @@ jobs:
       - run: scripts/dependency-check.sh
       - run: scripts/generate-sbom.sh
       - run: git diff --exit-code -- sbom-rust.cdx.json sbom-all.cdx.json
+      - if: always()
+        run: scripts/ci-docker.sh stop

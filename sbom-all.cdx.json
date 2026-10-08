@@ -39,6 +39,21 @@
       ]
     },
     {
+      "bom-ref": "1c236a0f81428bae",
+      "type": "file",
+      "name": "/source/.github/workflows/ci-host-check.yml",
+      "hashes": [
+        {
+          "alg": "SHA-1",
+          "content": "b08560d05c4ff391ebd5fb8a003d59bcf86f9772"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "1643a8562aef2552707bad8902a7f8c7fde6c2320d01a825f00d3169daad9f2d"
+        }
+      ]
+    },
+    {
       "bom-ref": "1ff8f358fa8f2b89",
       "type": "library",
       "name": "hybrid-x509-evidence",
@@ -221,11 +236,11 @@
       "hashes": [
         {
           "alg": "SHA-1",
-          "content": "24f8a24bb77d21da2932d1e639e48bcbf72cff2b"
+          "content": "6b4c561c02be0272d3e09167c94750e3762e61af"
         },
         {
           "alg": "SHA-256",
-          "content": "b4cbcdfae81909e6a38e305609a85df42c4ae4f4b2ac9ed885032862d8a66edb"
+          "content": "a1d57aab6a0c4ed3066346c75331fccab5c19acfbf86a0d76e759b9dfd1dd7b7"
         }
       ]
     },
@@ -316,11 +331,11 @@
       "hashes": [
         {
           "alg": "SHA-1",
-          "content": "8cbe96b75d44aeb094968ff7af890c398f20ed1b"
+          "content": "474ab0f2841d793b1add5c038ede354dbe0dc2fb"
         },
         {
           "alg": "SHA-256",
-          "content": "f741a8dac1eef2a666b6e4eb71fad0cd10c9b7446d51708ca50424ae3e8e829b"
+          "content": "b1fdcef5dcc6691a128a8a3ccad48026c72d2dc4ede90bbe0465fc15f947b8a1"
         }
       ]
     },
@@ -11973,6 +11988,98 @@
       ]
     },
     {
+      "bom-ref": "pkg:github/actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e?package-id=9825d26bb0ba70e0",
+      "type": "library",
+      "name": "actions/setup-go",
+      "version": "b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+      "cpe": "cpe:2.3:a:actions\\/setup-go:actions\\/setup-go:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e:*:*:*:*:*:*:*",
+      "purl": "pkg:github/actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "github-actions-usage-cataloger"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "github-action"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "github-actions-use-statement"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/setup-go:actions\\/setup_go:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/setup_go:actions\\/setup-go:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/setup_go:actions\\/setup_go:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/setup:actions\\/setup-go:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/setup:actions\\/setup_go:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/.github/workflows/verify.yml"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:github/actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f?package-id=491abdfddfe3d4c5",
+      "type": "library",
+      "name": "actions/upload-artifact",
+      "version": "b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+      "cpe": "cpe:2.3:a:actions\\/upload-artifact:actions\\/upload-artifact:b7c566a772e6b6bfb58ed0dc250532a479d7789f:*:*:*:*:*:*:*",
+      "purl": "pkg:github/actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+      "properties": [
+        {
+          "name": "syft:package:foundBy",
+          "value": "github-actions-usage-cataloger"
+        },
+        {
+          "name": "syft:package:type",
+          "value": "github-action"
+        },
+        {
+          "name": "syft:package:metadataType",
+          "value": "github-actions-use-statement"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/upload-artifact:actions\\/upload_artifact:b7c566a772e6b6bfb58ed0dc250532a479d7789f:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/upload_artifact:actions\\/upload-artifact:b7c566a772e6b6bfb58ed0dc250532a479d7789f:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/upload_artifact:actions\\/upload_artifact:b7c566a772e6b6bfb58ed0dc250532a479d7789f:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/upload:actions\\/upload-artifact:b7c566a772e6b6bfb58ed0dc250532a479d7789f:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:cpe23",
+          "value": "cpe:2.3:a:actions\\/upload:actions\\/upload_artifact:b7c566a772e6b6bfb58ed0dc250532a479d7789f:*:*:*:*:*:*:*"
+        },
+        {
+          "name": "syft:location:0:path",
+          "value": "/.github/workflows/ci-host-check.yml"
+        }
+      ]
+    },
+    {
       "bom-ref": "pkg:maven/dev.hybridx509/bc-x509-adapter-study@1.84.0?package-id=8ac5ed4e9d321ff7",
       "type": "library",
       "name": "bc-x509-adapter-study",
@@ -12121,81 +12228,6 @@
       ]
     },
     {
-      "bom-ref": "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.84?package-id=6de189025106ff5b",
-      "type": "library",
-      "group": "org.bouncycastle",
-      "name": "bcpkix-jdk18on",
-      "version": "1.84",
-      "cpe": "cpe:2.3:a:org.bouncycastle:bcpkix-jdk18on:1.84:*:*:*:*:*:*:*",
-      "purl": "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.84",
-      "properties": [
-        {
-          "name": "syft:package:foundBy",
-          "value": "java-pom-cataloger"
-        },
-        {
-          "name": "syft:package:language",
-          "value": "java"
-        },
-        {
-          "name": "syft:package:type",
-          "value": "java-archive"
-        },
-        {
-          "name": "syft:package:metadataType",
-          "value": "java-archive"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:org.bouncycastle:bcpkix_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcpkix-jdk18on:bcpkix-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcpkix-jdk18on:bcpkix_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcpkix_jdk18on:bcpkix-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcpkix_jdk18on:bcpkix_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bouncycastle:bcpkix-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bouncycastle:bcpkix_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcpkix:bcpkix-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcpkix:bcpkix_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:location:0:path",
-          "value": "/tools/corpus-generator/pom.xml"
-        },
-        {
-          "name": "syft:metadata:-:artifactID",
-          "value": "bcpkix-jdk18on"
-        },
-        {
-          "name": "syft:metadata:-:groupID",
-          "value": "org.bouncycastle"
-        }
-      ]
-    },
-    {
       "bom-ref": "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?package-id=4592046d0b9378bb",
       "type": "library",
       "group": "org.bouncycastle",
@@ -12263,81 +12295,6 @@
         {
           "name": "syft:metadata:-:artifactID",
           "value": "bcpkix-jdk18on"
-        },
-        {
-          "name": "syft:metadata:-:groupID",
-          "value": "org.bouncycastle"
-        }
-      ]
-    },
-    {
-      "bom-ref": "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.84?package-id=d6d38eb838f4e410",
-      "type": "library",
-      "group": "org.bouncycastle",
-      "name": "bcprov-jdk18on",
-      "version": "1.84",
-      "cpe": "cpe:2.3:a:org.bouncycastle:bcprov-jdk18on:1.84:*:*:*:*:*:*:*",
-      "purl": "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.84",
-      "properties": [
-        {
-          "name": "syft:package:foundBy",
-          "value": "java-pom-cataloger"
-        },
-        {
-          "name": "syft:package:language",
-          "value": "java"
-        },
-        {
-          "name": "syft:package:type",
-          "value": "java-archive"
-        },
-        {
-          "name": "syft:package:metadataType",
-          "value": "java-archive"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:org.bouncycastle:bcprov_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcprov-jdk18on:bcprov-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcprov-jdk18on:bcprov_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcprov_jdk18on:bcprov-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcprov_jdk18on:bcprov_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bouncycastle:bcprov-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bouncycastle:bcprov_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcprov:bcprov-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcprov:bcprov_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:location:0:path",
-          "value": "/tools/corpus-generator/pom.xml"
-        },
-        {
-          "name": "syft:metadata:-:artifactID",
-          "value": "bcprov-jdk18on"
         },
         {
           "name": "syft:metadata:-:groupID",
@@ -12488,81 +12445,6 @@
         {
           "name": "syft:metadata:-:artifactID",
           "value": "bctls-jdk18on"
-        },
-        {
-          "name": "syft:metadata:-:groupID",
-          "value": "org.bouncycastle"
-        }
-      ]
-    },
-    {
-      "bom-ref": "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.84?package-id=1d6e9170c66e8289",
-      "type": "library",
-      "group": "org.bouncycastle",
-      "name": "bcutil-jdk18on",
-      "version": "1.84",
-      "cpe": "cpe:2.3:a:org.bouncycastle:bcutil-jdk18on:1.84:*:*:*:*:*:*:*",
-      "purl": "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.84",
-      "properties": [
-        {
-          "name": "syft:package:foundBy",
-          "value": "java-pom-cataloger"
-        },
-        {
-          "name": "syft:package:language",
-          "value": "java"
-        },
-        {
-          "name": "syft:package:type",
-          "value": "java-archive"
-        },
-        {
-          "name": "syft:package:metadataType",
-          "value": "java-archive"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:org.bouncycastle:bcutil_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcutil-jdk18on:bcutil-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcutil-jdk18on:bcutil_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcutil_jdk18on:bcutil-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcutil_jdk18on:bcutil_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bouncycastle:bcutil-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bouncycastle:bcutil_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcutil:bcutil-jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:cpe23",
-          "value": "cpe:2.3:a:bcutil:bcutil_jdk18on:1.84:*:*:*:*:*:*:*"
-        },
-        {
-          "name": "syft:location:0:path",
-          "value": "/tools/corpus-generator/pom.xml"
-        },
-        {
-          "name": "syft:metadata:-:artifactID",
-          "value": "bcutil-jdk18on"
         },
         {
           "name": "syft:metadata:-:groupID",
@@ -14191,9 +14073,9 @@
     {
       "ref": "pkg:maven/pqcprobe/corpus-gen@1.0?package-id=7f2e50f8ede3aab5",
       "dependsOn": [
-        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.84?package-id=6de189025106ff5b",
-        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.84?package-id=d6d38eb838f4e410",
-        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.84?package-id=1d6e9170c66e8289"
+        "pkg:maven/org.bouncycastle/bcpkix-jdk18on@1.85?package-id=4592046d0b9378bb",
+        "pkg:maven/org.bouncycastle/bcprov-jdk18on@1.85?package-id=c7969f09a7a00450",
+        "pkg:maven/org.bouncycastle/bcutil-jdk18on@1.85?package-id=83f6cf65f32d73db"
       ]
     }
   ]

@@ -97,7 +97,7 @@ establish general X.509, TLS, hybrid-draft, or library behavior.
   critical hybrid extension, and revoked classical status. It runs these cases across OpenSSL 4.0.1,
   oqs-provider 0.11.0 with
   OpenSSL 3.5.7, Bouncy Castle 1.84 and 1.85, NSS 3.98 and 3.126, GnuTLS 3.8.13 and 3.7.3,
-  Go 1.26.4 and 1.26.5, Python cryptography 49.0.0 and 50.0.0, plus wolfSSL 5.9.2 in default and
+  Go 1.26.4 and 1.26.6, Python cryptography 49.0.0 and 50.0.0, plus wolfSSL 5.9.2 in default and
   dual-algorithm modes. Each result states whether its version is current, a study version,
   both, or supplied by the user.
 - Bouncy Castle 1.84 is the study adapter and Bouncy Castle 1.85 is the current adapter as of
@@ -220,9 +220,11 @@ establish general X.509, TLS, hybrid-draft, or library behavior.
 - A direct Go issuer-signature check shows that Go 1.26.4 does not implement the corpus ML-DSA
   issuer-signature algorithm. This explains the paper's unsupported result even though Go path
   building reports only an unknown authority.
-- Go 1.26.4 remains the pinned study adapter. Go 1.26.5 is the separate digest-pinned current
-  adapter. Govulncheck reports no reachable vulnerability for current 1.26.5. It reports two
-  fixed standard-library advisories in study 1.26.4, but neither affected symbol is reachable.
+- Go 1.26.4 remains the pinned study adapter. Go 1.26.6 is the separate digest-pinned current
+  adapter. The current adapter was updated to Go 1.26.6 after
+  Govulncheck found reachable advisory GO-2026-5972 in Go 1.26.5. The study version stays
+  fixed so previous results can be repeated. The complete verification workflow checks the
+  current adapter before merge.
 - The NSS 3.98 study adapter accepts Catalyst and Related through their classical paths. It
   reports the other four designs as unsupported.
 - Current NSS 3.126 accepts both pure post-quantum designs, Catalyst, Chameleon, and Related. It

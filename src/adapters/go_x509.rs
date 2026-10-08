@@ -38,7 +38,7 @@ pub struct GoX509ContainerConfig {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GoX509Release {
     Study1264,
-    Current1265,
+    Current1266,
 }
 
 #[derive(Debug, Error)]
@@ -164,14 +164,14 @@ pub fn verify_container(config: &GoX509ContainerConfig) -> Result<AdapterExecuti
         observation: StackObservation {
             adapter: match config.release {
                 GoX509Release::Study1264 => "go-crypto-x509-study",
-                GoX509Release::Current1265 => "go-crypto-x509-current",
+                GoX509Release::Current1266 => "go-crypto-x509-current",
             }
             .to_owned(),
             version,
             verdict,
             version_track: match config.release {
                 GoX509Release::Study1264 => VersionTrack::Study,
-                GoX509Release::Current1265 => VersionTrack::Current,
+                GoX509Release::Current1266 => VersionTrack::Current,
             },
             validation_profile: ValidationProfile::WebPkiServer,
             execution_isolation: ExecutionIsolation::Container,

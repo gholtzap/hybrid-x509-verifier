@@ -66,10 +66,26 @@ public final class CertLib {
     }
 
     public static ContentSigner compositeSigner(KeyPair keyPair, String label) throws Exception {
-        org.bouncycastle.crypto.CryptoServicesRegistrar.setSecureRandom(
-                Det.rng("sign-" + label + "-components"));
-        return new JcaContentSignerBuilder("MLDSA44-ECDSA-P256-SHA256").setProvider("BC")
-                .build(keyPair.getPrivate());
+        java.security.SecureRandom random = Det.rng("sign-" + label + "-components");
+        org.bouncycastle.crypto.CryptoServicesRegistrar.setSecureRandom(random);
+        ContentSigner delegate = new JcaContentSignerBuilder("MLDSA44-ECDSA-P256-SHA256")
+                .setProvider("BC").build(keyPair.getPrivate());
+        return new ContentSigner() {
+            public org.bouncycastle.asn1.x509.AlgorithmIdentifier getAlgorithmIdentifier() {
+                return delegate.getAlgorithmIdentifier();
+            }
+
+            public java.io.OutputStream getOutputStream() {
+                return delegate.getOutputStream();
+            }
+
+            public byte[] getSignature() {
+                // BC 1.84 read 32 unused random bytes before each composite signature.
+                // Keep that step to produce the fixed test data with BC 1.85.
+                random.nextBytes(new byte[32]);
+                return delegate.getSignature();
+            }
+        };
     }
 
     // ---- 인증서 빌더 ----

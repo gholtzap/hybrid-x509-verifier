@@ -19,7 +19,8 @@ must name the exact source revision in each transcript.
 
 ## Validation stack baseline
 
-The release sources were checked on 2026-08-05.
+The release sources were checked on 2026-08-05. The current Go control was updated to
+1.26.6 on 2026-10-07 to address [GO-2026-5972](https://pkg.go.dev/vuln/GO-2026-5972).
 
 | Stack | Current control | Study control | Official source |
 | --- | --- | --- | --- |
@@ -27,7 +28,7 @@ The release sources were checked on 2026-08-05.
 | oqs-provider | 0.11.0 | 0.11.0 | [oqs-provider releases](https://github.com/open-quantum-safe/oqs-provider/releases) |
 | GnuTLS | 3.8.13 | 3.7.3 | [GnuTLS release files](https://www.gnupg.org/ftp/gcrypt/gnutls/) |
 | NSS | 3.126 | 3.98 | [NSS release files](https://ftp.mozilla.org/pub/security/nss/releases/) |
-| Go crypto/x509 | 1.26.5 | 1.26.4 | [Go releases](https://go.dev/dl/) |
+| Go crypto/x509 | 1.26.6 | 1.26.4 | [Go releases](https://go.dev/dl/) |
 | Python cryptography | 50.0.0 | 49.0.0 | [Python package index](https://pypi.org/project/cryptography/) |
 | Bouncy Castle Java | 1.85 | 1.84 | [Maven Central metadata](https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-jdk18on/maven-metadata.xml) |
 | wolfSSL | 5.9.2 | 5.9.2 | [wolfSSL releases](https://github.com/wolfSSL/wolfssl/releases) |
