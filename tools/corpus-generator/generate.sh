@@ -7,11 +7,7 @@ mkdir -p "$output"
 output=$(CDPATH= cd -- "$output" && pwd)
 check=$(mktemp -d)
 trap 'rm -rf "$check"' EXIT
-host_user=$(id -u):$(id -g)
-# The rootless engine maps container root to the build account.
-case "$(docker info --format '{{json .SecurityOptions}}')" in
-  *'"name=rootless"'*) host_user=0:0 ;;
-esac
+host_user=$("$repo/scripts/container-user.sh")
 
 cp "$repo/tests/fixtures/paper-v1.0.2/composite-ica.pem" "$output/composite-ica.pem"
 cp "$repo/tests/fixtures/paper-v1.0.2/composite-leaf.pem" "$output/composite-leaf.pem"
